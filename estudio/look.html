@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Um look pra você — Irene Moreira</title>
+<meta name="theme-color" content="#FAF6EE">
+<meta property="og:title" content="Um look pra você 💛">
+<meta property="og:description" content="Sua consultora da Irene Moreira mirou um look pensando em você. Toque pra ver e responder.">
+<meta property="og:image" content="https://desejo-guiado.onrender.com/estudio/og-card.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{--gold:#B0872E;--gold2:#8C6B22;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+ *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+ body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+ header{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px 4px;}
+ header img{height:48px;width:auto;display:block;}
+ .tag{font-size:9px;letter-spacing:3px;color:var(--mut);text-transform:uppercase;}
+ .wrap{width:100%;max-width:440px;padding:8px 18px 44px;display:flex;flex-direction:column;align-items:center;}
+ .hello{font-family:'Fraunces';font-weight:500;font-size:23px;text-align:center;line-height:1.25;margin:10px 0 16px;}
+ .hello small{display:block;font-family:'Inter';font-size:13.5px;color:var(--mut);font-weight:400;margin-top:8px;letter-spacing:.2px;line-height:1.5;}
+ .look{width:100%;border-radius:18px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);box-shadow:0 12px 34px rgba(40,32,18,.12);}
+ .look img{width:100%;display:block;}
+ .btns{width:100%;display:flex;flex-direction:column;gap:11px;margin-top:22px;}
+ .rb{font-family:'Inter';font-weight:600;font-size:17px;padding:17px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--off);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s ease,box-shadow .2s;}
+ .rb:active{transform:scale(.97);}
+ .rb.primary{background:linear-gradient(100deg,#7A5E1E,#B0872E 42%,#8C6B22);color:#FFF6DD;border:none;box-shadow:0 6px 18px rgba(176,135,46,.34);}
+ .rb .em{font-size:20px;}
+ .state{min-height:62vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;color:var(--mut);padding:20px;}
+ .spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite;}
+ @keyframes sp{to{transform:rotate(360deg);}}
+ .chosen{font-size:46px;animation:pop .4s ease;}
+ @keyframes pop{0%{transform:scale(.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
+ .thanks{font-family:'Fraunces';font-weight:500;font-size:27px;color:var(--off);}
+ .thanks-sub{font-size:14px;color:var(--mut);max-width:290px;line-height:1.55;}
+ .foot{font-family:'Fraunces';font-size:12px;color:var(--mut);letter-spacing:4px;margin-top:28px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+<header>
+ <img src="logo.png" alt="Irene Moreira" onerror="this.style.display='none'">
+ <div class="tag">Desejo Guiado</div>
+</header>
+<div id="app" class="wrap">
+ <div class="state"><div class="spin"></div><div>Carregando seu look…</div></div>
+</div>
+<script>
+ var P=new URLSearchParams(location.search), ID=P.get('id')||'';
+ var app=document.getElementById('app');
+ var TECLAS=[
+   {k:'Acertou em mim', em:'💚', msg:'Que bom que você amou!'},
+   {k:'Quero provar',  em:'🛍️', primary:true, msg:'Maravilha! Vou separar no provador pra você.'},
+   {k:'Mira de novo',  em:'🔄', msg:'Combinado! Já vou mirar outro look pra você.'},
+   {k:'Não foi dessa', em:'🤍', msg:'Obrigada! Vou achar algo mais a sua cara.'}
+ ];
+ function esc(s){return (s||'').replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+ function err(msg){app.innerHTML='<div class="state"><div style="font-size:38px">🤍</div><div>'+esc(msg)+'</div><div class="foot">Irene Moreira</div></div>';}
+ function render(look){
+   var nome=look.cliente?esc(look.cliente):'';
+   var vend=look.vend?esc(look.vend):'sua consultora';
+   var hello = nome ? ('Oi, '+nome+' 💛') : 'Um look pra você 💛';
+   var sub = vend+' mirou este look especialmente pra você. O que você achou?';
+   var btns=TECLAS.map(function(t,i){return '<button class="rb'+(t.primary?' primary':'')+'" data-i="'+i+'"><span class="em">'+t.em+'</span> '+t.k+'</button>';}).join('');
+   app.innerHTML='<div class="hello">'+hello+'<small>'+sub+'</small></div>'
+     +'<div class="look"><img src="'+esc(look.img)+'" alt="look"></div>'
+     +'<div class="btns">'+btns+'</div>'
+     +'<div class="foot">Irene Moreira</div>';
+   Array.prototype.forEach.call(app.querySelectorAll('.rb'), function(b){
+     b.onclick=function(){ react(TECLAS[+b.getAttribute('data-i')]); };
+   });
+ }
+ function react(t){
+   app.innerHTML='<div class="state"><div class="chosen">'+t.em+'</div><div class="thanks">'+esc(t.msg)+'</div><div class="thanks-sub">Sua resposta — <b>'+esc(t.k)+'</b> — já chegou pra equipe da Irene Moreira. 💛</div><div class="foot">Irene Moreira</div></div>';
+   try{ fetch('/reacao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ID,reacao:t.k})}); }catch(e){}
+ }
+ if(!ID){ err('Link inválido. Peça um novo para sua consultora.'); }
+ else{
+   fetch('/look?id='+encodeURIComponent(ID)).then(function(r){return r.json();}).then(function(d){
+     if(!d || d.error || !d.img){ err('Look não encontrado. Peça um novo link.'); return; }
+     render(d);
+   }).catch(function(){ err('Não consegui carregar agora. Tente de novo em instantes.'); });
+ }
+</script>
+</body>
+</html>

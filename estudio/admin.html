@@ -56,6 +56,8 @@
   <div class="cards" id="stats"></div>
   <h2 class="sec">Por vendedora</h2>
   <div id="porvend"></div>
+  <h2 class="sec">Reações das clientes</h2>
+  <div class="atfeed" id="reacoes"></div>
   <h2 class="sec">Reservas no provador</h2>
   <div class="atfeed" id="reservas"></div>
   <h2 class="sec">Atividade recente</h2>
@@ -73,10 +75,13 @@ async function carregar(){
   try{log=(await (await fetch('/uso')).json()).log||[];}catch(e){}
   try{posts=(await (await fetch('/clube')).json()).posts||[];}catch(e){}
   let reservas=[]; try{reservas=(await (await fetch('/reserva')).json()).reservas||[];}catch(e){}
+  let looks={}; try{looks=(await (await fetch('/look')).json()).looks||{};}catch(e){}
   const today=hoje(), vends={};
   log.forEach(e=>{const v=e.vend||'(sem nome)';vends[v]=vends[v]||{total:0,hoje:0,last:'',cli:''};vends[v].total++;if((e.ts||'').slice(0,10)===today)vends[v].hoje++;if((e.ts||'')>vends[v].last){vends[v].last=e.ts||'';vends[v].cli=e.cliente||'';}});
   const hojeLooks=log.filter(e=>(e.ts||'').slice(0,10)===today).length;
-  document.getElementById('stats').innerHTML=card(log.length,'looks gerados (total)')+card(hojeLooks,'looks hoje')+card(Object.keys(vends).length,'vendedoras ativas')+card(posts.length,'posts no clube');
+  var lkArr=Object.keys(looks).map(function(k){return looks[k];});
+  var qProvar=lkArr.filter(function(l){return l&&l.reacao==='Quero provar';}).length;
+  document.getElementById('stats').innerHTML=card(log.length,'looks gerados (total)')+card(hojeLooks,'looks hoje')+card(Object.keys(vends).length,'vendedoras ativas')+card(qProvar,'quero provar 🛍️')+card(posts.length,'posts no clube');
   const rows=Object.entries(vends).sort((a,b)=>b[1].total-a[1].total).map(([v,d])=>'<tr><td class="v">'+v+'</td><td>'+d.total+'</td><td>'+d.hoje+'</td><td>'+(d.cli||'—')+'</td><td>'+fmt(d.last)+'</td></tr>').join('');
   document.getElementById('porvend').innerHTML=rows?('<table><tr><th>Vendedora</th><th>Total</th><th>Hoje</th><th>Última cliente</th><th>Última atividade</th></tr>'+rows+'</table>'):'<div class="empty">Nenhum look gerado ainda. Quando as vendedoras gerarem, aparece aqui.</div>';
   const rec=log.slice(-30).reverse();
@@ -85,6 +90,10 @@ async function carregar(){
   document.getElementById('clube').innerHTML=cp.length?cp.map(p=>'<div class="ctile"><img src="'+p.img+'"><div class="nm">'+(p.marca?p.marca+' · ':'')+(p.desc||p.occ||'look')+(p.por?' · R$'+p.por:'')+(p.vend?' · '+p.vend:'')+'</div></div>').join(''):'<div class="empty">Nada no clube ainda.</div>';
   var rv=reservas.slice().reverse();
   document.getElementById('reservas').innerHTML=rv.length?rv.map(function(r){return '<div class="atrow"><span class="who">'+(r.cliente||'cliente')+'</span><span>'+(Array.isArray(r.pecas)?r.pecas.join(' + '):'')+(r.preco?' · R$'+r.preco:'')+(r.vend?' · '+r.vend:'')+'</span><span class="when">'+fmt(r.ts)+'</span></div>';}).join(''):'<div class="empty">Nenhuma reserva ainda. Quando a vendedora reservar um look, aparece aqui.</div>';
+  var EMO={'Acertou em mim':'💚','Quero provar':'🛍️','Mira de novo':'🔄','Não foi dessa':'🤍'};
+  var lk=lkArr.filter(function(l){return l&&l.reacao;});
+  lk.sort(function(a,b){return (b.reacao_ts||b.ts||'').localeCompare(a.reacao_ts||a.ts||'');});
+  document.getElementById('reacoes').innerHTML=lk.length?lk.map(function(l){return '<div class="atrow"><span class="who">'+(EMO[l.reacao]||'•')+' '+(l.cliente||'cliente')+'</span><span><b>'+(l.reacao||'')+'</b>'+(Array.isArray(l.pecas)&&l.pecas.length?' · '+l.pecas.join(' + '):'')+(l.vend?' · '+l.vend:'')+'</span><span class="when">'+fmt(l.reacao_ts||l.ts)+'</span></div>';}).join(''):'<div class="empty">Nenhuma reação ainda. Quando a cliente tocar uma tecla no look enviado, aparece aqui.</div>';
 }
 document.getElementById('reload').onclick=carregar;
 carregar();

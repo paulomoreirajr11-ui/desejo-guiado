@@ -10,6 +10,8 @@ qr_*.png
 qr*.txt
 clube_posts.json
 uso_log.json
+reservas.json
+looks.json
 *.pdf
 
 # Imagens de teste e originais pesados (o app usa os .jpg)

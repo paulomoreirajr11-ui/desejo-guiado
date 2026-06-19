@@ -11,7 +11,7 @@ Rodar:
 Depois, no CELULAR (mesma Wi-Fi):  http://192.168.15.57:8770/estudio/celular.html
 (Sem FAL_KEY o app funciona em modo demo/concierge; a geracao ao vivo pede a chave.)
 """
-import os, sys, json, base64, random, socket, datetime, urllib.request, urllib.error
+import os, sys, json, base64, random, socket, datetime, uuid, urllib.request, urllib.parse, urllib.error
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -75,6 +75,21 @@ def add_reserva(r):
         rs = load_reservas(); rs.append(r); rs = rs[-2000:]
         with open(RESERVA_FILE, "w", encoding="utf-8") as f:
             json.dump(rs, f, ensure_ascii=False)
+    except Exception:
+        pass
+
+# ---- Looks compartilhados + reacoes (as "teclas") ----
+LOOKS_FILE = os.path.join(ROOT, "looks.json")
+def load_looks():
+    try:
+        with open(LOOKS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+def save_looks(d):
+    try:
+        with open(LOOKS_FILE, "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False)
     except Exception:
         pass
 
@@ -252,6 +267,13 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, {"log": load_uso()})
         if p == "/reserva":
             return self._json(200, {"reservas": load_reservas()})
+        if p == "/look":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            lid = (q.get("id") or [""])[0]
+            looks = load_looks()
+            if lid:
+                return self._json(200, looks.get(lid) or {"error": "not_found"})
+            return self._json(200, {"looks": looks})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
@@ -272,6 +294,34 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(200, {"ok": True, "count": len(load_reservas())})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
+        if p == "/look":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                looks = load_looks()
+                lid = uuid.uuid4().hex[:10]
+                d["ts"] = datetime.datetime.now().isoformat(timespec="seconds")
+                d["reacao"] = ""
+                looks[lid] = d
+                if len(looks) > 4000:
+                    for k in list(looks.keys())[:len(looks) - 4000]:
+                        looks.pop(k, None)
+                save_looks(looks)
+                return self._json(200, {"id": lid})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/reacao":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                looks = load_looks(); lid = d.get("id", "")
+                if lid in looks:
+                    looks[lid]["reacao"] = d.get("reacao", "")
+                    looks[lid]["reacao_ts"] = datetime.datetime.now().isoformat(timespec="seconds")
+                    save_looks(looks)
+                return self._json(200, {"ok": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
         if p != "/generate":
             return self.send_error(404)
         try:
@@ -288,11 +338,15 @@ class Handler(SimpleHTTPRequestHandler):
             url = fal_generate(prompt, uris)
             if not url: return self._json(502, {"error": "a nuvem nao devolveu imagem"})
             if body.get("faceswap"):
-                try:
-                    _sw = fal_faceswap(url, to_uri(body.get("person", "")))
-                    if _sw: url = _sw
-                except Exception:
-                    pass
+                face = to_uri(body.get("person", ""))
+                for _try in range(2):  # portao de rosto: tenta 2x antes do fallback
+                    try:
+                        _sw = fal_faceswap(url, face)
+                        if _sw:
+                            url = _sw
+                            break
+                    except Exception:
+                        pass
             try:
                 log_uso({"vend": body.get("vend", ""), "cliente": body.get("cliente", ""),
                          "pecas": body.get("pecas", ""), "ocasiao": body.get("ocasiao", ""),
