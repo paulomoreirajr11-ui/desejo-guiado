@@ -169,6 +169,19 @@ def fal_generate(prompt, image_uris):
     if imgs and isinstance(imgs[0], dict): return imgs[0].get("url")
     return data.get("url")
 
+def fal_faceswap(look_url, face_uri):
+    """Cola o rosto REAL (face_uri) sobre o look gerado (look_url). Garante a identidade."""
+    body = json.dumps({"base_image_url": look_url, "swap_image_url": face_uri}).encode()
+    req = urllib.request.Request("https://fal.run/fal-ai/face-swap", data=body,
+        headers={"Authorization": "Key " + FAL_KEY, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        d = json.loads(r.read().decode())
+    img = d.get("image")
+    if isinstance(img, dict): return img.get("url")
+    imgs = d.get("images")
+    if isinstance(imgs, list) and imgs and isinstance(imgs[0], dict): return imgs[0].get("url")
+    return d.get("url")
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=ROOT, **k)
@@ -217,6 +230,12 @@ class Handler(SimpleHTTPRequestHandler):
             uris = [to_uri(body.get("person", ""))] + [to_uri(g) for g in garments if g]
             url = fal_generate(prompt, uris)
             if not url: return self._json(502, {"error": "a nuvem nao devolveu imagem"})
+            if body.get("faceswap"):
+                try:
+                    _sw = fal_faceswap(url, to_uri(body.get("person", "")))
+                    if _sw: url = _sw
+                except Exception:
+                    pass
             try:
                 log_uso({"vend": body.get("vend", ""), "cliente": body.get("cliente", ""),
                          "pecas": body.get("pecas", ""), "ocasiao": body.get("ocasiao", ""),

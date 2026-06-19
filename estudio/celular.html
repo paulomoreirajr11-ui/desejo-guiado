@@ -289,7 +289,9 @@ function renderBig(){
 }
 function showLook(img,pecas){
   S.bandeja.push({img:img,nome:S.pessoa.nome,occ:S.occ,pecas:pecas||[],sel:true});
-  S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();upd();toast('Look pronto ✓ — arraste pra ver a galeria');
+  S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();
+  S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();
+  upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
 ger.onclick=()=>{
  const nomes=S.pecas.map(f=>(CAPT[f]?CAPT[f].nome:(byF(f)?byF(f).nome:f)));
@@ -306,7 +308,7 @@ ger.onclick=()=>{
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
  const garments=S.pecas.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
- fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||'')})})
+ fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli')})})
   .then(r=>r.json()).then(function(d){upd();
     if(d.image){showLook(d.image,nomes);}
     else{$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>'+(d.error||'configure a nuvem (FAL_KEY)')+'</div>';toast('nuvem não configurada');}})
