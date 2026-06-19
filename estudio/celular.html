@@ -161,7 +161,7 @@
 <div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div style="position:fixed;top:10px;right:16px;color:#C7A34A;font-size:28px;pointer-events:none;">✕</div></div>
 
 <script>
-const VENDEDORAS=['Maria','Ana','Bruna','Fernanda','Juliana','Letícia','Camila','Aline','Roberta','Sandra'];
+const VENDEDORAS=['Mazinha','Monica','Helena','Juliana','Marcia','Luciana','Emily','Val','Irene','Thaise','Liliane','Aletheia','Magali'];
 const MODELOS=[
  {key:'modelo_1_jovem',nome:'Júlia',tag:'Jovem 22'},{key:'modelo_2_meia_idade',nome:'Carla',tag:'38'},
  {key:'modelo_3_madura',nome:'Sônia',tag:'55'},{key:'modelo_4_esportiva',nome:'Bia',tag:'Esportiva'},
@@ -333,10 +333,20 @@ function renderBand(){
   b.querySelectorAll('.bx').forEach(x=>x.onclick=e=>{e.stopPropagation();S.bandeja.splice(+x.dataset.x,1);if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();});
 }
 
+var FRASES=[
+ 'Separei esses looks pensando em você 💛',
+ 'Achei que esses aqui têm a sua cara 💛',
+ 'Imaginei você nesses looks 💛',
+ 'Olha o que escolhi especialmente pra você 💛',
+ 'Esse aqui me lembrou você na hora 💛',
+ 'Dei uma garimpada e achei isso pra você 💛'
+];
+function nomeCliente(){if(S.tipo!=='cli')return '';var n=S.pessoa?(S.pessoa.nome||''):'';return /^(foto|cliente)/i.test(n)?'':n;}
+function fraseLook(){var nome=nomeCliente();var ola=nome?('Oi '+nome+'! '):'Oi! ';return ola+FRASES[Math.floor(Math.random()*FRASES.length)];}
 async function enviar(){
  const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
  if(!send.length){toast('Selecione ao menos 1 look');return;}
- const msg='Oi '+(S.pessoa?S.pessoa.nome:'')+'! Separei esses looks pensando em você 💛 — Irene Moreira';
+ const msg=fraseLook();
  try{const files=[];for(const it of send){const r=await fetch(it.img);let bl=await r.blob();bl=await watermarkBlob(bl);files.push(new File([bl],'look.jpg',{type:'image/jpeg'}));}
   if(files.length&&navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text:msg});toast('Aberto pra enviar '+files.length+' ✓');return;}}catch(e){}
  try{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');return;}catch(e){}
@@ -385,11 +395,10 @@ async function enviarResposta(){
  if(!it||!it.img){toast('Gere um look primeiro');return;}
  toast('Criando link…');
  var id='';
- try{var r=await fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:(S.pessoa?S.pessoa.nome:''),vend:S.vend,pecas:it.pecas||[],occ:it.occ})});var d=await r.json();id=d.id||'';}catch(e){}
+ try{var r=await fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})});var d=await r.json();id=d.id||'';}catch(e){}
  if(!id){toast('Sem conexão — tente de novo');return;}
  var link=location.origin+'/estudio/look.html?id='+id;
- var nome=S.pessoa?S.pessoa.nome:'';
- var msg='Oi '+nome+'! Mirei um look pensando em você 💛\nToque pra ver e me dizer o que achou:\n'+link;
+ var msg=fraseLook()+'\n👉 Toque pra ver e me dizer o que achou:\n'+link;
  try{if(navigator.share){await navigator.share({title:'Um look pra você',text:msg});toast('Aberto pra enviar ✓');return;}}catch(e){if(e&&e.name==='AbortError')return;}
  try{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');}catch(e){toast('Link criado ✓');}
 }
