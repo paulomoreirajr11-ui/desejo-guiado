@@ -276,7 +276,6 @@ function renderBig(){
   r.innerHTML='<div class="reveal" id="bigwrap"><img id="bigimg" src="'+it.img+'" style="cursor:zoom-in">'
    +(n>1?'<div class="gnav gprev" id="gp">‹</div><div class="gnav gnext" id="gn">›</div><div class="gidx">'+pos+' / '+n+'</div>':'')
    +'<button class="gsel'+(sel?' on':'')+'" id="gsel">'+(sel?'✓ vai pra cliente':'✗ fora')+'</button>'
-   +'<img class="wmk" src="logo.png" alt="">'
    +'<div class="vcap">Vi você nessa. <span style="font-size:11px;font-style:normal;color:#A39E94;">· toque amplia · arraste vê os outros</span></div></div>';
   const wrap=$('bigwrap'),im=$('bigimg');
   im.onclick=()=>{if(!_moved)openZoom(cur.img);};
