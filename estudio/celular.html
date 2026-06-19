@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="theme-color" content="#FAF6EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Desejo Guiado">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Desejo Guiado — no celular</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:#E7E0D2;color:var(--off);font-family:'Inter',sans-serif;}
+  .app{max-width:460px;margin:0 auto;background:var(--ink);min-height:100vh;padding-bottom:30px;}
+  header{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(250,246,238,.9);backdrop-filter:blur(8px);z-index:5;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:31px;line-height:1;letter-spacing:.5px;}
+  .brand{flex:1;display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:14px;letter-spacing:3.5px;}
+  .btag{font-size:8px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  header h1{font-family:'Fraunces';font-weight:500;font-size:16px;margin:0;flex:1;}
+  header a{font-size:11px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:14px;padding:5px 10px;}
+  .sess{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);}
+  .sess select{flex:1;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-family:inherit;font-size:13px;}
+  .sec{padding:14px 16px 0;}
+  .sec h2{font-family:'Fraunces';font-weight:500;font-size:14px;margin:0 0 9px;color:var(--off);}
+  .sec h2 b{color:var(--gold);}
+  .strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+  .av{flex:0 0 auto;width:74px;text-align:center;cursor:pointer;}
+  .av img{width:74px;height:92px;object-fit:cover;object-position:top;border-radius:11px;border:2px solid transparent;display:block;}
+  .av.on img{border-color:var(--gold);}
+  .av .n{font-size:11px;margin-top:3px;line-height:1.1;}
+  .av .t{font-size:9.5px;color:var(--mut);}
+  .tg{display:flex;gap:6px;margin-bottom:9px;}
+  .tg button{flex:1;font-size:12px;padding:8px;border-radius:16px;border:1px solid var(--line);background:transparent;color:var(--off);font-family:inherit;}
+  .tg button.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .cam{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--panel2);border:1.5px dashed var(--line);color:var(--gold2);border-radius:12px;padding:13px;font-size:13.5px;font-family:inherit;margin-bottom:10px;cursor:pointer;}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;}
+  .chip{flex:0 0 auto;font-size:12px;padding:6px 12px;border-radius:16px;border:1px solid var(--line);color:var(--mut);background:transparent;font-family:inherit;}
+  .chip.on{background:var(--gold);color:#1A1408;border-color:var(--gold);}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+  .tile{position:relative;border-radius:10px;overflow:hidden;background:var(--panel2);border:2px solid transparent;}
+  .tile img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+  .tile .nm{font-size:9.5px;color:var(--mut);padding:3px 5px;}
+  .tile .tz{font-size:8.5px;color:var(--gold2);}
+  .tile.on{border-color:var(--gold);}
+  .tile.on::after{content:'✓';position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#1A1408;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .tile.nofit{opacity:.4;}
+  .tile .nf{position:absolute;top:4px;left:4px;background:var(--bordo);color:#fff;font-size:8px;padding:1px 5px;border-radius:7px;}
+  .tile .delp{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:rgba(122,30,43,.92);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;}
+  .occ{display:flex;flex-wrap:wrap;gap:6px;}
+  .ob{font-size:12.5px;padding:9px 13px;border-radius:18px;border:1px solid var(--line);color:var(--off);background:transparent;font-family:inherit;}
+  .ob.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .ger{width:100%;margin:14px 0 0;background:var(--gold);color:#1A1408;border:none;border-radius:13px;padding:15px;font-size:16px;font-weight:600;font-family:inherit;}
+  .ger:disabled{opacity:.4;}
+  .res{margin-top:12px;border-radius:13px;overflow:hidden;background:var(--panel2);border:1px solid var(--line);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;}
+  .res img{width:100%;height:100%;object-fit:cover;}
+  .res .ph{color:var(--mut);font-size:13px;line-height:1.5;}
+  @keyframes rev{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  @keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .reveal{position:relative;width:100%;height:100%;animation:rev .6s ease-out;}
+  .reveal img{width:100%;height:100%;object-fit:cover;}
+  .reveal .vcap{position:absolute;left:0;right:0;bottom:0;padding:30px 14px 13px;background:linear-gradient(transparent,rgba(14,14,14,.92));font-family:'Fraunces';font-style:italic;font-size:19px;color:#E0C57E;animation:rev 1s ease-out .35s both;}
+  .loadshine{background:linear-gradient(100deg,#F1EADB 30%,#E3D8C4 50%,#F1EADB 70%)!important;background-size:200% 100%!important;animation:shine 1.1s linear infinite;}
+  .res .ph .big{font-family:'Fraunces';font-size:18px;color:var(--gold);display:block;margin-bottom:6px;}
+  .wpp{width:100%;margin-top:10px;background:#2E7D5B;color:#eafff0;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .wpp:disabled{opacity:.4;}
+  .band{display:flex;gap:6px;overflow-x:auto;margin-top:10px;min-height:8px;}
+  .band img{width:46px;height:58px;object-fit:cover;border-radius:7px;flex:0 0 auto;}
+  .novo{width:100%;margin-top:8px;background:transparent;color:var(--mut);border:1px solid var(--line);border-radius:11px;padding:10px;font-size:12.5px;font-family:inherit;}
+  .gnav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(14,14,14,.5);color:#E0C57E;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:3;cursor:pointer;border:1px solid var(--line);}
+  .gprev{left:8px;} .gnext{right:8px;}
+  .gidx{position:absolute;top:10px;left:10px;background:rgba(14,14,14,.6);color:#E0C57E;font-size:11px;padding:3px 9px;border-radius:12px;z-index:3;}
+  .gsel{position:absolute;top:8px;right:8px;z-index:3;border:1px solid var(--line);background:rgba(14,14,14,.6);color:#E0C57E;font-size:11px;padding:6px 11px;border-radius:14px;font-family:inherit;cursor:pointer;}
+  .gsel.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .bthumb{position:relative;flex:0 0 auto;cursor:pointer;}
+  .bthumb img{width:46px;height:58px;object-fit:cover;border-radius:7px;display:block;border:2px solid transparent;}
+  .bthumb.cur img{border-color:var(--gold);}
+  .bthumb.off img{opacity:.3;}
+  .bthumb .bx{position:absolute;top:1px;right:1px;width:16px;height:16px;border-radius:50%;background:rgba(122,30,43,.92);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .bthumb .bsel{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:rgba(14,14,14,.5);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .bthumb .bsel.on{background:var(--gold);color:#1A1408;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 18px;border-radius:30px;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;width:max-content;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="mono gold-metal">M</div>
+    <div class="brand">
+      <div class="bwm gold-metal">IRENE MOREIRA</div>
+      <div class="btag">Desejo Guiado</div>
+    </div>
+    <a href="estudio.html">TV / PC</a>
+  </header>
+  <div class="sess">
+    <select id="vend"></select>
+  </div>
+
+  <div class="sec">
+    <h2><b>1.</b> Quem vai vestir</h2>
+    <div class="tg"><button id="tgc" class="on">Minhas clientes</button><button id="tgi">Irenetes</button></div>
+    <label class="cam" style="margin:2px 0 10px;"><span>📲</span> Carregar foto da cliente (do celular)<input type="file" id="cfoto" accept="image/*" style="display:none"></label>
+    <div class="strip" id="pessoas"></div>
+  </div>
+
+  <div class="sec">
+    <h2><b>2.</b> Peças <span style="color:var(--mut);font-size:11px;">(toque pra montar o look)</span></h2>
+    <label class="cam"><span>📷</span> Foto da peça (câmera ou galeria)<input type="file" id="cam" accept="image/*" style="display:none"></label>
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="sec">
+    <h2><b>3.</b> Ocasião / estilo</h2>
+    <div class="occ" id="occ"></div>
+    <div class="tg" id="fundotg" style="margin-top:10px;"><button id="fcena" class="on">🌆 Cenário</button><button id="festudio">⬜ Estúdio infinito</button></div>
+    <button class="ger" id="ger" disabled>✨ Gerar look</button>
+    <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
+    <button class="wpp" id="wpp" disabled><span>🟢</span> Enviar no WhatsApp</button>
+    <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin-top:8px;">★ Soltar no Clube</button>
+    <div class="band" id="band"></div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
+      <button class="novo" id="limpar" style="flex:1;margin:0;">🗑 limpar galeria</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div id="promo" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.93);z-index:62;align-items:center;justify-content:center;padding:18px;">
+  <div style="max-width:380px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:18px;">
+    <h3 style="font-family:'Fraunces';color:var(--gold);margin:0 0 4px;font-size:19px;">Promoção pro Clube</h3>
+    <p style="color:var(--mut);font-size:11.5px;margin:0 0 12px;">O que aparece no post (pode deixar em branco).</p>
+    <input id="pmarca" placeholder="Marca (ex: Carmim)" style="width:100%;margin-bottom:8px;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;">
+    <input id="pdesc" placeholder="Descrição (ex: Calça jeans · única peça T42)" style="width:100%;margin-bottom:8px;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;">
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <input id="pde" inputmode="numeric" placeholder="De R$" style="flex:1;min-width:0;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;">
+      <input id="ppor" inputmode="numeric" placeholder="Por R$" style="flex:1;min-width:0;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;">
+    </div>
+    <input id="pcond" placeholder="Condição (ex: 3x sem juros)" style="width:100%;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;">
+    <button id="pwhats" style="width:100%;margin-top:12px;background:#1f6b3a;border:none;color:#eafff0;border-radius:11px;padding:13px;font-family:inherit;font-size:14px;font-weight:600;">🟢 Enviar no WhatsApp</button>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button id="pcancel" style="flex:1;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:11px;padding:12px;font-family:inherit;font-size:14px;">Cancelar</button>
+      <button id="psend" style="flex:1;background:var(--gold);border:none;color:#1A1408;border-radius:11px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;">★ Postar no feed</button>
+    </div>
+  </div>
+</div>
+<div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div style="position:fixed;top:10px;right:16px;color:#C7A34A;font-size:28px;pointer-events:none;">✕</div></div>
+
+<script>
+const VENDEDORAS=['Maria','Ana','Bruna','Fernanda','Juliana','Letícia','Camila','Aline','Roberta','Sandra'];
+const MODELOS=[
+ {key:'modelo_1_jovem',nome:'Júlia',tag:'Jovem 22'},{key:'modelo_2_meia_idade',nome:'Carla',tag:'38'},
+ {key:'modelo_3_madura',nome:'Sônia',tag:'55'},{key:'modelo_4_esportiva',nome:'Bia',tag:'Esportiva'},
+ {key:'modelo_5_m48_30',nome:'Renata',tag:'Mnq 48'},{key:'modelo_6_m50_60',nome:'Lúcia',tag:'Mnq 50'},
+ {key:'modelo_7_loira_19',nome:'Helena',tag:'Modelo'},{key:'modelo_8_morena_27',nome:'Valentina',tag:'Modelo'},
+];
+const ESTOQUE=[
+ {f:'real_pantacourt',cat:'Casual',nome:'Pantacourt laranja',tam:[40,42,44]},
+ {f:'gala_vinho',cat:'Festa',nome:'Gala vinho',tam:[36,38,40,42,44]},{f:'gala_paete',cat:'Festa',nome:'Gala paetê',tam:[42,44,46,48]},
+ {f:'cocktail_renda',cat:'Festa',nome:'Cocktail renda',tam:[36,38,40,42]},{f:'vestido_midi',cat:'Vestidos',nome:'Midi',tam:[38,40,42,44]},
+ {f:'slip_seda',cat:'Vestidos',nome:'Slip seda',tam:[36,38,40]},{f:'maxi_estampa',cat:'Vestidos',nome:'Maxi',tam:[38,40,42,44,46]},
+ {f:'macacao',cat:'Casual',nome:'Macacão',tam:[38,40,42]},{f:'alfaiataria',cat:'Terninho',nome:'Alfaiataria',tam:[38,40,42,44]},
+ {f:'conjunto_linho',cat:'Conjunto',nome:'Linho',tam:[36,38,40,42,44,46]},{f:'academia_1',cat:'Academia',nome:'Fitness',tam:[36,38,40,42,44]},
+ {f:'academia_2',cat:'Academia',nome:'Athleisure',tam:[38,40,42]},{f:'praia_kaftan',cat:'Praia',nome:'Kaftan',tam:[38,40,42,44,46,48]},
+ {f:'praia_vestido',cat:'Praia',nome:'Praia',tam:[38,40,42,44]},{f:'praia_maio',cat:'Praia',nome:'Maiô',tam:[38,40,42,44]},
+ {f:'biquini',cat:'Praia',nome:'Biquíni',tam:[36,38,40,42]},
+ {f:'saida_praia',cat:'Praia',nome:'Saída de praia',tam:[38,40,42,44,46]},
+ {f:'shorts_academia',cat:'Academia',nome:'Shorts academia',tam:[36,38,40,42,44]},
+ {f:'top_academia',cat:'Academia',nome:'Top academia',tam:[36,38,40,42,44]},
+ {f:'acc_bolsa',cat:'Acessórios',nome:'Clutch',tam:null},{f:'acc_scarpin',cat:'Acessórios',nome:'Scarpin',tam:null},
+ {f:'acc_brinco',cat:'Acessórios',nome:'Brinco',tam:null},{f:'acc_oculos',cat:'Acessórios',nome:'Óculos',tam:null},
+];
+const OCASIOES=['Dia a dia','Trabalho','Festa','Casual','Praia','Academia'];
+const RESULTS={
+ 'modelo_1_jovem|Festa':'resultados/res_festa_jovem.jpg','modelo_1_jovem|Dia a dia':'resultados/res_diaadia_jovem.jpg',
+ 'modelo_2_meia_idade|Trabalho':'resultados/res_trabalho_meiaidade.jpg','modelo_2_meia_idade|Casual':'resultados/res_casual_meiaidade.jpg',
+ 'modelo_3_madura|Festa':'resultados/res_festa_madura.jpg','modelo_5_m48_30|Festa':'resultados/res_festa_renata.jpg',
+ 'modelo_5_m48_30|Trabalho':'resultados/res_trabalho_renata.jpg','modelo_5_m48_30|Dia a dia':'resultados/res_diaadia_renata.jpg',
+ 'modelo_6_m50_60|Festa':'resultados/res_festa_lucia.jpg','modelo_6_m50_60|Trabalho':'resultados/res_trabalho_lucia.jpg',
+ 'modelo_6_m50_60|Casual':'resultados/res_casual_lucia.jpg',
+ 'demo_0|Festa':'resultados/res_festa_marina.jpg','demo_1|Trabalho':'resultados/res_trabalho_patricia.jpg',
+ 'demo_2|Festa':'resultados/res_festa_claudia.jpg','demo_3|Festa':'resultados/res_festa_vera.jpg','demo_4|Academia':'resultados/res_academia_tais.jpg','demo_6|Dia a dia':'resultados/res_diaadia_irene.jpg','demo_6|Casual':'resultados/res_diaadia_irene.jpg',
+};
+const CLIENTES_DEMO=[
+ {nome:'Marina',tamanho:'M',manequim:40,estilo:'Clássico',foto:'clientes/cliente_1.jpg'},
+ {nome:'Patrícia',tamanho:'G',manequim:44,estilo:'Sensual',foto:'clientes/cliente_2.jpg'},
+ {nome:'Cláudia',tamanho:'GG',manequim:48,estilo:'Romântico',foto:'clientes/cliente_3.jpg'},
+ {nome:'Vera',tamanho:'M',manequim:40,estilo:'Minimalista',foto:'clientes/cliente_4.jpg'},
+ {nome:'Taís',tamanho:'P',manequim:38,estilo:'Esportivo',foto:'clientes/cliente_5.jpg'},
+ {nome:'Neusa',tamanho:'GG',manequim:48,estilo:'Clássico',foto:'clientes/cliente_6.jpg'},
+ {nome:'Irene',tamanho:'M',manequim:42,estilo:'Clássico',foto:'clientes/cliente_irene.jpg'},
+];
+const LETTER2NUM={PP:36,P:38,M:40,G:44,GG:48,XGG:50};
+const $=id=>document.getElementById(id);
+const byF=f=>ESTOQUE.find(e=>e.f===f)||CAPT[f];
+let CAPT={};
+let FOTOS=[];
+let S={vend:localStorage.getItem('mira_vendedora')||VENDEDORAS[0],tipo:'cli',pessoa:null,cat:'Todas',pecas:[],occ:null,fundo:'cena',view:0,bandeja:[]};
+function trayKey(){return S.pessoa?('mira_celtray_'+S.vend+'_'+S.pessoa.key):null;}
+function saveTray(){const k=trayKey();if(k)localStorage.setItem(k,JSON.stringify(S.bandeja));}
+function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];S.view=S.bandeja.length-1;}
+
+const vend=$('vend');
+let _qv=new URLSearchParams(location.search).get('vend');
+if(_qv)localStorage.setItem('mira_vend_lock',_qv);
+const _lock=_qv||localStorage.getItem('mira_vend_lock')||'';
+if(_lock&&!VENDEDORAS.includes(_lock))VENDEDORAS.unshift(_lock);
+VENDEDORAS.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent='Você: '+v;vend.appendChild(o);});
+if(_lock){S.vend=_lock;localStorage.setItem('mira_vendedora',_lock);}
+vend.value=S.vend;
+vend.onchange=()=>{S.vend=vend.value;localStorage.setItem('mira_vendedora',S.vend);loadTray();renderBig();renderBand();};
+if(_lock){vend.disabled=true;vend.style.opacity='.9';vend.title='Travado nesta vendedora';}
+
+function getClientes(){
+ const stored=JSON.parse(localStorage.getItem('mira_clientes')||'[]').map((c,i)=>{const mq=c.manequim||(/^\d+$/.test(c.tamanho||'')?+c.tamanho:LETTER2NUM[c.tamanho])||null;return{key:'cli_'+i,nome:c.nome||'Cliente',manequim:mq,tag:mq?'Mnq '+mq:'',foto:c.foto,estilo:c.estilo||''};});
+ const demo=CLIENTES_DEMO.map((c,i)=>({key:'demo_'+i,nome:c.nome,manequim:c.manequim,tag:c.tamanho+' · '+c.manequim,foto:c.foto,estilo:c.estilo}));
+ return stored.concat(demo);
+}
+const pessoasEl=$('pessoas');
+function renderPessoas(){
+ const arr=S.tipo==='cli'?FOTOS.concat(getClientes()):MODELOS;
+ pessoasEl.innerHTML='';
+ arr.forEach(m=>{const d=document.createElement('div');d.className='av'+(S.pessoa&&S.pessoa.key===m.key?' on':'');
+  const src=m.foto?m.foto:('modelos/'+m.key+'.jpg');
+  d.innerHTML='<img src="'+src+'"><div class="n">'+m.nome+'</div><div class="t">'+(m.tag||'')+'</div>';
+  d.onclick=()=>{S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};pessoasEl.appendChild(d);});
+}
+$('tgc').onclick=()=>{S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=null;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
+$('tgi').onclick=()=>{S.tipo='iren';$('tgi').classList.add('on');$('tgc').classList.remove('on');S.pessoa=null;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
+
+const chipsEl=$('chips');
+const cats=['Todas',...[...new Set(ESTOQUE.map(e=>e.cat))]];
+cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todas'?' on':'');b.textContent=c;b.onclick=()=>{S.cat=c;[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent===c));renderGrid();};chipsEl.appendChild(b);});
+
+function tamLabel(e){if(!e.tam)return e.cat==='Acessórios'?'acess.':'novo';return 'T '+(e.tam.length>1?Math.min(...e.tam)+'–'+Math.max(...e.tam):e.tam[0]);}
+function fitOK(e){if(!S.pessoa||!S.pessoa.manequim||!e.tam)return true;return e.tam.includes(S.pessoa.manequim);}
+const gridEl=$('grid');
+function renderGrid(){
+ gridEl.innerHTML='';
+ const items=[...Object.values(CAPT),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];
+ items.forEach(e=>{const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(S.pecas.includes(e.f)?' on':'')+(ok?'':' nofit');
+  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
+  d.onclick=()=>{if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
+  gridEl.appendChild(d);});
+ gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
+}
+$('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Object.keys(CAPT).length;CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+
+$('cfoto').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:'Foto carregada',manequim:null,tag:'sua foto',foto:c.toDataURL('image/jpeg',.85),estilo:''};FOTOS.unshift(p);S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📲 foto da cliente carregada ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+const occEl=$('occ');
+OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{S.occ=o;[...occEl.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occEl.appendChild(b);});
+
+$('fcena').onclick=()=>{S.fundo='cena';$('fcena').classList.add('on');$('festudio').classList.remove('on');};
+$('festudio').onclick=()=>{S.fundo='estudio';$('festudio').classList.add('on');$('fcena').classList.remove('on');};
+const ger=$('ger');
+function upd(){ger.disabled=!(S.pessoa&&S.pecas.length&&S.occ);}
+let _sx=0,_sy=0,_moved=false;
+function gprev(){if(S.view>0){S.view--;renderBig();renderBand();}}
+function gnext(){if(S.view<S.bandeja.length-1){S.view++;renderBig();renderBand();}}
+function updWpp(){const n=S.bandeja.filter(b=>b.img&&b.sel!==false).length;const w=$('wpp');w.disabled=!n;w.innerHTML='<span>🟢</span> Enviar '+(n?'('+n+') ':'')+'no WhatsApp';const c=$('clube');if(c)c.disabled=!n;}
+function renderBig(){
+  const r=$('res');
+  if(!S.bandeja.some(b=>b.img)){r.innerHTML='<div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div>';updWpp();return;}
+  if(S.view<0)S.view=0;if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;
+  let it=S.bandeja[S.view];
+  if(!it||!it.img){const ids=S.bandeja.map((b,i)=>b.img?i:-1).filter(i=>i>=0);S.view=ids[ids.length-1];it=S.bandeja[S.view];}
+  const n=S.bandeja.length,pos=S.view+1,sel=it.sel!==false,cur=it;
+  r.innerHTML='<div class="reveal" id="bigwrap"><img id="bigimg" src="'+it.img+'" style="cursor:zoom-in">'
+   +(n>1?'<div class="gnav gprev" id="gp">‹</div><div class="gnav gnext" id="gn">›</div><div class="gidx">'+pos+' / '+n+'</div>':'')
+   +'<button class="gsel'+(sel?' on':'')+'" id="gsel">'+(sel?'✓ vai pra cliente':'✗ fora')+'</button>'
+   +'<div class="vcap">Vi você nessa. <span style="font-size:11px;font-style:normal;color:#A39E94;">· toque amplia · arraste vê os outros</span></div></div>';
+  const wrap=$('bigwrap'),im=$('bigimg');
+  im.onclick=()=>{if(!_moved)openZoom(cur.img);};
+  wrap.addEventListener('touchstart',function(e){_sx=e.touches[0].clientX;_sy=e.touches[0].clientY;_moved=false;},{passive:true});
+  wrap.addEventListener('touchmove',function(e){var dx=e.touches[0].clientX-_sx,dy=e.touches[0].clientY-_sy;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){_moved=true;e.preventDefault();}},{passive:false});
+  wrap.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-_sx,dy=e.changedTouches[0].clientY-_sy;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){dx<0?gnext():gprev();}});
+  const gp=$('gp'),gn=$('gn');if(gp)gp.onclick=gprev;if(gn)gn.onclick=gnext;
+  $('gsel').onclick=()=>{cur.sel=(cur.sel===false);saveTray();renderBig();renderBand();};
+  updWpp();
+}
+function showLook(img,pecas){
+  S.bandeja.push({img:img,nome:S.pessoa.nome,occ:S.occ,pecas:pecas||[],sel:true});
+  S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();upd();toast('Look pronto ✓ — arraste pra ver a galeria');
+}
+ger.onclick=()=>{
+ const nomes=S.pecas.map(f=>(CAPT[f]?CAPT[f].nome:(byF(f)?byF(f).nome:f)));
+ const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
+ const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
+ ger.disabled=true;
+ if(pre){
+   $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ produzindo o look…</span>vestindo '+S.pessoa.nome+' · '+S.occ+'</div>';
+   setTimeout(function(){showLook(pre,nomes);},1300);
+   return;
+ }
+ // geração AO VIVO (nuvem via server.py) — look com TODAS as peças
+ $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ gerando na nuvem…</span>'+S.pessoa.nome+' · '+S.occ+' · '+S.pecas.length+' peça(s) (uns segundos)</div>';
+ const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
+ const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
+ const garments=S.pecas.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
+ fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||'')})})
+  .then(r=>r.json()).then(function(d){upd();
+    if(d.image){showLook(d.image,nomes);}
+    else{$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>'+(d.error||'configure a nuvem (FAL_KEY)')+'</div>';toast('nuvem não configurada');}})
+  .catch(function(){upd();$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>abra o app pelo server.py (servidor offline)</div>';toast('servidor offline');});
+};
+function renderBand(){
+  const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
+  if(!arr.length){b.innerHTML='';return;}
+  b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'"><span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span></div>';}).join('');
+  b.querySelectorAll('.bthumb').forEach(t=>t.onclick=e=>{if(e.target.classList.contains('bx')||e.target.classList.contains('bsel'))return;S.view=+t.dataset.i;renderBig();renderBand();});
+  b.querySelectorAll('.bsel').forEach(s=>s.onclick=e=>{e.stopPropagation();var i=+s.dataset.s;S.bandeja[i].sel=(S.bandeja[i].sel===false);saveTray();renderBig();renderBand();});
+  b.querySelectorAll('.bx').forEach(x=>x.onclick=e=>{e.stopPropagation();S.bandeja.splice(+x.dataset.x,1);if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();});
+}
+
+async function enviar(){
+ const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
+ if(!send.length){toast('Selecione ao menos 1 look');return;}
+ const msg='Oi '+(S.pessoa?S.pessoa.nome:'')+'! Separei esses looks pensando em você 💛 — Irene Moreira';
+ try{const files=[];for(const it of send){const r=await fetch(it.img);const bl=await r.blob();files.push(new File([bl],'look.jpg',{type:bl.type||'image/jpeg'}));}
+  if(files.length&&navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text:msg});toast('Aberto pra enviar '+files.length+' ✓');return;}}catch(e){}
+ try{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');return;}catch(e){}
+ toast(send.length+' look(s) prontos ✓');
+}
+$('wpp').onclick=enviar;
+function soltarClube(){
+ const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
+ if(!send.length){toast('Selecione ao menos 1 look');return;}
+ $('promo').style.display='flex';
+}
+async function doClubePost(){
+ const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
+ if(!send.length){$('promo').style.display='none';return;}
+ const promo={marca:$('pmarca').value,desc:$('pdesc').value,de:$('pde').value,por:$('ppor').value,cond:$('pcond').value};
+ let ok=0;
+ for(const it of send){try{const r=await fetch('/clube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({img:it.img,occ:it.occ,pecas:it.pecas||[],nome:it.nome,vend:S.vend},promo))});if(r.ok)ok++;}catch(e){}}
+ $('promo').style.display='none';['pmarca','pdesc','pde','ppor','pcond'].forEach(id=>$(id).value='');
+ toast(ok?('Promoção no Clube ✓ ('+ok+')'):'Clube offline (server.py)');
+}
+async function doClubeWhats(){
+ const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
+ if(!send.length){toast('Selecione ao menos 1 look');return;}
+ const marca=$('pmarca').value,desc=$('pdesc').value,de=$('pde').value,por=$('ppor').value,cond=$('pcond').value;
+ let cap='✨ '+(marca||'Irene Moreira')+(desc?(' — '+desc):'');
+ if(de)cap+='\nDe R$ '+de;
+ if(por)cap+=(de?'  →  ':'\n')+'por R$ '+por;
+ if(cond)cap+='\n'+cond;
+ cap+='\n— Irene Moreira 💛';
+ try{const files=[];for(const it of send){const r=await fetch(it.img);const bl=await r.blob();files.push(new File([bl],'promo.jpg',{type:bl.type||'image/jpeg'}));}
+  if(files.length&&navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text:cap});$('promo').style.display='none';toast('Aberto pra enviar ✓');return;}}catch(e){}
+ try{window.open('https://wa.me/?text='+encodeURIComponent(cap),'_blank');toast('WhatsApp aberto ✓');}catch(e){}
+ $('promo').style.display='none';
+}
+$('clube').onclick=soltarClube;$('psend').onclick=doClubePost;$('pwhats').onclick=doClubeWhats;$('pcancel').onclick=()=>{$('promo').style.display='none';};
+$('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.classList.remove('on'));renderGrid();upd();renderBig();toast('Monte o próximo look ✓');};
+$('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
+
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
+renderPessoas();renderGrid();renderBig();renderBand();upd();
+window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
+$('zoom').onclick=function(){this.style.display='none';};
+$('zoomimg').onclick=function(e){e.stopPropagation();this.style.transform=this.style.transform==='scale(2.2)'?'scale(1)':'scale(2.2)';};
+</script>
+</body>
+</html>

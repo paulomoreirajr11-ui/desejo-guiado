@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clube de Venda — Desejo Guiado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(250,246,238,.9);backdrop-filter:blur(8px);z-index:5;flex-wrap:wrap;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:34px;line-height:1;letter-spacing:.5px;}
+  .brand{display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:16px;letter-spacing:4px;}
+  .btag{font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  header h1{font-family:'Fraunces';font-weight:500;font-size:18px;margin:0;}
+  .studio{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:14px;padding:16px;max-width:1280px;margin:0 auto;}
+  @media(max-width:900px){.studio{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;}
+  .panel h2{font-family:'Fraunces';font-weight:500;font-size:16px;margin:0 0 12px;}
+  .panel h2 b{color:var(--gold);}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .chip{font-size:12px;padding:7px 12px;border-radius:18px;border:1px solid var(--line);color:var(--mut);background:transparent;cursor:pointer;font-family:inherit;}
+  .chip.on{background:var(--gold);color:#1A1408;border-color:var(--gold);}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:430px;overflow:auto;}
+  .tile{position:relative;border-radius:10px;overflow:hidden;background:var(--panel2);cursor:pointer;border:2px solid transparent;}
+  .tile img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+  .tile .nm{font-size:10.5px;color:var(--mut);padding:4px 6px;}
+  .tile.on{border-color:var(--gold);}
+  .lbl{font-size:12px;color:var(--mut);margin:10px 0 7px;}
+  .models{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+  .mtile{border-radius:10px;overflow:hidden;background:var(--panel2);cursor:pointer;border:2px solid transparent;text-align:center;}
+  .mtile img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;display:block;}
+  .mtile .mn{font-size:9.5px;padding:3px 1px;}
+  .mtile.on{border-color:var(--gold);}
+  .occ{display:flex;flex-wrap:wrap;gap:6px;}
+  .ob{font-size:12px;padding:8px 12px;border-radius:18px;border:1px solid var(--line);color:var(--off);background:transparent;cursor:pointer;font-family:inherit;}
+  .ob.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .precos{display:flex;gap:8px;margin-top:6px;}
+  .precos input{flex:1;height:40px;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:0 10px;font-family:inherit;font-size:14px;}
+  .gerar{width:100%;margin-top:14px;background:var(--gold);color:#1A1408;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .gerar:disabled{opacity:.4;cursor:not-allowed;}
+  .hint{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5;}
+  .post{position:relative;aspect-ratio:4/5;border-radius:12px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;}
+  .post img{width:100%;height:100%;object-fit:cover;}
+  .post .ph{color:var(--mut);font-size:13px;padding:20px;line-height:1.5;}
+  .post .ph .big{font-family:'Fraunces';font-size:19px;color:var(--gold);display:block;margin-bottom:6px;}
+  .selo{position:absolute;left:12px;bottom:12px;right:12px;background:rgba(11,11,12,.82);border:1px solid var(--gold);border-radius:12px;padding:11px 14px;display:none;align-items:center;gap:12px;}
+  .selo.show{display:flex;}
+  .selo .m{width:30px;height:30px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-size:15px;flex:0 0 auto;}
+  .selo .de{font-size:12px;color:var(--mut);text-decoration:line-through;}
+  .selo .por{font-family:'Fraunces';font-size:22px;color:var(--gold);line-height:1;}
+  .selo .px{font-size:11px;color:#E7E3DA;}
+  .cta{display:flex;gap:8px;margin-top:10px;}
+  .cta button{flex:1;border-radius:11px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--off);}
+  .cta .pub{background:var(--bordo);border-color:var(--bordo);color:#F6E9EC;font-weight:500;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<header>
+  <div class="mono gold-metal">M</div>
+  <div class="brand"><div class="bwm gold-metal">IRENE MOREIRA</div><div class="btag">Desejo Guiado</div></div>
+  <nav style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;">
+    <a href="index.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Início</a>
+    <a href="estudio.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Estúdio</a>
+    <a href="cadastro.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Estoque</a>
+    <a href="cadastro_cliente.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Clientes</a>
+    <a href="clube.html" style="margin:0;font-size:13px;color:#1A1408;background:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:20px;padding:8px 16px;font-weight:500;">Clube</a>
+  </nav>
+</header>
+
+<div style="max-width:1280px;margin:0 auto;padding:16px 16px 0;">
+  <div class="panel">
+    <h2><b>★</b> Looks soltos no Clube <span id="clubecount" style="color:var(--mut);font-size:12px;"></span> <button id="recarregar" class="chip" style="margin-left:8px;">↻ atualizar</button></h2>
+    <div id="feed" class="grid" style="grid-template-columns:repeat(auto-fill,minmax(120px,1fr));max-height:none;"></div>
+  </div>
+</div>
+
+<div class="studio">
+  <section class="panel">
+    <h2><b>1 ·</b> Escolha a peça da promoção</h2>
+    <div class="chips" id="chips"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="panel">
+    <h2><b>2 ·</b> Modelo, estilo e preço</h2>
+    <div class="lbl">Modelo da casa:</div>
+    <div class="models" id="models"></div>
+    <div class="lbl">Estilo / ocasião:</div>
+    <div class="occ" id="occ"></div>
+    <div class="lbl">Marca e descrição:</div>
+    <div class="precos">
+      <input id="marca" type="text" placeholder="Marca (ex: Carmim)">
+      <input id="desc" type="text" placeholder="Descrição (ex: única peça T42)">
+    </div>
+    <div class="lbl">Condições da oferta:</div>
+    <div class="precos">
+      <input id="de" type="text" placeholder="De R$" inputmode="numeric">
+      <input id="por" type="text" placeholder="Por R$" inputmode="numeric">
+      <input id="px" type="text" placeholder="Parcelas (ex: 3x)">
+    </div>
+    <button class="gerar" id="gerar" disabled><span>✨</span> Gerar post</button>
+    <p class="hint">Combos com imagem pronta: <b>Helena/Valentina</b> ainda geram ao vivo; use <b>Sônia + Festa</b>, <b>Carla + Trabalho</b>, <b>Renata + Festa</b> etc. pra ver o post pronto. A IA gera qualquer combinação no sistema real.</p>
+  </section>
+
+  <section class="panel">
+    <h2><b>3 ·</b> Post pronto pro clube</h2>
+    <div class="post" id="post">
+      <div class="ph"><span class="big">Seu post promocional</span>escolha peça + modelo + estilo + preço e toque em "Gerar post"</div>
+      <div class="selo" id="selo"><div class="m">M</div><div style="flex:1"><div id="s-marca" style="font-family:'Fraunces';color:#E0C57E;font-size:13px;margin-bottom:2px;"></div><div><span class="de" id="s-de"></span> <span class="por" id="s-por"></span></div><div class="px" id="s-px"></div></div></div>
+    </div>
+    <div class="cta">
+      <button class="pub" id="pub">Postar no clube</button>
+      <button id="salvar">Salvar imagem</button>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+<button id="helpbtn" style="position:fixed;bottom:18px;right:18px;width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;z-index:30;box-shadow:0 4px 16px rgba(0,0,0,.45);">?</button>
+<div id="helpov" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.9);z-index:31;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:480px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:24px;">
+    <h3 style="font-family:'Fraunces';color:var(--gold);margin:0 0 12px;font-size:20px;">Como usar · Clube de Venda</h3>
+    <ol style="color:var(--off);font-size:13.5px;line-height:1.9;padding-left:18px;margin:0;">
+      <li>Escolha a <b>peça</b> da promoção.</li>
+      <li>Escolha a <b>modelo</b> da casa.</li>
+      <li>Toque no <b>estilo / ocasião</b>.</li>
+      <li>Digite as <b>condições</b> (de R$ / por R$ / parcelas).</li>
+      <li>Toque em <b>Gerar post</b> → sai com o selo de preço.</li>
+      <li><b>Postar no clube</b> ou <b>Salvar imagem</b>.</li>
+    </ol>
+    <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi</button>
+  </div>
+</div>
+<script>(function(){var b=document.getElementById('helpbtn'),o=document.getElementById('helpov'),c=document.getElementById('helpclose');b.onclick=function(){o.style.display='flex';};c.onclick=function(){o.style.display='none';};o.onclick=function(e){if(e.target===o)o.style.display='none';};})();</script>
+
+<script>
+const MODELOS=[
+ {key:'modelo_7_loira_19',nome:'Helena'},{key:'modelo_8_morena_27',nome:'Valentina'},
+ {key:'modelo_1_jovem',nome:'Júlia'},{key:'modelo_2_meia_idade',nome:'Carla'},
+ {key:'modelo_3_madura',nome:'Sônia'},{key:'modelo_5_m48_30',nome:'Renata'},
+];
+const ESTOQUE=[
+ {f:'gala_paete',cat:'Festa',nome:'Gala paetê'},{f:'cocktail_renda',cat:'Festa',nome:'Cocktail renda'},{f:'gala_vinho',cat:'Festa',nome:'Gala vinho'},
+ {f:'slip_seda',cat:'Vestidos',nome:'Slip de seda'},{f:'maxi_estampa',cat:'Vestidos',nome:'Maxi estampado'},{f:'vestido_midi',cat:'Vestidos',nome:'Midi'},
+ {f:'alfaiataria',cat:'Terninho',nome:'Alfaiataria'},{f:'macacao',cat:'Casual',nome:'Macacão'},{f:'conjunto_linho',cat:'Conjunto',nome:'Conjunto linho'},
+ {f:'academia_1',cat:'Academia',nome:'Fitness'},{f:'praia_kaftan',cat:'Praia',nome:'Kaftan'},{f:'praia_maio',cat:'Praia',nome:'Maiô'},
+];
+const OCASIOES=['Dia a dia','Trabalho','Festa','Casual'];
+const RESULTS={
+ 'modelo_1_jovem|Festa':'resultados/res_festa_jovem.jpg','modelo_1_jovem|Dia a dia':'resultados/res_diaadia_jovem.jpg',
+ 'modelo_2_meia_idade|Trabalho':'resultados/res_trabalho_meiaidade.jpg','modelo_2_meia_idade|Casual':'resultados/res_casual_meiaidade.jpg',
+ 'modelo_3_madura|Festa':'resultados/res_festa_madura.jpg','modelo_5_m48_30|Festa':'resultados/res_festa_renata.jpg',
+ 'modelo_5_m48_30|Trabalho':'resultados/res_trabalho_renata.jpg','modelo_5_m48_30|Dia a dia':'resultados/res_diaadia_renata.jpg',
+};
+let state={modelo:null,peca:null,occ:null,cat:'Todas'};
+
+const chips=document.getElementById('chips');
+const cats=['Todas',...[...new Set(ESTOQUE.map(e=>e.cat))]];
+cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todas'?' on':'');b.textContent=c;b.onclick=()=>{state.cat=c;[...chips.children].forEach(x=>x.classList.toggle('on',x.textContent===c));renderGrid();};chips.appendChild(b);});
+const grid=document.getElementById('grid');
+function renderGrid(){grid.innerHTML='';ESTOQUE.filter(e=>state.cat==='Todas'||e.cat===state.cat).forEach(e=>{const d=document.createElement('div');d.className='tile'+(state.peca===e.f?' on':'');d.innerHTML='<img src="estoque/'+e.f+'.jpg"><div class="nm">'+e.nome+'</div>';d.onclick=()=>{state.peca=e.f;renderGrid();upd();};grid.appendChild(d);});}
+
+const models=document.getElementById('models');
+MODELOS.forEach(m=>{const d=document.createElement('div');d.className='mtile';d.innerHTML='<img src="modelos/'+m.key+'.jpg"><div class="mn">'+m.nome+'</div>';d.onclick=()=>{state.modelo=m.key;[...models.children].forEach((x,i)=>x.classList.toggle('on',MODELOS[i].key===m.key));upd();};models.appendChild(d);});
+
+const occ=document.getElementById('occ');
+OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{state.occ=o;[...occ.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occ.appendChild(b);});
+
+const gerar=document.getElementById('gerar');
+function upd(){gerar.disabled=!(state.modelo&&state.peca&&state.occ);}
+
+const post=document.getElementById('post'), selo=document.getElementById('selo');
+function aplicarSelo(){const de=document.getElementById('de').value,por=document.getElementById('por').value,px=document.getElementById('px').value,marca=document.getElementById('marca').value,desc=document.getElementById('desc').value;document.getElementById('s-marca').textContent=[marca,desc].filter(Boolean).join(' · ');document.getElementById('s-de').textContent=de?'De R$'+de:'';document.getElementById('s-por').textContent=por?'R$'+por:'';document.getElementById('s-px').textContent=px?'em '+px:'';if(por||px||marca||desc){selo.classList.add('show');}else{selo.classList.remove('show');}}
+['de','por','px','marca','desc'].forEach(id=>document.getElementById(id).oninput=aplicarSelo);
+
+gerar.onclick=()=>{
+  const key=state.modelo+'|'+state.occ;const m=MODELOS.find(x=>x.key===state.modelo);
+  if(RESULTS[key]){post.innerHTML='<img src="'+RESULTS[key]+'">';}
+  else{post.innerHTML='<div class="ph"><span class="big">Em produção…</span>No sistema real a IA gera <b style="color:var(--off)">'+m.nome+'</b> com a peça, estilo <b style="color:var(--off)">'+state.occ+'</b>, pronta pro clube.</div>';}
+  post.appendChild(selo);aplicarSelo();
+};
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+document.getElementById('pub').onclick=async ()=>{const im=post.querySelector('img');if(!im){toast('Gere o post primeiro');return;}try{await fetch('/clube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:im.getAttribute('src'),occ:state.occ,marca:document.getElementById('marca').value,desc:document.getElementById('desc').value,de:document.getElementById('de').value,por:document.getElementById('por').value,cond:document.getElementById('px').value})});toast('Post enviado pro clube ✓');loadFeed();}catch(e){toast('Clube offline (server.py)');}};
+document.getElementById('salvar').onclick=()=>toast('Imagem salva ✓ (pronta pra postar)');
+async function loadFeed(){try{const r=await fetch('/clube');const d=await r.json();const posts=(d.posts||[]).slice().reverse();document.getElementById('clubecount').textContent=posts.length?('· '+posts.length+' look(s)'):'· vazio';document.getElementById('feed').innerHTML=posts.length?posts.map(p=>'<div class="tile"><img src="'+p.img+'"><div class="nm">'+(p.marca?'<b style="color:var(--gold2)">'+p.marca+'</b> ':'')+(p.desc||p.occ||'look')+((p.de||p.por)?'<br>'+(p.de?'<span style="color:var(--mut);text-decoration:line-through">R$'+p.de+'</span> ':'')+(p.por?'<b style="color:var(--gold)">R$'+p.por+'</b>':''):'')+(p.cond?' · '+p.cond:'')+(p.vend?'<br><span style="color:var(--mut)">'+p.vend+'</span>':'')+'</div></div>').join(''):'<div style="color:var(--mut);font-size:12px;padding:10px;">Nada no clube ainda. Solte looks pelo celular ou poste aqui.</div>';}catch(e){document.getElementById('feed').innerHTML='<div style="color:var(--mut);font-size:12px;padding:10px;">Abra pelo server.py pra ver o feed do clube.</div>';}}
+document.getElementById('recarregar').onclick=loadFeed;
+renderGrid();loadFeed();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desejo Guiado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;min-height:100vh;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:34px;line-height:1;letter-spacing:.5px;}
+  .brand{display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:16px;letter-spacing:4px;}
+  .btag{font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  header h1{font-family:'Fraunces';font-weight:500;font-size:18px;margin:0;}
+  nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+  nav a{margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;}
+  nav a.on{color:#1A1408;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  nav a.soon{opacity:.5;}
+  .hero{text-align:center;padding:48px 20px 30px;}
+  .hero .big{width:74px;height:74px;border-radius:50%;border:2px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-size:36px;margin:0 auto 22px;}
+  .hero h2{font-family:'Fraunces';font-weight:500;font-size:46px;color:var(--gold);margin:0;letter-spacing:-.01em;}
+  .hero .tag{font-family:'Fraunces';font-style:italic;font-size:19px;color:var(--off);margin:14px auto 0;max-width:34ch;line-height:1.4;}
+  .hero .sub{font-size:13px;color:var(--mut);letter-spacing:.2em;text-transform:uppercase;margin-top:18px;}
+  .mods{max-width:880px;margin:10px auto 50px;padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:680px){.mods{grid-template-columns:1fr;}.hero h2{font-size:36px;}}
+  .mod{display:flex;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;text-decoration:none;color:var(--off);transition:transform .12s,border-color .12s;}
+  .mod:hover{transform:translateY(-2px);border-color:var(--gold);}
+  .mod.soon{opacity:.6;}
+  .mod .ic{flex:0 0 auto;color:var(--gold);}
+  .mod h3{font-family:'Fraunces';font-weight:500;font-size:20px;margin:0 0 4px;}
+  .mod p{font-size:13px;color:var(--mut);margin:0;line-height:1.45;}
+  .mod .arr{margin-left:auto;color:var(--gold);font-size:20px;}
+  footer{text-align:center;color:var(--mut);font-size:12px;padding:0 0 30px;letter-spacing:.1em;}
+</style>
+</head>
+<body>
+<header>
+  <div class="mono gold-metal">M</div>
+  <div class="brand"><div class="bwm gold-metal">IRENE MOREIRA</div><div class="btag">Desejo Guiado</div></div>
+  <nav>
+    <a href="index.html" class="on">Início</a>
+    <a href="estudio.html">Estúdio</a>
+    <a href="cadastro.html">Estoque</a>
+    <a href="cadastro_cliente.html">Clientes</a>
+    <a href="clube.html">Clube</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="big">M</div>
+  <h2>Desejo Guiado</h2>
+  <p class="tag">A curadoria que mira no que ela ainda não sabia que queria.</p>
+  <p class="sub">Irene Moreira · curadoria com IA</p>
+</div>
+
+<div class="mods">
+  <a class="mod" href="estudio.html">
+    <svg class="ic" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="4"/><path d="M20 3v6M20 31v6M3 20h6M31 20h6" stroke-linecap="round"/></svg>
+    <div><h3>Estúdio</h3><p>Monte e gere o look da cliente, por ocasião.</p></div>
+    <span class="arr">→</span>
+  </a>
+  <a class="mod" href="cadastro.html">
+    <svg class="ic" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6a3 3 0 0 0-1.5 5.6L20 13l1.5-1.4A3 3 0 0 0 20 6Z"/><path d="M20 13 6 22v3h28v-3L20 13Z" stroke-linejoin="round"/></svg>
+    <div><h3>Estoque</h3><p>Cadastre as peças — a arara digital.</p></div>
+    <span class="arr">→</span>
+  </a>
+  <a class="mod" href="cadastro_cliente.html">
+    <svg class="ic" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="14" r="6"/><path d="M8 33c0-6.6 5.4-11 12-11s12 4.4 12 11" stroke-linecap="round"/></svg>
+    <div><h3>Clientes</h3><p>Cadastre suas clientes (foto + tamanho).</p></div>
+    <span class="arr">→</span>
+  </a>
+  <a class="mod" href="clube.html">
+    <svg class="ic" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 16v8h6l10 6V10L12 16H6Z" stroke-linejoin="round"/><path d="M28 15a7 7 0 0 1 0 10" stroke-linecap="round"/></svg>
+    <div><h3>Clube</h3><p>Gere e poste promoções nos clubes de venda.</p></div>
+    <span class="arr">→</span>
+  </a>
+</div>
+
+<footer>protótipo · toque para navegar</footer>
+<button id="helpbtn" style="position:fixed;bottom:18px;right:18px;width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;z-index:30;box-shadow:0 4px 16px rgba(0,0,0,.45);">?</button>
+<div id="helpov" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.9);z-index:31;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:480px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:24px;">
+    <h3 style="font-family:'Fraunces';color:var(--gold);margin:0 0 12px;font-size:20px;">Como funciona o Desejo Guiado</h3>
+    <p style="color:var(--mut);font-size:14px;line-height:1.6;margin:0 0 8px;">É o app da loja. Toque num módulo:</p>
+    <ul style="color:var(--off);font-size:13.5px;line-height:1.9;padding-left:18px;margin:0;">
+      <li><b>Estúdio</b> — monte o look da cliente e gere a imagem produzida.</li>
+      <li><b>Estoque</b> — cadastre as peças (a arara digital).</li>
+      <li><b>Clientes</b> — cadastre as fotos das suas clientes.</li>
+      <li><b>Clube</b> — gere posts de promoção prontos pra postar.</li>
+    </ul>
+    <p style="color:var(--mut);font-size:12.5px;margin-top:12px;">Em cada tela tem este "?" explicando o passo a passo.</p>
+    <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi</button>
+  </div>
+</div>
+<script>(function(){var b=document.getElementById('helpbtn'),o=document.getElementById('helpov'),c=document.getElementById('helpclose');b.onclick=function(){o.style.display='flex';};c.onclick=function(){o.style.display='none';};o.onclick=function(e){if(e.target===o)o.style.display='none';};})();</script>
+</body>
+</html>

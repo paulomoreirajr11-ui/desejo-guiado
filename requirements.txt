@@ -1,0 +1,3 @@
+# Desejo Guiado — Irene Moreira
+# O servidor (server.py) usa apenas a biblioteca padrao do Python.
+# Nenhuma dependencia externa e necessaria.

@@ -1,0 +1,23 @@
+# Segredos e binarios — nunca subir
+fal_key.txt
+cloudflared.exe
+cf*.log
+__pycache__/
+
+# Arquivos gerados / temporarios
+*_b64.txt
+qr_*.png
+qr*.txt
+clube_posts.json
+uso_log.json
+*.pdf
+
+# Imagens de teste e originais pesados (o app usa os .jpg)
+estudio/testes/
+estudio/conceitos/
+estudio/candidatas/
+estudio/*_backup*.html
+estudio/modelos/*.png
+estudio/estoque/*.png
+estudio/clientes/*.png
+estudio/resultados/*.png
