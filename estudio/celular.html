@@ -199,8 +199,10 @@ const CLIENTES_DEMO=[
 const LETTER2NUM={PP:36,P:38,M:40,G:44,GG:48,XGG:50};
 const $=id=>document.getElementById(id);
 const byF=f=>ESTOQUE.find(e=>e.f===f)||CAPT[f];
-let CAPT={};
-let FOTOS=[];
+let CAPT=JSON.parse(localStorage.getItem('mira_capt')||'{}');
+let FOTOS=JSON.parse(localStorage.getItem('mira_fotos')||'[]');
+function saveCapt(){try{var ks=Object.keys(CAPT).sort();while(ks.length>24){delete CAPT[ks.shift()];}localStorage.setItem('mira_capt',JSON.stringify(CAPT));}catch(e){}}
+function saveFotos(){try{if(FOTOS.length>12)FOTOS=FOTOS.slice(0,12);localStorage.setItem('mira_fotos',JSON.stringify(FOTOS));}catch(e){}}
 let S={vend:localStorage.getItem('mira_vendedora')||VENDEDORAS[0],tipo:'cli',pessoa:null,cat:'Todas',pecas:[],occ:null,fundo:'cena',view:0,bandeja:[]};
 function trayKey(){return S.pessoa?('mira_celtray_'+S.vend+'_'+S.pessoa.key):null;}
 function saveTray(){const k=trayKey();if(k)localStorage.setItem(k,JSON.stringify(S.bandeja));}
@@ -248,11 +250,11 @@ function renderGrid(){
   d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
   d.onclick=()=>{if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
- gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
+ gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
 }
-$('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Object.keys(CAPT).length;CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+$('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Date.now();CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};saveCapt();S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
 
-$('cfoto').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:'Foto carregada',manequim:null,tag:'sua foto',foto:c.toDataURL('image/jpeg',.85),estilo:''};FOTOS.unshift(p);S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📲 foto da cliente carregada ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+$('cfoto').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:'Foto carregada',manequim:null,tag:'sua foto',foto:c.toDataURL('image/jpeg',.85),estilo:''};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📲 foto da cliente carregada ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
 const occEl=$('occ');
 OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{S.occ=o;[...occEl.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occEl.appendChild(b);});
 
