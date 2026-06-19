@@ -62,6 +62,22 @@ def log_uso(entry):
     except Exception:
         pass
 
+# ---- Reservas no provador ----
+RESERVA_FILE = os.path.join(ROOT, "reservas.json")
+def load_reservas():
+    try:
+        with open(RESERVA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+def add_reserva(r):
+    try:
+        rs = load_reservas(); rs.append(r); rs = rs[-2000:]
+        with open(RESERVA_FILE, "w", encoding="utf-8") as f:
+            json.dump(rs, f, ensure_ascii=False)
+    except Exception:
+        pass
+
 # ---- POOL de cenas por ocasiao (5 cada; rotaciona automatico -> anti-carimbo) ----
 POOLS = {
  "Dia a dia": [
@@ -234,6 +250,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, {"posts": load_clube()})
         if p == "/uso":
             return self._json(200, {"log": load_uso()})
+        if p == "/reserva":
+            return self._json(200, {"reservas": load_reservas()})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
@@ -243,6 +261,15 @@ class Handler(SimpleHTTPRequestHandler):
                 post = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
                 posts = load_clube(); posts.append(post); save_clube(posts)
                 return self._json(200, {"ok": True, "count": len(posts)})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/reserva":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                r = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                r["ts"] = datetime.datetime.now().isoformat(timespec="seconds")
+                add_reserva(r)
+                return self._json(200, {"ok": True, "count": len(load_reservas())})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
         if p != "/generate":

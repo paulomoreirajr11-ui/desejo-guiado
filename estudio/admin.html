@@ -56,6 +56,8 @@
   <div class="cards" id="stats"></div>
   <h2 class="sec">Por vendedora</h2>
   <div id="porvend"></div>
+  <h2 class="sec">Reservas no provador</h2>
+  <div class="atfeed" id="reservas"></div>
   <h2 class="sec">Atividade recente</h2>
   <div class="atfeed" id="atfeed"></div>
   <h2 class="sec">Clube — posts</h2>
@@ -70,6 +72,7 @@ async function carregar(){
   let log=[],posts=[];
   try{log=(await (await fetch('/uso')).json()).log||[];}catch(e){}
   try{posts=(await (await fetch('/clube')).json()).posts||[];}catch(e){}
+  let reservas=[]; try{reservas=(await (await fetch('/reserva')).json()).reservas||[];}catch(e){}
   const today=hoje(), vends={};
   log.forEach(e=>{const v=e.vend||'(sem nome)';vends[v]=vends[v]||{total:0,hoje:0,last:'',cli:''};vends[v].total++;if((e.ts||'').slice(0,10)===today)vends[v].hoje++;if((e.ts||'')>vends[v].last){vends[v].last=e.ts||'';vends[v].cli=e.cliente||'';}});
   const hojeLooks=log.filter(e=>(e.ts||'').slice(0,10)===today).length;
@@ -80,6 +83,8 @@ async function carregar(){
   document.getElementById('atfeed').innerHTML=rec.length?rec.map(e=>'<div class="atrow"><span class="who">'+(e.vend||'?')+'</span><span>'+(e.cliente||'cliente')+' · '+pecasTxt(e.pecas)+' · '+(e.ocasiao||'')+(e.fundo==='estudio'?' · estúdio':'')+'</span><span class="when">'+fmt(e.ts)+'</span></div>').join(''):'<div class="empty">Sem atividade ainda.</div>';
   const cp=posts.slice().reverse();
   document.getElementById('clube').innerHTML=cp.length?cp.map(p=>'<div class="ctile"><img src="'+p.img+'"><div class="nm">'+(p.marca?p.marca+' · ':'')+(p.desc||p.occ||'look')+(p.por?' · R$'+p.por:'')+(p.vend?' · '+p.vend:'')+'</div></div>').join(''):'<div class="empty">Nada no clube ainda.</div>';
+  var rv=reservas.slice().reverse();
+  document.getElementById('reservas').innerHTML=rv.length?rv.map(function(r){return '<div class="atrow"><span class="who">'+(r.cliente||'cliente')+'</span><span>'+(Array.isArray(r.pecas)?r.pecas.join(' + '):'')+(r.preco?' · R$'+r.preco:'')+(r.vend?' · '+r.vend:'')+'</span><span class="when">'+fmt(r.ts)+'</span></div>';}).join(''):'<div class="empty">Nenhuma reserva ainda. Quando a vendedora reservar um look, aparece aqui.</div>';
 }
 document.getElementById('reload').onclick=carregar;
 carregar();

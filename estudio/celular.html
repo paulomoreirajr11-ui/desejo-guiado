@@ -124,6 +124,7 @@
     <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
     <button class="wpp" id="wpp" disabled><span>🟢</span> Enviar no WhatsApp</button>
     <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin-top:8px;">★ Soltar no Clube</button>
+    <button class="novo" id="reservar" disabled style="margin-top:8px;border-color:var(--gold);color:var(--gold2);">📌 Reservar no provador</button>
     <div class="band" id="band"></div>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
@@ -267,7 +268,7 @@ window._wmLogo=new Image(); window._wmLogo.src='logo.png';
 function watermarkBlob(blob){return new Promise(function(res){try{var u=URL.createObjectURL(blob),img=new Image();img.onload=function(){try{var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;var x=c.getContext('2d');x.drawImage(img,0,0);var lg=window._wmLogo;if(lg&&lg.complete&&lg.naturalWidth){var w=c.width*0.095,h=lg.naturalHeight*(w/lg.naturalWidth),p=c.width*0.035;x.shadowColor='rgba(0,0,0,.3)';x.shadowBlur=Math.round(c.width*0.008);x.globalAlpha=1;x.drawImage(lg,c.width-w-p,c.height-h-p,w,h);x.shadowBlur=0;}c.toBlob(function(b){URL.revokeObjectURL(u);res(b||blob);},'image/jpeg',0.92);}catch(e){URL.revokeObjectURL(u);res(blob);}};img.onerror=function(){URL.revokeObjectURL(u);res(blob);};img.src=u;}catch(e){res(blob);}});}
 function gprev(){if(S.view>0){S.view--;renderBig();renderBand();}}
 function gnext(){if(S.view<S.bandeja.length-1){S.view++;renderBig();renderBand();}}
-function updWpp(){const n=S.bandeja.filter(b=>b.img&&b.sel!==false).length;const w=$('wpp');w.disabled=!n;w.innerHTML='<span>🟢</span> Enviar '+(n?'('+n+') ':'')+'no WhatsApp';const c=$('clube');if(c)c.disabled=!n;}
+function updWpp(){const n=S.bandeja.filter(b=>b.img&&b.sel!==false).length;const w=$('wpp');w.disabled=!n;w.innerHTML='<span>🟢</span> Enviar '+(n?'('+n+') ':'')+'no WhatsApp';const c=$('clube');if(c)c.disabled=!n;const rb=$('reservar');if(rb)rb.disabled=!S.bandeja.some(b=>b.img);}
 function renderBig(){
   const r=$('res');
   if(!S.bandeja.some(b=>b.img)){r.innerHTML='<div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div>';updWpp();return;}
@@ -363,6 +364,13 @@ async function doClubeWhats(){
  $('promo').style.display='none';
 }
 $('clube').onclick=soltarClube;$('psend').onclick=doClubePost;$('pwhats').onclick=doClubeWhats;$('pcancel').onclick=()=>{$('promo').style.display='none';};
+async function doReservar(){
+ var it=S.bandeja[S.view]||S.bandeja.filter(function(b){return b.img;})[0];
+ if(!it||!it.img){toast('Gere um look primeiro');return;}
+ var preco=''; try{var p=prompt('Preço do look (R$) — opcional:',''); if(p===null)return; preco=p;}catch(e){}
+ try{await fetch('/reserva',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:(S.pessoa?S.pessoa.nome:''),pecas:it.pecas||[],preco:preco,img:it.img})});toast('📌 Reservado no provador ✓');}catch(e){toast('Reserva offline');}
+}
+$('reservar').onclick=doReservar;
 $('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.classList.remove('on'));renderGrid();upd();renderBig();toast('Monte o próximo look ✓');};
 $('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
 
