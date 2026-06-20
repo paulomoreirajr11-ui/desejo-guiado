@@ -339,10 +339,13 @@ function excluirCliente(key){
  renderPessoas();renderGrid();renderBig();renderBand();upd();toast('Cliente excluída da galeria ✓');
 }
 function updTrocar(){var t=$('trocar');if(t){var okT=S.pessoa&&S.pessoa.key&&(S.pessoa.key.indexOf('foto_')===0||S.pessoa.key.indexOf('cli_')===0);t.style.display=okT?'block':'none';}var fb=$('ficha-btn');if(fb){var okF=(S.tipo==='cli'&&S.pessoa);fb.style.display=okF?'block':'none';if(okF){var ff=FICHAS[S.pessoa.key];var has=ff&&Object.keys(ff).some(function(k){return ff[k];});fb.innerHTML=has?'📋 Ficha da cliente ✓':'📋 Ficha da cliente';}}}
-var _fk=null;
+var _fk=null,_fsy=0;
+function lockScroll(){_fsy=window.pageYOffset||document.documentElement.scrollTop||0;document.body.style.position='fixed';document.body.style.top=(-_fsy)+'px';document.body.style.left='0';document.body.style.right='0';}
+function unlockScroll(){document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';window.scrollTo(0,_fsy);}
+function fecharFicha(){var f=$('ficha');if(f)f.style.display='none';unlockScroll();renderPessoas();}
 function saveFichas(){try{localStorage.setItem('mira_fichas',JSON.stringify(FICHAS));}catch(e){}}
 function updFichaWpp(){var a=$('fichawpp');if(!a)return;var tel=($('ftelefone').value||'').replace(/\D/g,'');if(tel.length>=10){a.style.display='block';a.href='https://wa.me/55'+tel;}else{a.style.display='none';}}
-function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();$('ficha').style.display='flex';}
+function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();lockScroll();$('ficha').style.display='flex';}
 function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();renderAnivBar();}
 function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=FOTOS.concat(getClientes());var out=[];people.forEach(function(p){var f=FICHAS[p.key];if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
 function renderAnivBar(){var bar=$('anivbar');if(!bar)return;var arr=aniversariantesDoMes();if(arr.length){bar.style.display='flex';$('anivtxt').textContent=arr.length+(arr.length===1?' aniversariante este mês':' aniversariantes este mês');}else{bar.style.display='none';}}
@@ -354,9 +357,9 @@ if($('aniv'))$('aniv').onclick=function(e){if(e.target===this)this.style.display
 function salvarNome(){if(!S.pessoa)return;var nm=$('fnome').value.trim();var key=S.pessoa.key;if(nm){if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.nome=nm;saveFotos();}else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].nome=nm;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}S.pessoa.nome=nm;}$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');}
 if($('fnome'))$('fnome').oninput=salvarNome;
 if($('ficha-btn'))$('ficha-btn').onclick=abrirFicha;
-if($('fichaclose'))$('fichaclose').onclick=function(){$('ficha').style.display='none';renderPessoas();};
-if($('ficha'))$('ficha').onclick=function(e){if(e.target===this){this.style.display='none';renderPessoas();}};
-if($('fichadel'))$('fichadel').onclick=function(){if(!_fk)return;delete FICHAS[_fk];saveFichas();['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){$(id).value='';});updFichaWpp();toast('Ficha apagada ✓');$('ficha').style.display='none';renderPessoas();};
+if($('fichaclose'))$('fichaclose').onclick=fecharFicha;
+if($('ficha'))$('ficha').onclick=function(e){if(e.target===this)fecharFicha();};
+if($('fichadel'))$('fichadel').onclick=function(){if(!_fk)return;delete FICHAS[_fk];saveFichas();['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){$(id).value='';});updFichaWpp();toast('Ficha apagada ✓');fecharFicha();};
 $('trocar').onclick=function(){$('trocafoto').click();};
 $('trocafoto').onchange=function(e){var f=e.target.files[0];if(!f||!S.pessoa)return;var key=S.pessoa.key;var rd=new FileReader();rd.onload=function(ev){var img=new Image();img.onload=function(){var mx=820,c=document.createElement('canvas');var w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var du=c.toDataURL('image/jpeg',.85);
  if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.foto=du;saveFotos();}
