@@ -98,6 +98,9 @@
   .bthumb .bsel.on{background:var(--gold);color:#1A1408;}
   .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 18px;border-radius:30px;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;width:max-content;max-width:90%;text-align:center;}
   .toast.show{opacity:1;}
+  .flab{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;}
+  .finput{width:100%;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;}
+  .finput::placeholder{color:var(--mut);}
 </style>
 </head>
 <body>
@@ -121,6 +124,7 @@
     <div style="font-size:11px;color:var(--mut);margin:-2px 0 10px;line-height:1.45;">💡 Rosto perfeito: foto <b style="color:var(--gold2)">frontal</b> e <b style="color:var(--gold2)">bem iluminada</b> (evite ângulo forte e contraluz).</div>
     <input id="buscacli" class="busca" placeholder="🔍 Buscar cliente pelo nome…" autocomplete="off">
     <div class="strip" id="pessoas"></div>
+    <button class="novo" id="ficha-btn" style="display:none;margin-top:8px;border-color:var(--gold);color:var(--gold2);">📋 Ficha da cliente</button>
     <button class="novo" id="trocar" style="display:none;margin-top:8px;border-color:var(--gold);color:var(--gold2);">🔄 Trocar a foto desta cliente <span style="color:var(--mut);font-size:11px;">(mantém o histórico)</span></button>
     <input id="trocafoto" type="file" accept="image/*" style="display:none">
   </div>
@@ -166,6 +170,27 @@
       <button id="pcancel" style="flex:1;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:11px;padding:12px;font-family:inherit;font-size:14px;">Cancelar</button>
       <button id="psend" style="flex:1;background:var(--gold);border:none;color:#1A1408;border-radius:11px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;">★ Postar no feed</button>
     </div>
+  </div>
+</div>
+<div id="ficha" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
+  <div style="max-width:460px;width:100%;background:var(--ink);border-radius:18px 18px 0 0;padding:18px 18px 28px;max-height:90vh;overflow:auto;box-shadow:0 -8px 30px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <h3 id="fichanome" style="font-family:'Fraunces';color:var(--gold2);margin:0;font-size:19px;flex:1;">Ficha</h3>
+      <button id="fichaclose" style="background:transparent;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <p style="font-size:11px;color:var(--mut);margin:4px 0 6px;">Salva sozinho. Preencha só o que quiser.</p>
+    <label class="flab">👗 Manequim / tamanho</label>
+    <input id="fmanequim" class="finput" placeholder="ex: 42  ou  40-44" autocomplete="off">
+    <label class="flab">👠 Número do sapato</label>
+    <input id="fsapato" class="finput" inputmode="numeric" placeholder="ex: 37" autocomplete="off">
+    <label class="flab">📱 Telefone (WhatsApp)</label>
+    <input id="ftelefone" class="finput" inputmode="tel" placeholder="ex: (19) 99999-9999" autocomplete="off">
+    <label class="flab">🎂 Aniversário</label>
+    <input id="faniversario" class="finput" placeholder="ex: 12/03" autocomplete="off">
+    <label class="flab">📝 Notas (gosto, cores, o que evita…)</label>
+    <textarea id="fnotas" class="finput" rows="3" placeholder="ex: ama tons terrosos, evita decote, fã de alfaiataria" style="resize:vertical;"></textarea>
+    <a id="fichawpp" href="#" style="display:none;margin-top:12px;text-align:center;background:#2E7D5B;color:#eafff0;border-radius:11px;padding:12px;font-size:14px;font-weight:600;text-decoration:none;">🟢 Chamar no WhatsApp</a>
+    <button id="fichadel" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--bordo);border-radius:11px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer;">🗑 Apagar ficha</button>
   </div>
 </div>
 <div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div style="position:fixed;top:10px;right:16px;color:#C7A34A;font-size:28px;pointer-events:none;">✕</div></div>
@@ -219,6 +244,7 @@ const $=id=>document.getElementById(id);
 const byF=f=>ESTOQUE.find(e=>e.f===f)||CAPT[f];
 let CAPT=JSON.parse(localStorage.getItem('mira_capt')||'{}');
 let FOTOS=JSON.parse(localStorage.getItem('mira_fotos')||'[]');
+let FICHAS=JSON.parse(localStorage.getItem('mira_fichas')||'{}');
 function saveCapt(){try{var ks=Object.keys(CAPT).sort();while(ks.length>24){delete CAPT[ks.shift()];}localStorage.setItem('mira_capt',JSON.stringify(CAPT));}catch(e){}}
 function saveFotos(){try{if(FOTOS.length>12)FOTOS=FOTOS.slice(0,12);localStorage.setItem('mira_fotos',JSON.stringify(FOTOS));}catch(e){}}
 let S={vend:localStorage.getItem('mira_vendedora')||VENDEDORAS[0],tipo:'cli',pessoa:null,cat:'Todas',busca:'',pecas:[],occ:null,fundo:'cena',view:0,bandeja:[]};
@@ -298,7 +324,17 @@ function excluirCliente(key){
  if(S.pessoa&&S.pessoa.key===key)S.pessoa=null;
  renderPessoas();renderGrid();renderBig();renderBand();upd();toast('Cliente excluída da galeria ✓');
 }
-function updTrocar(){var t=$('trocar');if(!t)return;var ok=S.pessoa&&S.pessoa.key&&(S.pessoa.key.indexOf('foto_')===0||S.pessoa.key.indexOf('cli_')===0);t.style.display=ok?'block':'none';}
+function updTrocar(){var t=$('trocar');if(t){var okT=S.pessoa&&S.pessoa.key&&(S.pessoa.key.indexOf('foto_')===0||S.pessoa.key.indexOf('cli_')===0);t.style.display=okT?'block':'none';}var fb=$('ficha-btn');if(fb){var okF=(S.tipo==='cli'&&S.pessoa);fb.style.display=okF?'block':'none';if(okF){var ff=FICHAS[S.pessoa.key];var has=ff&&Object.keys(ff).some(function(k){return ff[k];});fb.innerHTML=has?'📋 Ficha da cliente ✓':'📋 Ficha da cliente';}}}
+var _fk=null;
+function saveFichas(){try{localStorage.setItem('mira_fichas',JSON.stringify(FICHAS));}catch(e){}}
+function updFichaWpp(){var a=$('fichawpp');if(!a)return;var tel=($('ftelefone').value||'').replace(/\D/g,'');if(tel.length>=10){a.style.display='block';a.href='https://wa.me/55'+tel;}else{a.style.display='none';}}
+function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();$('ficha').style.display='flex';}
+function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();}
+['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){var el=$(id);if(el)el.oninput=salvarFicha;});
+if($('ficha-btn'))$('ficha-btn').onclick=abrirFicha;
+if($('fichaclose'))$('fichaclose').onclick=function(){$('ficha').style.display='none';renderPessoas();};
+if($('ficha'))$('ficha').onclick=function(e){if(e.target===this){this.style.display='none';renderPessoas();}};
+if($('fichadel'))$('fichadel').onclick=function(){if(!_fk)return;delete FICHAS[_fk];saveFichas();['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){$(id).value='';});updFichaWpp();toast('Ficha apagada ✓');$('ficha').style.display='none';renderPessoas();};
 $('trocar').onclick=function(){$('trocafoto').click();};
 $('trocafoto').onchange=function(e){var f=e.target.files[0];if(!f||!S.pessoa)return;var key=S.pessoa.key;var rd=new FileReader();rd.onload=function(ev){var img=new Image();img.onload=function(){var mx=820,c=document.createElement('canvas');var w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var du=c.toDataURL('image/jpeg',.85);
  if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.foto=du;saveFotos();}
