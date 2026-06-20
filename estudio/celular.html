@@ -471,6 +471,7 @@ function carregarReacoes(){
     S.reacoes=d.reacoes||{};renderBand();renderBig();
   }).catch(function(){});
 }
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&S.pessoa&&S.bandeja&&S.bandeja.length)carregarReacoes();});
 
 var FRASES=[
  'Separei esses looks pensando em você 💛',
