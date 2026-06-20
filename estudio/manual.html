@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia rápido — Desejo Guiado</title>
+<meta name="theme-color" content="#FAF6EE">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{--gold:#B0872E;--gold2:#8C6B22;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+ *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+ body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;line-height:1.55;}
+ .wrap{max-width:540px;margin:0 auto;padding:0 18px 60px;}
+ header{display:flex;flex-direction:column;align-items:center;gap:4px;padding:26px 16px 10px;text-align:center;}
+ @keyframes goldshine{to{background-position:200% center;}}
+ .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+ .mono{font-family:'Fraunces';font-weight:600;font-size:40px;line-height:1;}
+ .bwm{font-family:'Fraunces';font-weight:500;font-size:15px;letter-spacing:5px;margin-top:6px;}
+ .btag{font-size:9px;letter-spacing:3px;color:var(--mut);text-transform:uppercase;margin-top:4px;}
+ .hero{text-align:center;margin:14px 0 6px;}
+ .hero h1{font-family:'Fraunces';font-weight:500;font-size:27px;margin:0 0 8px;line-height:1.2;}
+ .hero p{font-size:15px;color:#5b5346;margin:0 auto;max-width:430px;}
+ .min{display:inline-block;margin-top:14px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gold2);border:1px solid var(--line);border-radius:20px;padding:6px 14px;background:var(--panel2);}
+ .first{background:#1E1B19;color:#EBDDBB;border-radius:16px;padding:18px 18px 16px;margin:26px 0 8px;}
+ .first h2{font-family:'Fraunces';font-weight:500;font-size:17px;margin:0 0 10px;color:#E8CE86;}
+ .first .li{display:flex;gap:11px;margin:9px 0;font-size:14px;align-items:flex-start;}
+ .first .li b{color:#fff;}
+ .first .em{font-size:18px;line-height:1.3;flex-shrink:0;}
+ .sectit{font-family:'Fraunces';font-weight:500;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--gold2);margin:34px 0 4px;text-align:center;}
+ .step{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 16px 15px;margin:14px 0;box-shadow:0 6px 18px rgba(40,32,18,.05);display:flex;gap:14px;}
+ .num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--panel2);border:1px solid var(--gold);color:var(--gold2);font-family:'Fraunces';font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;}
+ .body{flex:1;}
+ .body h3{font-family:'Fraunces';font-weight:500;font-size:18px;margin:2px 0 6px;}
+ .body p{margin:5px 0;font-size:14.5px;color:#3f3a31;}
+ .tip{display:flex;gap:8px;align-items:flex-start;background:#FBF6EA;border-left:3px solid var(--gold);border-radius:8px;padding:9px 11px;margin-top:9px;font-size:13.5px;color:#6a5a2c;}
+ .tip b{color:var(--gold2);}
+ .secret{border:1.5px solid var(--gold);background:#FBF6EA;}
+ .badge{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:500;margin:3px 5px 3px 0;}
+ .golden{background:linear-gradient(160deg,#FBF6EA,#F1EADB);border:1px solid var(--gold);border-radius:16px;padding:18px;margin:30px 0 10px;}
+ .golden h2{font-family:'Fraunces';font-weight:500;font-size:19px;margin:0 0 12px;color:var(--gold2);text-align:center;}
+ .golden .g{display:flex;gap:11px;align-items:flex-start;margin:11px 0;font-size:14.5px;}
+ .golden .gn{font-family:'Fraunces';font-weight:600;color:var(--gold2);font-size:17px;flex-shrink:0;width:22px;}
+ .end{text-align:center;margin:34px 0 0;}
+ .end .q{font-family:'Fraunces';font-style:italic;font-size:19px;color:var(--off);line-height:1.4;}
+ .end .s{font-size:13px;color:var(--mut);margin-top:12px;}
+ .foot{font-family:'Fraunces';font-size:11px;color:var(--mut);letter-spacing:4px;margin-top:30px;text-transform:uppercase;text-align:center;}
+ .cta{display:block;text-align:center;background:var(--gold);color:#1A1408;text-decoration:none;font-weight:600;font-size:16px;border-radius:14px;padding:15px;margin:24px 0 6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header>
+  <div class="mono gold-metal">M</div>
+  <div class="bwm gold-metal">IRENE MOREIRA</div>
+  <div class="btag">Desejo Guiado</div>
+ </header>
+
+ <div class="hero">
+  <h1>Guia rápido</h1>
+  <p>Você monta o look na sua cliente, manda no WhatsApp, e ela responde com <b>um toque</b>. O sistema aprende o gosto dela e te mostra onde está a venda. 💛</p>
+  <div class="min">⏱ Leva 1 minuto pra pegar o jeito</div>
+ </div>
+
+ <div class="first">
+  <h2>Antes de começar</h2>
+  <div class="li"><span class="em">📲</span><span><b>Salve na tela de início:</b> abra seu link → botão de compartilhar → “Adicionar à Tela de Início”. Vira um app, abre num toque.</span></div>
+  <div class="li"><span class="em">🔒</span><span><b>O link é só seu.</b> O primeiro celular que abre fica registrado no seu nome. Não repasse pra ninguém.</span></div>
+  <div class="li"><span class="em">🔄</span><span><b>Sempre na última versão.</b> Não precisa atualizar nada — o app se atualiza sozinho.</span></div>
+ </div>
+
+ <div class="sectit">· o passo a passo ·</div>
+
+ <div class="step">
+  <div class="num">1</div>
+  <div class="body">
+   <h3>👤 Escolha a cliente</h3>
+   <p><b>📷 Tirar foto</b> (aqui na loja) ou <b>📲 Galeria / rede social</b> (um print do Instagram dela).</p>
+   <p>Já tem a cliente salva? Use a <b>🔍 lupa</b> e busque pelo nome.</p>
+   <div class="tip"><span>💡</span><span><b>Dica de ouro:</b> foto <b>frontal</b> e <b>bem iluminada</b> = rosto perfeito. Evite ângulo forte e contraluz.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">2</div>
+  <div class="body">
+   <h3>👗 Monte o look</h3>
+   <p>Toque nas <b>peças</b> que quer combinar e escolha a <b>ocasião</b> (Festa, Trabalho, Jantar, Praia…).</p>
+   <p>Peça que não está no estoque? <b>Fotografe na hora</b> que ela entra no look.</p>
+   <div class="tip"><span>💡</span><span>Pode montar <b>vários looks</b> pra mesma cliente — eles ficam guardados na galeria dela.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">3</div>
+  <div class="body">
+   <h3>✨ Gere o look</h3>
+   <p>Toque em <b>“Gerar look”</b>. Em segundos, a cliente aparece vestindo a peça.</p>
+   <div class="tip"><span>💡</span><span>Não curtiu o cenário? <b>Gere de novo</b> — ele varia o fundo sozinho.</span></div>
+  </div>
+ </div>
+
+ <div class="step secret">
+  <div class="num">4</div>
+  <div class="body">
+   <h3>💬 Envie COM RESPOSTA <span style="color:var(--gold2);font-size:13px;">(o segredo!)</span></h3>
+   <p>Use o botão <b>“💬 Enviar com resposta”</b>. A cliente recebe o look e responde com <b>1 toque</b>, sem digitar nada.</p>
+   <p>É <b>esse botão</b> que ensina o sistema o que ela gosta.</p>
+   <div class="tip"><span>⚖️</span><span>O “🟢 Enviar no WhatsApp” manda <b>só a foto</b> (sem resposta). Pra aprender o gosto, use sempre o <b>com resposta</b>.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">5</div>
+  <div class="body">
+   <h3>💚 Veja o que ela achou</h3>
+   <p>Quando a cliente toca, aparece um <b>selo no próprio look</b>:</p>
+   <div>
+    <span class="badge">💚 Acertou em mim</span>
+    <span class="badge">🔄 Mira de novo</span>
+    <span class="badge">⏳ Esperando</span>
+   </div>
+   <div class="tip"><span>💡</span><span>Voltou pro app depois de mandar? Os selos <b>atualizam sozinhos</b>. O look com 💚 é o que ela amou.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">6</div>
+  <div class="body">
+   <h3>🎯 Olhe o card de Gosto</h3>
+   <p>Em cima da galeria, o sistema <b>resume sozinho</b> o que a cliente ama e onde apostar:</p>
+   <p style="background:#FBF6EA;border:1px solid var(--gold);border-radius:10px;padding:10px 12px;font-size:13.5px;">🎯 <b>Gosto de Marina</b><br>💚 Ama: <b>Festa · Jantar</b><br>→ Aposte em <b>Festa</b> 💛</p>
+   <div class="tip"><span>💡</span><span>Bata o olho aqui <b>antes</b> de montar o próximo look. É a sua dica de venda.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">7</div>
+  <div class="body">
+   <h3>📌 Reservar no provador</h3>
+   <p>A cliente esquentou? Separe a peça de verdade e toque em <b>“Reservar no provador”</b> (coloque o preço).</p>
+   <div class="tip"><span>💡</span><span>Isso é interno — não vai pra cliente. Aparece no painel como <b>quase-venda</b>.</span></div>
+  </div>
+ </div>
+
+ <div class="step">
+  <div class="num">8</div>
+  <div class="body">
+   <h3>📋 Ficha &amp; 🎂 Aniversários</h3>
+   <p><b>Ficha:</b> tamanho, sapato, telefone, gostos da cliente — <b>salva sozinho</b>, preencha só o que quiser.</p>
+   <p><b>Aniversariantes do mês</b> aparecem no topo — desculpa perfeita pra um look especial. 🎂</p>
+  </div>
+ </div>
+
+ <div class="golden">
+  <h2>✨ As 3 dicas de ouro</h2>
+  <div class="g"><span class="gn">1</span><span>Foto <b>frontal e iluminada</b> da cliente — o rosto fica perfeito.</span></div>
+  <div class="g"><span class="gn">2</span><span>Use sempre o <b>“Enviar com resposta”</b> — é o que faz o sistema aprender.</span></div>
+  <div class="g"><span class="gn">3</span><span>Olhe o <b>card 🎯 de Gosto</b> antes de montar o próximo look.</span></div>
+ </div>
+
+ <div class="end">
+  <div class="q">Capriche na curadoria.<br>O sistema cuida do resto. 💛</div>
+  <div class="s">Dúvida? Fale com o Paulo ou a Thaise.</div>
+ </div>
+
+ <div class="foot">Irene Moreira · Desejo Guiado</div>
+</div>
+</body>
+</html>
