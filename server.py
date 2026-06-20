@@ -539,6 +539,23 @@ class Handler(SimpleHTTPRequestHandler):
         if p == "/look":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             lid = (q.get("id") or [""])[0]
+            ids = (q.get("ids") or [""])[0]
+            if ids:
+                wanted = [x for x in ids.split(",") if x][:300]
+                out = {}
+                if SB_ON and wanted:
+                    try:
+                        rows = sb_req("GET", "looks", "id=in.(" + ",".join(wanted) + ")&select=id,reacao") or []
+                        for r in rows:
+                            out[r["id"]] = r.get("reacao") or ""
+                    except Exception:
+                        pass
+                else:
+                    looks = load_looks()
+                    for w in wanted:
+                        if w in looks:
+                            out[w] = looks[w].get("reacao") or ""
+                return self._json(200, {"reacoes": out})
             looks = load_looks()
             if lid:
                 return self._json(200, looks.get(lid) or {"error": "not_found"})

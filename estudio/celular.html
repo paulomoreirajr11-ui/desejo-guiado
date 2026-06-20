@@ -147,6 +147,7 @@
     <button class="wpp" id="resposta" disabled style="background:var(--gold);color:#1A1408;margin-top:8px;">💬 Enviar com resposta</button>
     <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin-top:8px;">★ Soltar no Clube</button>
     <button class="novo" id="reservar" disabled style="margin-top:8px;border-color:var(--gold);color:var(--gold2);">📌 Reservar no provador</button>
+    <div id="resumo" style="display:none;font-size:12px;color:var(--gold2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-top:10px;text-align:center;font-weight:500;"></div>
     <div class="band" id="band"></div>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
@@ -265,7 +266,7 @@ function saveFotos(){try{if(FOTOS.length>12)FOTOS=FOTOS.slice(0,12);localStorage
 let S={vend:localStorage.getItem('mira_vendedora')||VENDEDORAS[0],tipo:'cli',pessoa:null,cat:'Todas',busca:'',pecas:[],occ:null,fundo:'cena',view:0,bandeja:[]};
 function trayKey(){return S.pessoa?('mira_celtray_'+S.vend+'_'+S.pessoa.key):null;}
 function saveTray(){const k=trayKey();if(k)localStorage.setItem(k,JSON.stringify(S.bandeja));}
-function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];S.view=S.bandeja.length-1;}
+function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];S.view=S.bandeja.length-1;S.reacoes={};carregarReacoes();}
 
 const vend=$('vend');
 let _qv=new URLSearchParams(location.search).get('vend');
@@ -393,6 +394,7 @@ function renderBig(){
    +(n>1?'<div class="gnav gprev" id="gp">‹</div><div class="gnav gnext" id="gn">›</div><div class="gidx">'+pos+' / '+n+'</div>':'')
    +'<button class="gsel'+(sel?' on':'')+'" id="gsel">'+(sel?'✓ vai pra cliente':'✗ fora')+'</button>'
    +(it.preco?'<div class="ptag">📌 R$ '+it.preco+'</div>':'')
+   +((function(){var st=lookStatus(it);return st?'<div style="position:absolute;top:10px;left:10px;background:rgba(20,16,8,.78);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;">'+st.e+' '+st.t+'</div>':'';})())
    +'<div class="vcap">Vi você nessa. <span style="font-size:11px;font-style:normal;color:#A39E94;">· toque amplia · arraste vê os outros</span></div></div>';
   const wrap=$('bigwrap'),im=$('bigimg');
   im.onclick=()=>{if(!_moved)openZoom(cur.img);};
@@ -432,11 +434,42 @@ ger.onclick=()=>{
 };
 function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
-  if(!arr.length){b.innerHTML='';return;}
-  b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'"><span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span></div>';}).join('');
+  if(!arr.length){b.innerHTML='';renderResumo();return;}
+  b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;var st=lookStatus(o.it);return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'">'+(st?'<span style="position:absolute;top:3px;left:3px;font-size:13px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));pointer-events:none;">'+st.e+'</span>':'')+'<span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span></div>';}).join('');
   b.querySelectorAll('.bthumb').forEach(t=>t.onclick=e=>{if(e.target.classList.contains('bx')||e.target.classList.contains('bsel'))return;S.view=+t.dataset.i;renderBig();renderBand();});
   b.querySelectorAll('.bsel').forEach(s=>s.onclick=e=>{e.stopPropagation();var i=+s.dataset.s;S.bandeja[i].sel=(S.bandeja[i].sel===false);saveTray();renderBig();renderBand();});
   b.querySelectorAll('.bx').forEach(x=>x.onclick=e=>{e.stopPropagation();S.bandeja.splice(+x.dataset.x,1);if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();});
+  renderResumo();
+}
+function lookStatus(it){
+  if(!it||(!it.lookid&&!it.enviado))return null;
+  var rc=(S.reacoes||{})[it.lookid];
+  if(rc==='Acertou em mim')return {e:'💚',t:'acertou em mim'};
+  if(rc==='Mira de novo')return {e:'🔄',t:'pediu outro'};
+  return {e:'⏳',t:'enviado'};
+}
+function renderResumo(){
+  var el=$('resumo');if(!el)return;
+  var imgs=S.bandeja.filter(function(b){return b.img;});
+  var env=imgs.filter(function(b){return b.lookid||b.enviado;});
+  if(!env.length){el.style.display='none';return;}
+  var rs=S.reacoes||{};
+  var ac=env.filter(function(b){return rs[b.lookid]==='Acertou em mim';}).length;
+  var mn=env.filter(function(b){return rs[b.lookid]==='Mira de novo';}).length;
+  var esp=env.length-ac-mn;
+  var cn=(typeof nomeCliente==='function'?nomeCliente():'')||'';
+  var p=['<b>'+imgs.length+'</b> mirado'+(imgs.length>1?'s':'')+(cn?' p/ '+cn:'')];
+  if(ac)p.push('💚 '+ac+' acertou');
+  if(mn)p.push('🔄 '+mn+' pediu outro');
+  if(esp)p.push('⏳ '+esp+' esperando');
+  el.innerHTML=p.join(' · ');el.style.display='block';
+}
+function carregarReacoes(){
+  var ids=S.bandeja.map(function(b){return b.lookid;}).filter(Boolean);
+  if(!ids.length){renderResumo();return;}
+  fetch('/look?ids='+encodeURIComponent(ids.join(','))).then(function(r){return r.json();}).then(function(d){
+    S.reacoes=d.reacoes||{};renderBand();renderBig();
+  }).catch(function(){});
 }
 
 var FRASES=[
@@ -522,6 +555,7 @@ async function enviarResposta(){
  var id='';
  try{var r=await fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})});var d=await r.json();id=d.id||'';}catch(e){}
  if(!id){toast('Sem conexão — tente de novo');return;}
+ it.lookid=id;it.enviado=true;saveTray();renderBig();renderBand();
  var link=location.origin+'/estudio/look.html?id='+id;
  var msg=fraseLook()+'\n👉 Toque pra ver e me dizer o que achou:\n'+link;
  try{if(navigator.share){await navigator.share({title:'Um look pra você',text:msg});toast('Aberto pra enviar ✓');return;}}catch(e){if(e&&e.name==='AbortError')return;}
