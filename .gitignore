@@ -12,6 +12,7 @@ clube_posts.json
 uso_log.json
 reservas.json
 looks.json
+claims.json
 *.pdf
 
 # Privacidade — fotos de clientes e midias soltas NUNCA no repo publico

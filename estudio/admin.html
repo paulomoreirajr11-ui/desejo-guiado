@@ -60,6 +60,8 @@
   <div class="atfeed" id="reacoes"></div>
   <h2 class="sec">Reservas no provador</h2>
   <div class="atfeed" id="reservas"></div>
+  <h2 class="sec">Travas de acesso (aparelhos)</h2>
+  <div class="atfeed" id="travas"></div>
   <h2 class="sec">Atividade recente</h2>
   <div class="atfeed" id="atfeed"></div>
   <h2 class="sec">Clube — posts</h2>
@@ -76,6 +78,7 @@ async function carregar(){
   try{posts=(await (await fetch('/clube')).json()).posts||[];}catch(e){}
   let reservas=[]; try{reservas=(await (await fetch('/reserva')).json()).reservas||[];}catch(e){}
   let looks={}; try{looks=(await (await fetch('/look')).json()).looks||{};}catch(e){}
+  let claims={}; try{claims=(await (await fetch('/claim')).json()).claims||{};}catch(e){}
   const today=hoje(), vends={};
   log.forEach(e=>{const v=e.vend||'(sem nome)';vends[v]=vends[v]||{total:0,hoje:0,last:'',cli:''};vends[v].total++;if((e.ts||'').slice(0,10)===today)vends[v].hoje++;if((e.ts||'')>vends[v].last){vends[v].last=e.ts||'';vends[v].cli=e.cliente||'';}});
   const hojeLooks=log.filter(e=>(e.ts||'').slice(0,10)===today).length;
@@ -94,6 +97,9 @@ async function carregar(){
   var lk=lkArr.filter(function(l){return l&&l.reacao;});
   lk.sort(function(a,b){return (b.reacao_ts||b.ts||'').localeCompare(a.reacao_ts||a.ts||'');});
   document.getElementById('reacoes').innerHTML=lk.length?lk.map(function(l){return '<div class="atrow"><span class="who">'+(EMO[l.reacao]||'•')+' '+(l.cliente||'cliente')+'</span><span><b>'+(l.reacao||'')+'</b>'+(Array.isArray(l.pecas)&&l.pecas.length?' · '+l.pecas.join(' + '):'')+(l.vend?' · '+l.vend:'')+'</span><span class="when">'+fmt(l.reacao_ts||l.ts)+'</span></div>';}).join(''):'<div class="empty">Nenhuma reação ainda. Quando a cliente tocar uma tecla no look enviado, aparece aqui.</div>';
+  var ck=Object.keys(claims);
+  document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
+  document.querySelectorAll('.liberar').forEach(function(b){b.onclick=async function(){if(!confirm('Liberar '+b.dataset.v+'? Ela poderá registrar um novo celular ao abrir o link de novo.'))return;try{await fetch('/claim/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:b.dataset.v})});}catch(e){}carregar();};});
 }
 document.getElementById('reload').onclick=carregar;
 carregar();

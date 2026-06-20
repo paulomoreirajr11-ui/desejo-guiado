@@ -93,6 +93,21 @@ def save_looks(d):
     except Exception:
         pass
 
+# ---- Trava por aparelho (device-lock das vendedoras) ----
+CLAIMS_FILE = os.path.join(ROOT, "claims.json")
+def load_claims():
+    try:
+        with open(CLAIMS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+def save_claims(d):
+    try:
+        with open(CLAIMS_FILE, "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False)
+    except Exception:
+        pass
+
 # ---- POOL de cenas por ocasiao (5 cada; rotaciona automatico -> anti-carimbo) ----
 POOLS = {
  "Dia a dia": [
@@ -274,6 +289,8 @@ class Handler(SimpleHTTPRequestHandler):
             if lid:
                 return self._json(200, looks.get(lid) or {"error": "not_found"})
             return self._json(200, {"looks": looks})
+        if p == "/claim":
+            return self._json(200, {"claims": load_claims()})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
@@ -319,6 +336,29 @@ class Handler(SimpleHTTPRequestHandler):
                     looks[lid]["reacao"] = d.get("reacao", "")
                     looks[lid]["reacao_ts"] = datetime.datetime.now().isoformat(timespec="seconds")
                     save_looks(looks)
+                return self._json(200, {"ok": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/claim":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                vend = (d.get("vend") or "").strip(); dev = (d.get("device") or "").strip()
+                if not vend or not dev:
+                    return self._json(200, {"ok": False})
+                claims = load_claims(); cur = claims.get(vend)
+                if not cur or cur.get("device") == dev:
+                    claims[vend] = {"device": dev, "ts": datetime.datetime.now().isoformat(timespec="seconds")}
+                    save_claims(claims)
+                    return self._json(200, {"ok": True})
+                return self._json(200, {"ok": False, "locked": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/claim/reset":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                claims = load_claims(); claims.pop((d.get("vend") or "").strip(), None); save_claims(claims)
                 return self._json(200, {"ok": True})
             except Exception as e:
                 return self._json(500, {"error": str(e)})

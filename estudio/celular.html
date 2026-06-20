@@ -226,6 +226,13 @@ if(_lock){S.vend=_lock;localStorage.setItem('mira_vendedora',_lock);}
 vend.value=S.vend;
 vend.onchange=()=>{S.vend=vend.value;localStorage.setItem('mira_vendedora',S.vend);loadTray();renderBig();renderBand();};
 if(_lock){vend.disabled=true;vend.style.opacity='.9';vend.title='Travado nesta vendedora';}
+var DEV=localStorage.getItem('mira_device');
+if(!DEV){DEV=(self.crypto&&crypto.randomUUID)?crypto.randomUUID():('d'+Date.now()+Math.random().toString(36).slice(2));localStorage.setItem('mira_device',DEV);}
+function blockScreen(v){document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;font-family:Inter,sans-serif;background:#FAF6EE;color:#1E1A15;">'
+ +'<div style="font-size:48px;margin-bottom:14px;">🔒</div>'
+ +'<div style="font-family:Fraunces,serif;font-size:23px;margin-bottom:12px;">Link travado</div>'
+ +'<div style="color:#897F6F;font-size:14px;max-width:310px;line-height:1.6;">Este link já está em uso no celular de <b>'+v+'</b>. Por segurança, ele só funciona naquele aparelho.<br><br>Trocou de celular? Peça pra <b>Thaise (administração)</b> liberar o seu acesso.</div></div>';}
+if(_lock){fetch('/claim',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:_lock,device:DEV})}).then(function(r){return r.json();}).then(function(d){if(d&&d.locked)blockScreen(_lock);}).catch(function(){});}
 
 function getClientes(){
  const stored=JSON.parse(localStorage.getItem('mira_clientes')||'[]').map((c,i)=>{const mq=c.manequim||(/^\d+$/.test(c.tamanho||'')?+c.tamanho:LETTER2NUM[c.tamanho])||null;return{key:'cli_'+i,nome:c.nome||'Cliente',manequim:mq,tag:mq?'Mnq '+mq:'',foto:c.foto,estilo:c.estilo||''};});
