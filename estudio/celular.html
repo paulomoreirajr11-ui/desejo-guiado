@@ -179,6 +179,8 @@
       <button id="fichaclose" style="background:transparent;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;">✕</button>
     </div>
     <p style="font-size:11px;color:var(--mut);margin:4px 0 6px;">Salva sozinho. Preencha só o que quiser.</p>
+    <label class="flab">🙋‍♀️ Nome da cliente</label>
+    <input id="fnome" class="finput" placeholder="ex: Maria Silva" autocomplete="off">
     <label class="flab">👗 Manequim / tamanho</label>
     <input id="fmanequim" class="finput" placeholder="ex: 42  ou  40-44" autocomplete="off">
     <label class="flab">👠 Número do sapato</label>
@@ -311,7 +313,8 @@ function renderGrid(){
 }
 $('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Date.now();CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};saveCapt();S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
 
-function carregarFotoCliente(f,fonte){if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:(fonte==='camera'?'Foto câmera':'Foto galeria'),manequim:null,tag:(fonte==='camera'?'câmera':'rede social'),foto:c.toDataURL('image/jpeg',.85),estilo:'',fonte:fonte};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast(fonte==='camera'?'📷 foto na loja ✓ (IA corrige)':'📲 foto da rede social ✓ (rosto travado)');};img.src=ev.target.result;};rd.readAsDataURL(f);}
+function carregarFotoCliente(f,fonte){if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var _nm='';try{var _pn=prompt('Nome da cliente? (pode deixar em branco)');if(_pn&&_pn.trim())_nm=_pn.trim();}catch(e){}
+const p={key:'foto_'+Date.now(),nome:(_nm||(fonte==='camera'?'Foto câmera':'Foto galeria')),manequim:null,tag:(_nm?'cliente':(fonte==='camera'?'câmera':'rede social')),foto:c.toDataURL('image/jpeg',.85),estilo:'',fonte:fonte};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast(fonte==='camera'?'📷 foto na loja ✓ (IA corrige)':'📲 foto da rede social ✓ (rosto travado)');};img.src=ev.target.result;};rd.readAsDataURL(f);}
 $('cfoto').onchange=e=>carregarFotoCliente(e.target.files[0],'galeria');
 $('ccam').onchange=e=>carregarFotoCliente(e.target.files[0],'camera');
 $('buscacli').oninput=function(e){S.busca=e.target.value;renderPessoas();};
@@ -328,9 +331,11 @@ function updTrocar(){var t=$('trocar');if(t){var okT=S.pessoa&&S.pessoa.key&&(S.
 var _fk=null;
 function saveFichas(){try{localStorage.setItem('mira_fichas',JSON.stringify(FICHAS));}catch(e){}}
 function updFichaWpp(){var a=$('fichawpp');if(!a)return;var tel=($('ftelefone').value||'').replace(/\D/g,'');if(tel.length>=10){a.style.display='block';a.href='https://wa.me/55'+tel;}else{a.style.display='none';}}
-function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();$('ficha').style.display='flex';}
+function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();$('ficha').style.display='flex';}
 function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();}
 ['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){var el=$(id);if(el)el.oninput=salvarFicha;});
+function salvarNome(){if(!S.pessoa)return;var nm=$('fnome').value.trim();var key=S.pessoa.key;if(nm){if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.nome=nm;saveFotos();}else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].nome=nm;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}S.pessoa.nome=nm;}$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');}
+if($('fnome'))$('fnome').oninput=salvarNome;
 if($('ficha-btn'))$('ficha-btn').onclick=abrirFicha;
 if($('fichaclose'))$('fichaclose').onclick=function(){$('ficha').style.display='none';renderPessoas();};
 if($('ficha'))$('ficha').onclick=function(e){if(e.target===this){this.style.display='none';renderPessoas();}};
