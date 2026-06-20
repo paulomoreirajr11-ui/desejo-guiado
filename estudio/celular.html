@@ -111,7 +111,10 @@
   <div class="sec">
     <h2><b>1.</b> Quem vai vestir</h2>
     <div class="tg"><button id="tgc" class="on">Minhas clientes</button><button id="tgi">Irenetes</button></div>
-    <label class="cam" style="margin:2px 0 10px;"><span>📲</span> Carregar foto da cliente (do celular)<input type="file" id="cfoto" accept="image/*" style="display:none"></label>
+    <div style="display:flex;gap:8px;margin:2px 0 10px;">
+      <label class="cam" style="flex:1;margin:0;"><span>📷</span> Tirar foto<input type="file" id="ccam" accept="image/*" capture="environment" style="display:none"></label>
+      <label class="cam" style="flex:1;margin:0;"><span>📲</span> Galeria / rede social<input type="file" id="cfoto" accept="image/*" style="display:none"></label>
+    </div>
     <div class="strip" id="pessoas"></div>
   </div>
 
@@ -269,7 +272,9 @@ function renderGrid(){
 }
 $('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Date.now();CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};saveCapt();S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
 
-$('cfoto').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:'Foto carregada',manequim:null,tag:'sua foto',foto:c.toDataURL('image/jpeg',.85),estilo:''};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📲 foto da cliente carregada ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+function carregarFotoCliente(f,fonte){if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const p={key:'foto_'+Date.now(),nome:(fonte==='camera'?'Foto câmera':'Foto galeria'),manequim:null,tag:(fonte==='camera'?'câmera':'rede social'),foto:c.toDataURL('image/jpeg',.85),estilo:'',fonte:fonte};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast(fonte==='camera'?'📷 foto na loja ✓ (IA corrige)':'📲 foto da rede social ✓ (rosto travado)');};img.src=ev.target.result;};rd.readAsDataURL(f);}
+$('cfoto').onchange=e=>carregarFotoCliente(e.target.files[0],'galeria');
+$('ccam').onchange=e=>carregarFotoCliente(e.target.files[0],'camera');
 const occEl=$('occ');
 OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{S.occ=o;[...occEl.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occEl.appendChild(b);});
 
@@ -325,7 +330,7 @@ ger.onclick=()=>{
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
  const garments=S.pecas.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
- fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli')})})
+ fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')})})
   .then(r=>r.json()).then(function(d){upd();
     if(d.image){showLook(d.image,nomes);}
     else{$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>'+(d.error||'configure a nuvem (FAL_KEY)')+'</div>';toast('nuvem não configurada');}})
