@@ -108,6 +108,23 @@ def save_claims(d):
     except Exception:
         pass
 
+# ---- Supabase (banco de dados persistente) ----
+SB_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SB_KEY = os.environ.get("SUPABASE_KEY", "")
+SB_ON = bool(SB_URL and SB_KEY)
+def sb_req(method, table, params="", body=None, prefer="return=representation"):
+    if not SB_ON:
+        return None
+    url = SB_URL + "/rest/v1/" + table + (("?" + params) if params else "")
+    data = json.dumps(body).encode() if body is not None else None
+    headers = {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"}
+    if prefer:
+        headers["Prefer"] = prefer
+    req = urllib.request.Request(url, data=data, method=method, headers=headers)
+    with urllib.request.urlopen(req, timeout=20) as r:
+        txt = r.read().decode()
+        return json.loads(txt) if txt.strip() else []
+
 # ---- POOL de cenas por ocasiao (25 cada, 9 estilos; rotaciona automatico -> anti-carimbo) ----
 POOLS = {
  "Dia a dia": [
@@ -462,6 +479,16 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, {"looks": looks})
         if p == "/claim":
             return self._json(200, {"claims": load_claims()})
+        if p == "/sbstatus":
+            out = {"sb_on": SB_ON}
+            if SB_ON:
+                try:
+                    out["amostra"] = sb_req("GET", "claims", "select=vend&limit=1")
+                    out["ok"] = True
+                except Exception as e:
+                    out["ok"] = False
+                    out["error"] = str(e)
+            return self._json(200, out)
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
