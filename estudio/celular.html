@@ -41,8 +41,7 @@
   .busca::placeholder{color:var(--mut);}
   .av{flex:0 0 auto;width:74px;text-align:center;cursor:pointer;position:relative;}
   .avx{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(122,30,43,.92);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;}
-  .avzoom{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:rgba(20,16,8,.55);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;}
-  .av img{width:74px;height:92px;object-fit:cover;object-position:top;border-radius:11px;border:2px solid transparent;display:block;}
+  .av img{width:74px;height:92px;object-fit:cover;object-position:top;border-radius:11px;border:2px solid transparent;display:block;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
   .av.on img{border-color:var(--gold);}
   .av .n{font-size:11px;margin-top:3px;line-height:1.1;}
   .av .t{font-size:9.5px;color:var(--mut);}
@@ -126,7 +125,7 @@
     <div style="font-size:11px;color:var(--mut);margin:-2px 0 10px;line-height:1.45;">💡 Rosto perfeito: foto <b style="color:var(--gold2)">frontal</b> e <b style="color:var(--gold2)">bem iluminada</b> (evite ângulo forte e contraluz).</div>
     <input id="buscacli" class="busca" placeholder="🔍 Buscar cliente pelo nome…" autocomplete="off">
     <div class="strip" id="pessoas"></div>
-    <div style="font-size:11px;color:var(--mut);margin:6px 0 2px;">🔍 Toque na lupa da foto pra ver a cliente maior.</div>
+    <div style="font-size:11px;color:var(--mut);margin:6px 0 2px;">💡 Segure a foto da cliente pra ver maior.</div>
     <button class="novo" id="ficha-btn" style="display:none;margin-top:8px;border-color:var(--gold);color:var(--gold2);">📋 Ficha da cliente</button>
     <button class="novo" id="trocar" style="display:none;margin-top:8px;border-color:var(--gold);color:var(--gold2);">🔄 Trocar a foto desta cliente <span style="color:var(--mut);font-size:11px;">(mantém o histórico)</span></button>
     <input id="trocafoto" type="file" accept="image/*" style="display:none">
@@ -304,10 +303,11 @@ function renderPessoas(){
  arr.forEach(m=>{const d=document.createElement('div');d.className='av'+(S.pessoa&&S.pessoa.key===m.key?' on':'');
   const src=m.foto?m.foto:('modelos/'+m.key+'.jpg');
   const canDel=(m.key.indexOf('foto_')===0||m.key.indexOf('cli_')===0);
-  d.innerHTML=(canDel?'<span class="avx" data-del="'+m.key+'">✕</span>':'')+'<span class="avzoom">🔍</span><img src="'+src+'"><div class="n">'+m.nome+'</div><div class="t">'+(m.tag||'')+'</div>';
-  d.onclick=()=>{S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};pessoasEl.appendChild(d);});
+  d.innerHTML=(canDel?'<span class="avx" data-del="'+m.key+'">✕</span>':'')+'<img src="'+src+'"><div class="n">'+m.nome+'</div><div class="t">'+(m.tag||'')+'</div>';
+  d.onclick=()=>{if(d._lpz){d._lpz=false;return;}S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
+  (function(dd){var t;dd.addEventListener('touchstart',function(){dd._lpz=false;t=setTimeout(function(){dd._lpz=true;var im=dd.querySelector('img');if(im)openZoom(im.src);},450);},{passive:true});dd.addEventListener('touchmove',function(){clearTimeout(t);});dd.addEventListener('touchend',function(){clearTimeout(t);});})(d);
+  pessoasEl.appendChild(d);});
  pessoasEl.querySelectorAll('.avx').forEach(x=>x.onclick=ev=>{ev.stopPropagation();excluirCliente(x.dataset.del);});
- pessoasEl.querySelectorAll('.avzoom').forEach(z=>z.onclick=ev=>{ev.stopPropagation();var im=z.parentNode.querySelector('img');if(im)openZoom(im.src);});
  updTrocar();
 }
 $('tgc').onclick=()=>{S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=null;S.busca='';var _bc=$('buscacli');if(_bc)_bc.value='';loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
