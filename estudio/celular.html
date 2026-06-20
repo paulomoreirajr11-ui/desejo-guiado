@@ -187,7 +187,7 @@ const ESTOQUE=[
  {f:'acc_bolsa',cat:'Acessórios',nome:'Clutch',tam:null},{f:'acc_scarpin',cat:'Acessórios',nome:'Scarpin',tam:null},
  {f:'acc_brinco',cat:'Acessórios',nome:'Brinco',tam:null},{f:'acc_oculos',cat:'Acessórios',nome:'Óculos',tam:null},
 ];
-const OCASIOES=['Dia a dia','Trabalho','Festa','Casual','Praia','Academia'];
+const OCASIOES=['Dia a dia','Trabalho','Casual','Jantar','Festa','Casamento','Viagem','Praia','Academia'];
 const RESULTS={
  'modelo_1_jovem|Festa':'resultados/res_festa_jovem.jpg','modelo_1_jovem|Dia a dia':'resultados/res_diaadia_jovem.jpg',
  'modelo_2_meia_idade|Trabalho':'resultados/res_trabalho_meiaidade.jpg','modelo_2_meia_idade|Casual':'resultados/res_casual_meiaidade.jpg',
@@ -351,7 +351,17 @@ var FRASES=[
  'Imaginei você nesses looks 💛',
  'Olha o que escolhi especialmente pra você 💛',
  'Esse aqui me lembrou você na hora 💛',
- 'Dei uma garimpada e achei isso pra você 💛'
+ 'Bateu o olho e pensei em você 💛',
+ 'Esse tem tudo a ver com você 💛',
+ 'Já te imaginei usando esse 💛',
+ 'Escolhi a dedo pensando em você 💛',
+ 'Esse combina demais com você 💛',
+ 'Não resisti e separei esse pra você 💛',
+ 'Esse aqui tem a sua elegância 💛',
+ 'Olha que coisa linda separei pra você 💛',
+ 'Pensei em você assim que vi esse 💛',
+ 'Esse me fez lembrar do seu estilo 💛',
+ 'Separei algo especial pra te mostrar 💛'
 ];
 function nomeCliente(){if(S.tipo!=='cli')return '';var n=S.pessoa?(S.pessoa.nome||''):'';return /^(foto|cliente)/i.test(n)?'':n;}
 function fraseLook(){var nome=nomeCliente();var ola=nome?('Oi '+nome+'! '):'Oi! ';return ola+FRASES[Math.floor(Math.random()*FRASES.length)];}
