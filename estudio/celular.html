@@ -113,6 +113,7 @@
   <div class="sess">
     <select id="vend"></select>
   </div>
+  <div id="anivbar" style="display:none;margin:10px 16px 0;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--gold2);cursor:pointer;align-items:center;gap:8px;">🎂 <span id="anivtxt"></span><span style="margin-left:auto;color:var(--mut);font-size:11px;">toque pra ver ›</span></div>
 
   <div class="sec">
     <h2><b>1.</b> Quem vai vestir</h2>
@@ -170,6 +171,16 @@
       <button id="pcancel" style="flex:1;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:11px;padding:12px;font-family:inherit;font-size:14px;">Cancelar</button>
       <button id="psend" style="flex:1;background:var(--gold);border:none;color:#1A1408;border-radius:11px;padding:12px;font-family:inherit;font-size:14px;font-weight:600;">★ Postar no feed</button>
     </div>
+  </div>
+</div>
+<div id="aniv" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
+  <div style="max-width:460px;width:100%;background:var(--ink);border-radius:18px 18px 0 0;padding:18px 18px 28px;max-height:80vh;overflow:auto;box-shadow:0 -8px 30px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0;font-size:19px;flex:1;">🎂 Aniversariantes do mês</h3>
+      <button id="anivclose" style="background:transparent;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--mut);margin:0 0 8px;">Mande um look de presente 💝</p>
+    <div id="anivlist"></div>
   </div>
 </div>
 <div id="ficha" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
@@ -332,7 +343,13 @@ var _fk=null;
 function saveFichas(){try{localStorage.setItem('mira_fichas',JSON.stringify(FICHAS));}catch(e){}}
 function updFichaWpp(){var a=$('fichawpp');if(!a)return;var tel=($('ftelefone').value||'').replace(/\D/g,'');if(tel.length>=10){a.style.display='block';a.href='https://wa.me/55'+tel;}else{a.style.display='none';}}
 function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();$('ficha').style.display='flex';}
-function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();}
+function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();renderAnivBar();}
+function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=FOTOS.concat(getClientes());var out=[];people.forEach(function(p){var f=FICHAS[p.key];if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
+function renderAnivBar(){var bar=$('anivbar');if(!bar)return;var arr=aniversariantesDoMes();if(arr.length){bar.style.display='flex';$('anivtxt').textContent=arr.length+(arr.length===1?' aniversariante este mês':' aniversariantes este mês');}else{bar.style.display='none';}}
+function abrirAniv(){var arr=aniversariantesDoMes();var el=$('anivlist');el.innerHTML=arr.length?arr.map(function(a){var tel=(a.telefone||'').replace(/\D/g,'');return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);"><div style="flex:1;"><div style="font-weight:500;">'+(a.nome||'cliente')+'</div><div style="font-size:12px;color:var(--mut);">🎂 dia '+a.dia+'</div></div>'+(tel.length>=10?'<a href="https://wa.me/55'+tel+'" style="font-size:20px;text-decoration:none;">🟢</a>':'')+'<button class="anivsel" data-k="'+a.key+'" style="background:var(--gold);color:#1A1408;border:none;border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">👗 Fazer look</button></div>';}).join(''):'<div style="color:var(--mut);font-size:13px;padding:10px 0;">Ninguém faz aniversário este mês.</div>';el.querySelectorAll('.anivsel').forEach(function(b){b.onclick=function(){var k=b.getAttribute('data-k');var p=FOTOS.concat(getClientes()).find(function(x){return x.key===k;});if(p){S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();}$('aniv').style.display='none';toast('Cliente selecionada — monte o look 💝');};});$('aniv').style.display='flex';}
+if($('anivbar'))$('anivbar').onclick=abrirAniv;
+if($('anivclose'))$('anivclose').onclick=function(){$('aniv').style.display='none';};
+if($('aniv'))$('aniv').onclick=function(e){if(e.target===this)this.style.display='none';};
 ['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){var el=$(id);if(el)el.oninput=salvarFicha;});
 function salvarNome(){if(!S.pessoa)return;var nm=$('fnome').value.trim();var key=S.pessoa.key;if(nm){if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.nome=nm;saveFotos();}else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].nome=nm;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}S.pessoa.nome=nm;}$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');}
 if($('fnome'))$('fnome').oninput=salvarNome;
@@ -510,7 +527,7 @@ $('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.cl
 $('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
 
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
-renderPessoas();renderGrid();renderBig();renderBand();upd();
+renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();
 window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
 $('zoom').onclick=function(){this.style.display='none';};
 $('zoomimg').onclick=function(e){e.stopPropagation();this.style.transform=this.style.transform==='scale(2.2)'?'scale(1)':'scale(2.2)';};
