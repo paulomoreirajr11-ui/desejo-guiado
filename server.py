@@ -49,14 +49,32 @@ def save_clube(posts):
 # ---- Registro de uso por vendedora (painel do admin) ----
 USO_FILE = os.path.join(ROOT, "uso_log.json")
 def load_uso():
+    if SB_ON:
+        try:
+            return sb_req("GET", "uso", "select=*&order=ts.desc&limit=3000") or []
+        except Exception:
+            pass
     try:
         with open(USO_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return []
 def log_uso(entry):
+    if SB_ON:
+        try:
+            sb_req("POST", "uso", body={"vend": entry.get("vend"), "cliente": entry.get("cliente"),
+                "pecas": entry.get("pecas"), "ocasiao": entry.get("ocasiao"), "fundo": entry.get("fundo"), "ts": entry.get("ts")})
+            return
+        except Exception:
+            pass
     try:
-        log = load_uso(); log.append(entry); log = log[-3000:]
+        log = []
+        try:
+            with open(USO_FILE, "r", encoding="utf-8") as f:
+                log = json.load(f)
+        except Exception:
+            log = []
+        log.append(entry); log = log[-3000:]
         with open(USO_FILE, "w", encoding="utf-8") as f:
             json.dump(log, f, ensure_ascii=False)
     except Exception:
@@ -65,14 +83,32 @@ def log_uso(entry):
 # ---- Reservas no provador ----
 RESERVA_FILE = os.path.join(ROOT, "reservas.json")
 def load_reservas():
+    if SB_ON:
+        try:
+            return sb_req("GET", "reservas", "select=*&order=ts.desc") or []
+        except Exception:
+            pass
     try:
         with open(RESERVA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return []
 def add_reserva(r):
+    if SB_ON:
+        try:
+            sb_req("POST", "reservas", body={"vend": r.get("vend"), "cliente": r.get("cliente"),
+                "pecas": r.get("pecas"), "preco": r.get("preco"), "img": r.get("img"), "ts": r.get("ts")})
+            return
+        except Exception:
+            pass
     try:
-        rs = load_reservas(); rs.append(r); rs = rs[-2000:]
+        rs = []
+        try:
+            with open(RESERVA_FILE, "r", encoding="utf-8") as f:
+                rs = json.load(f)
+        except Exception:
+            rs = []
+        rs.append(r); rs = rs[-2000:]
         with open(RESERVA_FILE, "w", encoding="utf-8") as f:
             json.dump(rs, f, ensure_ascii=False)
     except Exception:
