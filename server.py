@@ -34,6 +34,14 @@ FAL_MODEL = os.environ.get("FAL_MODEL", "fal-ai/nano-banana/edit")
 # ---- Clube de venda (feed compartilhado entre celular e TV) ----
 CLUBE_FILE = os.path.join(ROOT, "clube_posts.json")
 def load_clube():
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "clube", "select=*&order=ts.asc") or []
+            return [{"img": r.get("img"), "marca": r.get("marca"), "desc": r.get("descricao"),
+                "de": r.get("de"), "por": r.get("por"), "cond": r.get("cond"), "occ": r.get("occ"),
+                "pecas": r.get("pecas"), "nome": r.get("nome"), "vend": r.get("vend")} for r in rows]
+        except Exception:
+            pass
     try:
         with open(CLUBE_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -117,6 +125,14 @@ def add_reserva(r):
 # ---- Looks compartilhados + reacoes (as "teclas") ----
 LOOKS_FILE = os.path.join(ROOT, "looks.json")
 def load_looks():
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "looks", "select=*&order=ts.desc&limit=4000") or []
+            return {r["id"]: {"img": r.get("img"), "cliente": r.get("cliente"), "vend": r.get("vend"),
+                "pecas": r.get("pecas"), "occ": r.get("occ"), "reacao": r.get("reacao") or "",
+                "reacao_ts": r.get("reacao_ts"), "ts": r.get("ts")} for r in rows if r.get("id")}
+        except Exception:
+            pass
     try:
         with open(LOOKS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -132,6 +148,12 @@ def save_looks(d):
 # ---- Trava por aparelho (device-lock das vendedoras) ----
 CLAIMS_FILE = os.path.join(ROOT, "claims.json")
 def load_claims():
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "claims", "select=*") or []
+            return {r["vend"]: {"device": r.get("device"), "ts": r.get("ts")} for r in rows if r.get("vend")}
+        except Exception:
+            pass
     try:
         with open(CLAIMS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -532,6 +554,16 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 n = int(self.headers.get("Content-Length", 0))
                 post = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                if SB_ON:
+                    try:
+                        sb_req("POST", "clube", body={"img": post.get("img"), "marca": post.get("marca"),
+                            "descricao": post.get("desc"), "de": post.get("de"), "por": post.get("por"),
+                            "cond": post.get("cond"), "occ": post.get("occ"), "pecas": post.get("pecas"),
+                            "nome": post.get("nome"), "vend": post.get("vend"),
+                            "ts": datetime.datetime.now().isoformat(timespec="seconds")})
+                        return self._json(200, {"ok": True})
+                    except Exception:
+                        pass
                 posts = load_clube(); posts.append(post); save_clube(posts)
                 return self._json(200, {"ok": True, "count": len(posts)})
             except Exception as e:
@@ -549,9 +581,17 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 n = int(self.headers.get("Content-Length", 0))
                 d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
-                looks = load_looks()
                 lid = uuid.uuid4().hex[:10]
-                d["ts"] = datetime.datetime.now().isoformat(timespec="seconds")
+                ts = datetime.datetime.now().isoformat(timespec="seconds")
+                if SB_ON:
+                    try:
+                        sb_req("POST", "looks", body={"id": lid, "img": d.get("img"), "cliente": d.get("cliente"),
+                            "vend": d.get("vend"), "pecas": d.get("pecas"), "occ": d.get("occ"), "ts": ts, "reacao": ""})
+                        return self._json(200, {"id": lid})
+                    except Exception:
+                        pass
+                looks = load_looks()
+                d["ts"] = ts
                 d["reacao"] = ""
                 looks[lid] = d
                 if len(looks) > 4000:
@@ -565,7 +605,15 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 n = int(self.headers.get("Content-Length", 0))
                 d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
-                looks = load_looks(); lid = d.get("id", "")
+                lid = d.get("id", "")
+                if SB_ON and lid:
+                    try:
+                        sb_req("PATCH", "looks", "id=eq." + lid, body={"reacao": d.get("reacao", ""),
+                            "reacao_ts": datetime.datetime.now().isoformat(timespec="seconds")})
+                        return self._json(200, {"ok": True})
+                    except Exception:
+                        pass
+                looks = load_looks()
                 if lid in looks:
                     looks[lid]["reacao"] = d.get("reacao", "")
                     looks[lid]["reacao_ts"] = datetime.datetime.now().isoformat(timespec="seconds")
@@ -580,9 +628,20 @@ class Handler(SimpleHTTPRequestHandler):
                 vend = (d.get("vend") or "").strip(); dev = (d.get("device") or "").strip()
                 if not vend or not dev:
                     return self._json(200, {"ok": False})
+                now = datetime.datetime.now().isoformat(timespec="seconds")
+                if SB_ON:
+                    try:
+                        rows = sb_req("GET", "claims", "vend=eq." + urllib.parse.quote(vend) + "&select=*") or []
+                        cur = rows[0] if rows else None
+                        if not cur or cur.get("device") == dev:
+                            sb_req("POST", "claims", body={"vend": vend, "device": dev, "ts": now}, prefer="resolution=merge-duplicates")
+                            return self._json(200, {"ok": True})
+                        return self._json(200, {"ok": False, "locked": True})
+                    except Exception:
+                        pass
                 claims = load_claims(); cur = claims.get(vend)
                 if not cur or cur.get("device") == dev:
-                    claims[vend] = {"device": dev, "ts": datetime.datetime.now().isoformat(timespec="seconds")}
+                    claims[vend] = {"device": dev, "ts": now}
                     save_claims(claims)
                     return self._json(200, {"ok": True})
                 return self._json(200, {"ok": False, "locked": True})
@@ -592,7 +651,14 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 n = int(self.headers.get("Content-Length", 0))
                 d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
-                claims = load_claims(); claims.pop((d.get("vend") or "").strip(), None); save_claims(claims)
+                vend = (d.get("vend") or "").strip()
+                if SB_ON:
+                    try:
+                        sb_req("DELETE", "claims", "vend=eq." + urllib.parse.quote(vend))
+                        return self._json(200, {"ok": True})
+                    except Exception:
+                        pass
+                claims = load_claims(); claims.pop(vend, None); save_claims(claims)
                 return self._json(200, {"ok": True})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
