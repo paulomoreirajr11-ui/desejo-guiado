@@ -120,6 +120,8 @@
     </div>
     <input id="buscacli" class="busca" placeholder="🔍 Buscar cliente pelo nome…" autocomplete="off">
     <div class="strip" id="pessoas"></div>
+    <button class="novo" id="trocar" style="display:none;margin-top:8px;border-color:var(--gold);color:var(--gold2);">🔄 Trocar a foto desta cliente <span style="color:var(--mut);font-size:11px;">(mantém o histórico)</span></button>
+    <input id="trocafoto" type="file" accept="image/*" style="display:none">
   </div>
 
   <div class="sec">
@@ -259,6 +261,7 @@ function renderPessoas(){
   d.innerHTML=(canDel?'<span class="avx" data-del="'+m.key+'">✕</span>':'')+'<img src="'+src+'"><div class="n">'+m.nome+'</div><div class="t">'+(m.tag||'')+'</div>';
   d.onclick=()=>{S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};pessoasEl.appendChild(d);});
  pessoasEl.querySelectorAll('.avx').forEach(x=>x.onclick=ev=>{ev.stopPropagation();excluirCliente(x.dataset.del);});
+ updTrocar();
 }
 $('tgc').onclick=()=>{S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=null;S.busca='';var _bc=$('buscacli');if(_bc)_bc.value='';loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
 $('tgi').onclick=()=>{S.tipo='iren';$('tgi').classList.add('on');$('tgc').classList.remove('on');S.pessoa=null;S.busca='';var _bc=$('buscacli');if(_bc)_bc.value='';loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
@@ -287,13 +290,21 @@ $('ccam').onchange=e=>carregarFotoCliente(e.target.files[0],'camera');
 $('buscacli').oninput=function(e){S.busca=e.target.value;renderPessoas();};
 function excluirCliente(key){
  var arr=FOTOS.concat(getClientes());var m=arr.find(function(p){return p.key===key;});
- var ok=true; try{ok=confirm('Excluir '+(m?m.nome:'esta cliente')+' da galeria? A foto será apagada.');}catch(e){ok=true;}
+ var ok=true; try{ok=confirm('Excluir '+(m?m.nome:'esta cliente')+'? Isso apaga a foto E o histórico de looks dela. (Pra só trocar a foto, use o botão "Trocar a foto".)');}catch(e){ok=true;}
  if(!ok)return;
  if(key.indexOf('foto_')===0){FOTOS=FOTOS.filter(function(p){return p.key!==key;});saveFotos();}
  else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(i>=0&&i<cl.length){cl.splice(i,1);localStorage.setItem('mira_clientes',JSON.stringify(cl));}}
  if(S.pessoa&&S.pessoa.key===key)S.pessoa=null;
  renderPessoas();renderGrid();renderBig();renderBand();upd();toast('Cliente excluída da galeria ✓');
 }
+function updTrocar(){var t=$('trocar');if(!t)return;var ok=S.pessoa&&S.pessoa.key&&(S.pessoa.key.indexOf('foto_')===0||S.pessoa.key.indexOf('cli_')===0);t.style.display=ok?'block':'none';}
+$('trocar').onclick=function(){$('trocafoto').click();};
+$('trocafoto').onchange=function(e){var f=e.target.files[0];if(!f||!S.pessoa)return;var key=S.pessoa.key;var rd=new FileReader();rd.onload=function(ev){var img=new Image();img.onload=function(){var mx=820,c=document.createElement('canvas');var w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var du=c.toDataURL('image/jpeg',.85);
+ if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.foto=du;saveFotos();}
+ else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].foto=du;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}
+ var arr=FOTOS.concat(getClientes());S.pessoa=arr.find(function(x){return x.key===key;})||S.pessoa;
+ renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📸 Foto trocada — histórico mantido ✓');
+ };img.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
 const occEl=$('occ');
 OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{S.occ=o;[...occEl.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occEl.appendChild(b);});
 
