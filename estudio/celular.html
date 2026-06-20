@@ -213,6 +213,16 @@
 </div>
 <div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div style="position:fixed;top:10px;right:16px;color:#C7A34A;font-size:28px;pointer-events:none;">✕</div></div>
 
+<div id="sabedoria" style="display:none;position:fixed;inset:0;background:rgba(20,16,8,.62);z-index:70;align-items:center;justify-content:center;padding:24px;">
+  <div style="max-width:380px;width:100%;background:var(--ink);border:1px solid var(--gold);border-radius:20px;padding:30px 26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);">
+    <div style="font-family:'Fraunces';color:var(--gold2);font-size:12px;letter-spacing:2.5px;text-transform:uppercase;">A palavra da Irene</div>
+    <div id="sabola" style="font-family:'Fraunces';font-size:21px;margin:14px 0 6px;color:var(--off);">Bom dia 💛</div>
+    <div id="sabfrase" style="font-family:'Fraunces';font-style:italic;font-size:18px;line-height:1.5;color:var(--off);margin:8px 0 18px;"></div>
+    <div style="font-family:'Fraunces';color:var(--gold2);font-size:14px;">— Irene Moreira</div>
+    <button id="sabok" style="margin-top:22px;background:var(--gold);color:#1A1408;border:none;border-radius:12px;padding:12px 30px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">Começar o dia ✨</button>
+  </div>
+</div>
+<script src="frases.js" charset="utf-8"></script>
 <script>
 const VENDEDORAS=['Mazinha','Monica','Helena','Juliana','Marcia','Luciana','Emily','Val','Irene','Thaise','Liliane','Aletheia','Magali','Michele','Sophie'];
 const MODELOS=[
@@ -595,7 +605,11 @@ $('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.cl
 $('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
 
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
-renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();
+function _saud(){var h=new Date().getHours();return h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');}
+function mostrarSabedoria(){try{var fr=window.FRASES_SABEDORIA;if(!fr||!fr.length)return;var vend=S.vend||'';var k='mira_sabedoria_'+vend;var hoje=new Date().toISOString().slice(0,10);if(localStorage.getItem(k)===hoje)return;var off=VENDEDORAS.indexOf(vend);if(off<0)off=0;var d=new Date();var ini=new Date(d.getFullYear(),0,0);var dia=Math.floor((d-ini)/86400000);var idx=((dia+off)%fr.length+fr.length)%fr.length;var nome=(vend||'').split(' ')[0];$('sabola').textContent=_saud()+(nome?', '+nome:'')+' 💛';$('sabfrase').textContent='“'+fr[idx]+'”';$('sabedoria').style.display='flex';localStorage.setItem(k,hoje);}catch(e){}}
+if($('sabok'))$('sabok').onclick=function(){$('sabedoria').style.display='none';};
+if($('sabedoria'))$('sabedoria').onclick=function(e){if(e.target===this)this.style.display='none';};
+renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();mostrarSabedoria();
 window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
 $('zoom').onclick=function(){this.style.display='none';};
 $('zoomimg').onclick=function(e){e.stopPropagation();this.style.transform=this.style.transform==='scale(2.2)'?'scale(1)':'scale(2.2)';};
