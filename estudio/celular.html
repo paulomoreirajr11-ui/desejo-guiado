@@ -148,6 +148,7 @@
     <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin-top:8px;">★ Soltar no Clube</button>
     <button class="novo" id="reservar" disabled style="margin-top:8px;border-color:var(--gold);color:var(--gold2);">📌 Reservar no provador</button>
     <div id="resumo" style="display:none;font-size:12px;color:var(--gold2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-top:10px;text-align:center;font-weight:500;"></div>
+    <div id="gosto" style="display:none;font-size:13px;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:11px 13px;margin-top:8px;line-height:1.5;"></div>
     <div class="band" id="band"></div>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
@@ -449,20 +450,44 @@ function lookStatus(it){
   return {e:'⏳',t:'enviado'};
 }
 function renderResumo(){
-  var el=$('resumo');if(!el)return;
-  var imgs=S.bandeja.filter(function(b){return b.img;});
-  var env=imgs.filter(function(b){return b.lookid||b.enviado;});
-  if(!env.length){el.style.display='none';return;}
-  var rs=S.reacoes||{};
-  var ac=env.filter(function(b){return rs[b.lookid]==='Acertou em mim';}).length;
-  var mn=env.filter(function(b){return rs[b.lookid]==='Mira de novo';}).length;
-  var esp=env.length-ac-mn;
-  var cn=(typeof nomeCliente==='function'?nomeCliente():'')||'';
-  var p=['<b>'+imgs.length+'</b> mirado'+(imgs.length>1?'s':'')+(cn?' p/ '+cn:'')];
-  if(ac)p.push('💚 '+ac+' acertou');
-  if(mn)p.push('🔄 '+mn+' pediu outro');
-  if(esp)p.push('⏳ '+esp+' esperando');
-  el.innerHTML=p.join(' · ');el.style.display='block';
+  var el=$('resumo');
+  if(el){
+    var imgs=S.bandeja.filter(function(b){return b.img;});
+    var env=imgs.filter(function(b){return b.lookid||b.enviado;});
+    if(!env.length){el.style.display='none';}
+    else{
+      var rs=S.reacoes||{};
+      var ac=env.filter(function(b){return rs[b.lookid]==='Acertou em mim';}).length;
+      var mn=env.filter(function(b){return rs[b.lookid]==='Mira de novo';}).length;
+      var esp=env.length-ac-mn;
+      var cn=(typeof nomeCliente==='function'?nomeCliente():'')||'';
+      var p=['<b>'+imgs.length+'</b> mirado'+(imgs.length>1?'s':'')+(cn?' p/ '+cn:'')];
+      if(ac)p.push('💚 '+ac+' acertou');
+      if(mn)p.push('🔄 '+mn+' pediu outro');
+      if(esp)p.push('⏳ '+esp+' esperando');
+      el.innerHTML=p.join(' · ');el.style.display='block';
+    }
+  }
+  renderGosto();
+}
+function renderGosto(){
+  var el=$('gosto'); if(!el) return;
+  var rs=S.reacoes||{}, ama={}, rep={};
+  S.bandeja.forEach(function(b){
+    if(!b.img||!b.lookid)return;
+    var rc=rs[b.lookid], occ=b.occ||''; if(!rc||!occ)return;
+    if(rc==='Acertou em mim')ama[occ]=(ama[occ]||0)+1;
+    else if(rc==='Mira de novo')rep[occ]=(rep[occ]||0)+1;
+  });
+  var amaL=Object.keys(ama).sort(function(a,b){return ama[b]-ama[a];});
+  var repL=Object.keys(rep).filter(function(o){return !ama[o];});
+  if(!amaL.length&&!repL.length){el.style.display='none';return;}
+  var cn=(typeof nomeCliente==='function'?nomeCliente():'')||'esta cliente';
+  var h='<div style="font-family:\'Fraunces\',serif;color:var(--gold2);font-size:14px;">🎯 Gosto de '+cn+'</div>';
+  if(amaL.length)h+='<div style="margin-top:5px;">💚 Ama: <b>'+amaL.map(function(o){return o+(ama[o]>1?' ('+ama[o]+'×)':'');}).join(' · ')+'</b></div>';
+  if(repL.length)h+='<div style="margin-top:3px;color:var(--mut);">🔄 Ainda não emplacou: '+repL.join(' · ')+'</div>';
+  if(amaL.length)h+='<div style="margin-top:6px;color:var(--gold2);font-weight:600;">→ Aposte em '+amaL[0]+' 💛</div>';
+  el.innerHTML=h;el.style.display='block';
 }
 function carregarReacoes(){
   var ids=S.bandeja.map(function(b){return b.lookid;}).filter(Boolean);
