@@ -454,7 +454,7 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
                 "clean even softbox studio lighting, no props and no scenery")
     else:
         cena = pick_cena(ocasiao)
-    return ("Editorial fashion photograph for a luxury boutique. Use the FIRST reference image as the EXACT same person "
+    return ("High-fashion editorial photograph for a luxury fashion magazine. Use the FIRST reference image as the EXACT same person "
             "— her FACE must be IDENTICAL to the reference (same facial features, bone structure, eyes, nose, mouth, "
             "smile and expression), same hair, skin tone and age; she must be instantly recognizable. Do NOT beautify, "
             "rejuvenate, slim or alter her face or body; preserve her REAL body shape and proportions. "
@@ -464,9 +464,11 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
             "remove any hanger, clips and background." + peca +
             " Hair and makeup: " + beauty + " — keep this styling regardless of the background. "
             "Scene: " + cena + ". " + pose + ". "
-            "Full-length fashion editorial, 85mm lens, shallow depth of field, refined color grade, magazine-cover quality, "
-            "aspirational and elegant, tack-sharp focus, photorealistic, entire body head to feet in frame, beautifully "
-            "exposed. No text, no logos, no hanger.")
+            "Captured as a high-fashion magazine editorial: professional fashion photography, soft directional key light "
+            "with subtle rim light, cinematic film-like color grade with rich elegant tones, refined editorial composition "
+            "with intentional negative space, 85mm lens, shallow depth of field, full-length with the entire body from head "
+            "to feet in frame, tack-sharp focus, natural photorealistic skin texture, aspirational campaign mood, "
+            "magazine-cover quality, beautifully exposed. No text, no logos, no hanger.")
 
 def to_uri(v):
     """data-uri ou http(s) passa direto; caminho local vira data-uri."""
