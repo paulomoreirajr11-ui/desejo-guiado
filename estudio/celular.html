@@ -392,7 +392,17 @@ var FRASES=[
  'Olha que coisa linda separei pra você 💛',
  'Pensei em você assim que vi esse 💛',
  'Esse me fez lembrar do seu estilo 💛',
- 'Separei algo especial pra te mostrar 💛'
+ 'Separei algo especial pra te mostrar 💛',
+ 'Esse parece que foi feito pra você 💛',
+ 'Reservei esse pensando em você 💛',
+ 'Esse tem o seu charme 💛',
+ 'Imaginei como ia ficar lindo em você 💛',
+ 'Esse aqui pediu pra ser seu 💛',
+ 'Esse é você da cabeça aos pés 💛',
+ 'Não pude deixar de te mostrar esse 💛',
+ 'Olha esse — fechei na hora pensando em você 💛',
+ 'Esse aqui combina com o seu momento 💛',
+ 'Vi esse e seu nome veio na cabeça 💛'
 ];
 function nomeCliente(){if(S.tipo!=='cli')return '';var n=S.pessoa?(S.pessoa.nome||''):'';return /^(foto|cliente)/i.test(n)?'':n;}
 function fraseLook(){var nome=nomeCliente();var ola=nome?('Oi '+nome+'! '):'Oi! ';return ola+FRASES[Math.floor(Math.random()*FRASES.length)];}
