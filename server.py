@@ -508,6 +508,14 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=ROOT, **k)
     def log_message(self, *a): pass
+    def end_headers(self):
+        pth = self.path.split("?")[0]
+        seg = pth.rsplit("/", 1)[-1]
+        if pth.endswith(".html") or pth.endswith("/") or "." not in seg:
+            self.send_header("Cache-Control", "no-cache, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
     def _json(self, code, obj):
         b = json.dumps(obj).encode()
         self.send_response(code)
