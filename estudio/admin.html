@@ -88,8 +88,8 @@ async function carregar(){
   log.forEach(e=>{const v=e.vend||'(sem nome)';vends[v]=vends[v]||{total:0,hoje:0,last:'',cli:''};vends[v].total++;if((e.ts||'').slice(0,10)===today)vends[v].hoje++;if((e.ts||'')>vends[v].last){vends[v].last=e.ts||'';vends[v].cli=e.cliente||'';}});
   const hojeLooks=log.filter(e=>(e.ts||'').slice(0,10)===today).length;
   var lkArr=Object.keys(looks).map(function(k){return looks[k];});
-  var qProvar=lkArr.filter(function(l){return l&&l.reacao==='Quero provar';}).length;
-  document.getElementById('stats').innerHTML=card(log.length,'looks gerados (total)')+card(hojeLooks,'looks hoje')+card(Object.keys(vends).length,'vendedoras ativas')+card(qProvar,'quero provar 🛍️')+card(posts.length,'posts no clube');
+  var qAcertou=lkArr.filter(function(l){return l&&l.reacao==='Acertou em mim';}).length;
+  document.getElementById('stats').innerHTML=card(log.length,'looks gerados (total)')+card(hojeLooks,'looks hoje')+card(Object.keys(vends).length,'vendedoras ativas')+card(qAcertou,'acertou em mim 💚')+card(posts.length,'posts no clube');
   const rows=Object.entries(vends).sort((a,b)=>b[1].total-a[1].total).map(([v,d])=>'<tr><td class="v">'+v+'</td><td>'+d.total+'</td><td>'+d.hoje+'</td><td>'+(d.cli||'—')+'</td><td>'+fmt(d.last)+'</td></tr>').join('');
   document.getElementById('porvend').innerHTML=rows?('<table><tr><th>Vendedora</th><th>Total</th><th>Hoje</th><th>Última cliente</th><th>Última atividade</th></tr>'+rows+'</table>'):'<div class="empty">Nenhum look gerado ainda. Quando as vendedoras gerarem, aparece aqui.</div>';
   const rec=log.slice(-30).reverse();

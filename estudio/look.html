@@ -54,9 +54,7 @@
  var app=document.getElementById('app');
  var TECLAS=[
    {k:'Acertou em mim', em:'💚', msg:'Que alegria!'},
-   {k:'Quero provar',  em:'🛍️', msg:'Anotado com carinho!'},
-   {k:'Mira de novo',  em:'🔄', msg:'Combinado!'},
-   {k:'Não foi dessa', em:'🤍', msg:'Obrigada pela sinceridade!'}
+   {k:'Mira de novo',  em:'🔄', msg:'Combinado! Já vou mirar outro pra você.'}
  ];
  function esc(s){return (s||'').replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
  function err(m){app.innerHTML='<div class="state"><div style="font-size:38px">🤍</div><div>'+esc(m)+'</div><div class="foot">Irene Moreira</div></div>';}

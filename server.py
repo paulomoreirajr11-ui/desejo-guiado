@@ -378,15 +378,11 @@ class Handler(SimpleHTTPRequestHandler):
             url = fal_generate(prompt, uris)
             if not url: return self._json(502, {"error": "a nuvem nao devolveu imagem"})
             if body.get("faceswap"):
-                face = to_uri(body.get("person", ""))
-                for _try in range(2):  # portao de rosto: tenta 2x antes do fallback
-                    try:
-                        _sw = fal_faceswap(url, face)
-                        if _sw:
-                            url = _sw
-                            break
-                    except Exception:
-                        pass
+                try:
+                    _sw = fal_faceswap(url, to_uri(body.get("person", "")))
+                    if _sw: url = _sw
+                except Exception:
+                    pass
             try:
                 log_uso({"vend": body.get("vend", ""), "cliente": body.get("cliente", ""),
                          "pecas": body.get("pecas", ""), "ocasiao": body.get("ocasiao", ""),
