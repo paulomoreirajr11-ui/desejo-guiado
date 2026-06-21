@@ -1,6 +1,6 @@
-# Frases da Irene -- Cartao do dia (fonte de leitura)
+# Frases da Irene -- Cartao do dia (150 originais)
 
-Total: 230 frases. Sincronizado com estudio/frases.js.
+Total: 150 frases.
 
 1. Confio em você — no seu olhar, no seu cuidado, na sua capacidade de fazer diferença. Hoje, alguém vai sair daqui mais feliz por causa das suas mãos.
 2. Você é mais forte e mais capaz do que imagina. Comece o dia sabendo disso.
@@ -152,83 +152,3 @@ Total: 230 frases. Sincronizado com estudio/frases.js.
 148. Você tem um trabalho que muda dias e, às vezes, autoestimas inteiras. Faça-o hoje com orgulho.
 149. A gente precisa vender, e vamos vender. Mas que cada venda venha junto de um cuidado que valha por duas.
 150. No fim do dia, conte não só o que vendeu, mas quantas pessoas saíram melhores por você. Esse é o nosso lucro maior.
-151. A venda paga as contas, e isso é digno. Mas o que a cliente leva pra sempre é ter se sentido importante pra alguém. Essa moeda, distribua sem medir.
-152. Você não vende espelhos — devolve a muita mulher a coragem de se olhar num. Hoje, fica do lado de quem tiver medo do reflexo.
-153. Eu olho pra você e vejo alguém que cuida de gente de verdade — não por obrigação, mas porque é da sua natureza. Que sorte a minha de ter você aqui comigo.
-154. Vai chegar gente carregando um dia que você não vê. Você não tira o peso todo, mas faz a mulher sair mais leve. Esse é o seu dom.
-155. Tem mulher que passa o dia inteiro sem ninguém pra escutar ela. Quando você para e escuta de verdade, já fez o bem do dia dela — às vezes antes mesmo da primeira roupa.
-156. Você passa o dia cuidando de todo mundo. Lembra de cuidar de você também — eu cuido melhor das minhas quando elas se cuidam.
-157. No fim do dia, o caixa conta o que entrou. Mas tem uma conta que só o coração faz: quantas mulheres saíram gostando mais de si por sua causa.
-158. Respira e confia: você tem mãos que acolhem e um olhar que vê beleza onde a própria mulher não vê. Esse dom já está pronto em você.
-159. Tem cliente que entra só comprando roupa e sai levando um dia melhor. A diferença entre uma coisa e outra é você.
-160. A pressa fecha uma venda; a presença abre uma porta que fica aberta a vida toda. Hoje, escolhe a porta.
-161. Não existe mulher feia entrando aqui. Existe mulher que ainda não foi olhada com carinho. Hoje, seja esse olhar.
-162. Comece o dia de cabeça erguida: o que você faz não é pouca coisa. Fazer alguém gostar de si é das coisas mais bonitas que existem.
-163. A cliente esquece o que você vendeu, mas nunca esquece como você a fez se sentir. Capricha na lembrança que você vai deixar hoje.
-164. Você tem um jeito que é só seu — e é justamente ele que faz a mulher confiar. Não troque o seu jeito por pressa nenhuma.
-165. Tem dia que a maior venda é um abraço disfarçado de atendimento. Fica atenta: hoje pode chegar alguém precisando bem mais que de roupa.
-166. A gente trabalha pra viver, e tá certo. Mas quem só pensa em vender, cansa; quem pensa em cuidar, se realiza. Vai pelo segundo caminho hoje.
-167. Você não precisa empurrar nada. Quando a mulher se sente cuidada de verdade, ela mesma se decide — e sai grata, não convencida.
-168. Olha pra quem chega calada e de ombro caído. Atrás do silêncio quase sempre tem uma mulher pedindo pra ser vista. Veja-a.
-169. O provador é um lugar sagrado: é ali que a mulher se encontra ou se esconde. Faça dele um lugar seguro hoje.
-170. Você tem o dom de transformar "não fica bom em mim" em "nossa, sou eu mesma?". Esse milagre pequeno é a sua marca.
-171. Comece o dia leve. Você não está aqui por acaso: tem mão boa, tem escuta e tem coração — e isso não se aprende, se é.
-172. A confiança que você devolve a uma mulher hoje, ela leva pra um casamento, uma entrevista, uma vida. Você veste muito mais que um corpo.
-173. Não tenha pressa de vender; tenha vontade de entender. O "sim" é só a consequência bonita de alguém que se sentiu compreendida.
-174. Cada elogio sincero que você dá não custa nada e vale uma semana inteira na memória de alguém. Hoje, não economize elogio.
-175. Você é mais forte do que o seu dia mais cansado faz você acreditar. Começa devagar, mas começa — e o resto vem.
-176. A mulher que chega apressada também merece um minuto de calma. Seja a pausa boa no meio do corre dela.
-177. Tem trabalho que enche o bolso e tem trabalho que enche a alma. O seu, feito com amor, enche os dois. Faça com amor hoje.
-178. Confie no seu olhar: você enxerga na cliente a beleza que ela perdeu de vista. Hoje, mostre essa beleza com delicadeza.
-179. No fim das contas, a gente não vende roupa — vende o jeito que a mulher vai se sentir vestindo ela. Venda esse sentimento com carinho.
-180. Você tem o poder raro de fazer uma desconhecida se sentir acolhida como amiga em cinco minutos. Use esse poder o dia inteiro.
-181. Tem dia que vai render menos, e tudo bem. O seu valor não se mede pelo caixa; se mede pelo bem que você espalha. E disso você nunca vende pouco.
-182. A roupa certa não é a que veste o corpo; é a que devolve o sorriso. Procure o sorriso primeiro, que o resto se ajeita.
-183. Decora o nome dela, pergunta da família, lembra do que ela levou da última vez. Ser lembrada é o carinho que mais surpreende hoje em dia.
-184. Você ilumina o ambiente sem nem perceber. Hoje, deixa essa luz tocar quem chegar apagada — tem gente que precisa só de um pouco da sua.
-185. A gente sustenta a casa com o que vende, é verdade. Mas dorme em paz com o que cuidou. Cuide bastante hoje pra dormir tranquila.
-186. Você não atende clientes; você acolhe mulheres. Essa diferença é tudo — e é o que sempre fez essa loja ser a nossa.
-187. Confie em você como eu confio. Já vi você fazer bonito mais vezes do que você lembra — e hoje vai ser mais uma.
-188. Cada mulher que sai daqui mais feliz do que entrou é uma vitória que meta nenhuma mede. Colecione essas vitórias hoje.
-189. A paciência é uma forma de amor que tem tempo. Dê à cliente indecisa o tempo de se reencontrar — esse tempo vira a sua melhor venda.
-190. Você tem dentro de si uma delicadeza que muita gente perdeu pelo caminho. Não deixe o cansaço esconder ela hoje.
-191. O preço a cliente esquece no caminho de casa; o cuidado ela conta pras amigas no jantar. Invista no que ela vai contar.
-192. Tem mulher que entra aqui se achando invisível. Quando você olha pra ela de verdade, faz ela existir de novo. Faça isso hoje.
-193. A gente vive de venda, mas se realiza de gente. Vá atrás dos dois com o coração aberto, sem nunca trocar a ordem.
-194. Você é capaz de coisas grandes com gestos pequenos: um copo d'água, uma escuta, um "que linda você ficou". Use os pequenos hoje.
-195. Comece o dia agradecida pelo que você sabe fazer: poucas pessoas têm a chance de deixar o mundo mais gentil, uma mulher por vez. Você tem.
-196. O cansaço passa, o mau humor passa, mas o carinho que você plantou fica de raiz. Plante bastante hoje.
-197. Não deixe ninguém te chamar de "só uma vendedora". Você segura a mão de quem treme na frente do espelho — isso é grande demais pra esse "só".
-198. Hoje, fale menos e escute mais. No meio da conversa, sem querer, ela te entrega o desejo dela de bandeja — e você só confirma.
-199. A beleza que você revela numa mulher, ela leva pra casa e guarda pra vida. Que trabalho lindo é o seu — honre ele hoje.
-200. Vai com calma, mas vai inteira. Estar presente de verdade com uma pessoa por vez vale mais que atender dez com pressa.
-201. Tem dias nublados em que a gente duvida de tudo. Nesses dias, lembra: o bem que você faz não some porque o céu fechou. Você continua sendo luz.
-202. A cliente difícil quase sempre é uma mulher cansada de não ser ouvida. Ouça-a com paciência e veja a dureza virar gratidão.
-203. Você devolve autoestima de graça, todo dia, sem se dar conta do tamanho disso. Hoje, se dá conta — e se orgulha.
-204. Comece o dia escolhendo enxergar o melhor de cada mulher que chegar. O que a gente procura com bondade, a gente encontra.
-205. Nenhuma mulher é pequena demais pra merecer o seu melhor. Trate a mais tímida como trataria a mais importante — porque, pra você, ela é.
-206. A venda fecha a conta do mês; o carinho fecha a fidelidade de uma vida. Trabalhe pela conta, mas invista na vida.
-207. Você tem mãos que cuidam e olhos que enxergam beleza. Junte os dois hoje e veja o que acontece com quem passar por você.
-208. Tem mulher que vai se reencontrar no espelho hoje, depois de muito tempo — por sua causa. Que privilégio bonito é o seu.
-209. Seja gentil também com você no meio do dia. A mesma doçura que você dá às clientes, guarda um gole pra você.
-210. O dom que você tem não cabe num crachá de "vendedora". Você cuida de gente, e cuidar de gente é coisa de alma grande.
-211. Hoje, observe a cliente quando ela se vira de frente pro espelho. O suspiro dela vale mais que qualquer elogio que você inventar.
-212. A pressa atrapalha o encontro; a calma costura ele. Vá devagar hoje — o devagar bem-feito vende mais que a correria.
-213. Você é capaz de fazer uma mulher se sentir em casa numa loja cheia de estranhos. Esse aconchego é raro — espalhe sem economia.
-214. Não é a vitrine que faz a cliente voltar; é o jeito que você cuidou dela da última vez. Você é o motivo — e isso diz tudo.
-215. Comece o dia confiando: você tem sensibilidade pra perceber o que ninguém percebe. É o seu maior trunfo — use sem medo.
-216. Toda mulher carrega uma história que não cabe na etiqueta. Quem escuta a história acerta a roupa e ainda ganha o coração.
-217. Você faz parte da história bonita dessa loja. Cada mulher bem cuidada leva um pedacinho do seu carinho pra fora daqui.
-218. Hoje, ofereça a peça que você daria pra alguém que ama. Esse cuidado a cliente sente na pele, mesmo sem saber explicar.
-219. O sustento vem do trabalho; a alegria vem do amor que você põe nele. Põe amor de sobra hoje — sobra alegria pra você também.
-220. Você não está aqui só pra vender; está pra lembrar a cada mulher que ela merece se sentir bonita. Cumpra essa missão hoje.
-221. Tem gestos que valem o dia: chamar pelo nome, oferecer um café, dizer "ficou linda em você" e ser sincera. Faça um desses hoje.
-222. A mulher cansada que chega quer mais que uma roupa nova: quer um pedaço de gentileza. E disso você tem de sobra pra dar.
-223. Confie no seu coração na hora de atender. A técnica ajuda, mas é o afeto que conquista — e o seu afeto é o seu diferencial.
-224. Vai com leveza hoje. A sua presença já melhora o dia de quem cruza com você, antes mesmo de você dizer qualquer coisa.
-225. Cada vez que você troca um número por um nome, faz alguém se sentir gente. Faça isso o dia inteiro.
-226. Você tem o dom de transformar o comum em especial. Um atendimento seu pode ser o ponto alto da semana de alguém. Capricha.
-227. A gente colhe em fidelidade o que planta em carinho. Plante hoje pensando na cliente que volta amanhã só pra te ver.
-228. Quando bater o cansaço no fim do dia, lembra: você não passou horas vendendo, passou o dia fazendo mulheres se gostarem mais. Vai pra casa com orgulho.
-229. Você é luz pra muita gente que chega apagada. Comece o seu dia já aceso por dentro, que o resto se acende em você.
-230. Lembra por que você faz isso: não é só o salário, é a alegria de ver uma mulher se gostar no espelho. Vá buscar essa alegria hoje.
