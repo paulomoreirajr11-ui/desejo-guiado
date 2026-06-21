@@ -1,4 +1,4 @@
-# Frases da Irene — Cartao do dia (fonte de leitura)
+# Frases da Irene -- Cartao do dia (fonte de leitura)
 
 Total: 230 frases. Sincronizado com estudio/frases.js.
 
@@ -154,9 +154,9 @@ Total: 230 frases. Sincronizado com estudio/frases.js.
 150. No fim do dia, conte não só o que vendeu, mas quantas pessoas saíram melhores por você. Esse é o nosso lucro maior.
 151. A venda paga as contas, e isso é digno. Mas o que a cliente leva pra sempre é ter se sentido importante pra alguém. Essa moeda, distribua sem medir.
 152. Você não vende espelhos — devolve a muita mulher a coragem de se olhar num. Hoje, fica do lado de quem tiver medo do reflexo.
-153. Começa o dia sabendo o que eu sei faz tempo: tem quem venda, e tem quem cuida vendendo. Você é das que cuidam — e isso é raro.
+153. Eu olho pra você e vejo alguém que cuida de gente de verdade — não por obrigação, mas porque é da sua natureza. Que sorte a minha de ter você aqui comigo.
 154. Vai chegar gente carregando um dia que você não vê. Você não tira o peso todo, mas faz a mulher sair mais leve. Esse é o seu dom.
-155. Antes de oferecer, pergunta. A roupa certa quase sempre mora na história que ela conta sem perceber. Hoje, escuta com o coração.
+155. Tem mulher que passa o dia inteiro sem ninguém pra escutar ela. Quando você para e escuta de verdade, já fez o bem do dia dela — às vezes antes mesmo da primeira roupa.
 156. Você passa o dia cuidando de todo mundo. Lembra de cuidar de você também — eu cuido melhor das minhas quando elas se cuidam.
 157. No fim do dia, o caixa conta o que entrou. Mas tem uma conta que só o coração faz: quantas mulheres saíram gostando mais de si por sua causa.
 158. Respira e confia: você tem mãos que acolhem e um olhar que vê beleza onde a própria mulher não vê. Esse dom já está pronto em você.
