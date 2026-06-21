@@ -211,7 +211,7 @@
     </div>
   </div>
 </div>
-<div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div style="position:fixed;top:10px;right:16px;color:#C7A34A;font-size:28px;pointer-events:none;">✕</div></div>
+<div id="zoom" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.96);z-index:60;align-items:center;justify-content:center;overflow:auto;padding:8px;"><img id="zoomimg" style="max-width:100%;height:auto;border-radius:10px;cursor:zoom-out;transition:transform .2s;"><div id="zoomx" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:14px;z-index:62;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.55);color:#C7A34A;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;-webkit-tap-highlight-color:transparent;">✕</div></div>
 
 <div id="sabedoria" style="display:none;position:fixed;inset:0;background:rgba(20,16,8,.62);z-index:70;align-items:center;justify-content:center;padding:24px;">
   <div style="max-width:380px;width:100%;background:var(--ink);border:1px solid var(--gold);border-radius:20px;padding:30px 26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);">
@@ -613,6 +613,7 @@ renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();most
 window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
 $('zoom').onclick=function(){this.style.display='none';};
 $('zoomimg').onclick=function(e){e.stopPropagation();this.style.transform=this.style.transform==='scale(2.2)'?'scale(1)':'scale(2.2)';};
+$('zoomx').onclick=function(e){e.stopPropagation();var i=$('zoomimg');if(i)i.style.transform='scale(1)';$('zoom').style.display='none';};
 </script>
 </body>
 </html>
