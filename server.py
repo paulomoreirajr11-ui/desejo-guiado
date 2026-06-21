@@ -454,27 +454,31 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
                 "clean even softbox studio lighting, no props and no scenery")
     else:
         cena = pick_cena(ocasiao)
-    return ("High-fashion editorial photograph for a luxury fashion magazine, but the subject is a REAL woman, not a model. "
-            "Use the FIRST reference image as the EXACT same real person — her FACE must be IDENTICAL to the reference "
-            "(same facial features, bone structure, eyes, nose, mouth, smile and expression), the SAME hair COLOR, the SAME "
-            "hair LENGTH, the same skin tone and the same AGE. If she wears glasses in the reference, KEEP the glasses. "
+    return ("A realistic, elegant fashion photograph of a REAL woman wearing a REAL outfit — a virtual try-on for a real "
+            "boutique. The woman and the clothes are REAL products and must be reproduced EXACTLY as in the reference images; "
+            "ONLY the background scene and her pose may change for the occasion — NEVER the woman and NEVER the garment. "
+            "THE GARMENTS ARE THE PRODUCT BEING SOLD, so this is the most important rule. Reproduce each piece from the "
+            "OTHER reference images (every image after the first) EXACTLY and unchanged: the SAME silhouette, the SAME "
+            "neckline, the SAME straps and sleeves, the SAME length, the SAME fabric and colors, and the EXACT same print, "
+            "flowers, embroidery, lace, beading or appliqué in the SAME place and SAME size as the reference. Do NOT "
+            "redesign, restyle or 'upgrade' the garment to match the occasion or a magazine look. Specifically: do NOT turn "
+            "a localized floral appliqué into an all-over floral print; do NOT change a spaghetti-strap dress into a "
+            "one-shoulder, halter, sleeved or lace dress; do NOT add, remove or move straps, sleeves, flowers or details; "
+            "do NOT replace a complex artwork/fresco print with a different print. The customer must receive the IDENTICAL "
+            "piece shown. Include EVERY piece shown — top, bottom or dress, footwear and accessories — styled into one "
+            "harmonious look; take ONLY the garments and remove any hanger, clips and background." + peca +
+            " The woman is the person in the FIRST reference image and her FACE must be IDENTICAL to that reference "
+            "(same facial features, bone structure, eyes, nose, mouth, smile and expression), with the SAME hair COLOR, the "
+            "SAME hair LENGTH, the same skin tone and the same AGE. If she wears glasses in the reference, KEEP the glasses. "
             "She must remain INSTANTLY recognizable as that exact same real woman. Do NOT beautify, rejuvenate, slim her, "
-            "change her hair color or hair length, remove her glasses, or turn her into a young fashion model; keep her REAL "
-            "age, face, hair and body exactly as in the reference. "
-            "Dress her in a COMPLETE, cohesive outfit assembled from ALL the OTHER reference images (every image after "
-            "the first): include EVERY piece shown — top, bottom or dress, footwear and accessories. Reproduce each "
-            "garment EXACTLY as in its reference image — the SAME print, pattern, artwork, drawing, colors, cut, fabric, "
-            "length and every detail must be IDENTICAL to the reference, copied faithfully. These are REAL products being "
-            "sold, so you must NOT redesign, reinvent, reinterpret, restyle, simplify, crop or change the print or pattern "
-            "of any garment in ANY way — the exact same fabric artwork must appear on the body. Take ONLY the garments; "
-            "remove any hanger, clips and background." + peca +
-            " Hair and makeup: " + beauty + " — you may arrange the hair to suit the occasion, but ALWAYS keep its real color and real length; keep this styling regardless of the background. "
+            "change her hair color or hair length, remove her glasses, or turn her into a young fashion model. "
+            "Hair and makeup: " + beauty + " — you may arrange the hair to suit the occasion, but ALWAYS keep its real color and real length. "
             "Scene: " + cena + ". " + pose + ". "
-            "Captured as a high-fashion magazine editorial: professional fashion photography, soft directional key light "
-            "with subtle rim light, cinematic film-like color grade with rich elegant tones, refined editorial composition "
-            "with intentional negative space, 85mm lens, shallow depth of field, full-length with the entire body from head "
-            "to feet in frame, tack-sharp focus, natural photorealistic skin texture, elegant and natural editorial mood (woman stays exactly herself: real age, real hair, real face), "
-            "magazine-cover quality, beautifully exposed. No text, no logos, no hanger.")
+            "Photographed beautifully: elegant professional fashion photography, soft directional key light with subtle rim "
+            "light, refined natural color grade with rich elegant tones, intentional negative space, 85mm lens, shallow depth "
+            "of field, full-length with the entire body from head to feet in frame, tack-sharp focus, natural photorealistic "
+            "skin texture, magazine-quality finish. This elegance must come ONLY from the lighting, the scene and the "
+            "composition — NEVER from altering the woman or her clothes. No text, no logos, no hanger.")
 
 def to_uri(v):
     """data-uri ou http(s) passa direto; caminho local vira data-uri."""
