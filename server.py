@@ -454,20 +454,23 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
                 "clean even softbox studio lighting, no props and no scenery")
     else:
         cena = pick_cena(ocasiao)
-    return ("High-fashion editorial photograph for a luxury fashion magazine. Use the FIRST reference image as the EXACT same person "
-            "— her FACE must be IDENTICAL to the reference (same facial features, bone structure, eyes, nose, mouth, "
-            "smile and expression), same hair, skin tone and age; she must be instantly recognizable. Do NOT beautify, "
-            "rejuvenate, slim or alter her face or body; preserve her REAL body shape and proportions. "
+    return ("High-fashion editorial photograph for a luxury fashion magazine, but the subject is a REAL woman, not a model. "
+            "Use the FIRST reference image as the EXACT same real person — her FACE must be IDENTICAL to the reference "
+            "(same facial features, bone structure, eyes, nose, mouth, smile and expression), the SAME hair COLOR, the SAME "
+            "hair LENGTH, the same skin tone and the same AGE. If she wears glasses in the reference, KEEP the glasses. "
+            "She must remain INSTANTLY recognizable as that exact same real woman. Do NOT beautify, rejuvenate, slim her, "
+            "change her hair color or hair length, remove her glasses, or turn her into a young fashion model; keep her REAL "
+            "age, face, hair and body exactly as in the reference. "
             "Dress her in a COMPLETE, cohesive outfit assembled from ALL the OTHER reference images (every image after "
             "the first): include EVERY piece shown — top, bottom or dress, footwear and accessories — reproducing each "
             "faithfully (color, cut, fabric, details) and styling them into one harmonious look. Take ONLY the garments; "
             "remove any hanger, clips and background." + peca +
-            " Hair and makeup: " + beauty + " — keep this styling regardless of the background. "
+            " Hair and makeup: " + beauty + " — you may arrange the hair to suit the occasion, but ALWAYS keep its real color and real length; keep this styling regardless of the background. "
             "Scene: " + cena + ". " + pose + ". "
             "Captured as a high-fashion magazine editorial: professional fashion photography, soft directional key light "
             "with subtle rim light, cinematic film-like color grade with rich elegant tones, refined editorial composition "
             "with intentional negative space, 85mm lens, shallow depth of field, full-length with the entire body from head "
-            "to feet in frame, tack-sharp focus, natural photorealistic skin texture, aspirational campaign mood, "
+            "to feet in frame, tack-sharp focus, natural photorealistic skin texture, elegant and natural editorial mood (woman stays exactly herself: real age, real hair, real face), "
             "magazine-cover quality, beautifully exposed. No text, no logos, no hanger.")
 
 def to_uri(v):
