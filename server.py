@@ -462,8 +462,11 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
             "change her hair color or hair length, remove her glasses, or turn her into a young fashion model; keep her REAL "
             "age, face, hair and body exactly as in the reference. "
             "Dress her in a COMPLETE, cohesive outfit assembled from ALL the OTHER reference images (every image after "
-            "the first): include EVERY piece shown — top, bottom or dress, footwear and accessories — reproducing each "
-            "faithfully (color, cut, fabric, details) and styling them into one harmonious look. Take ONLY the garments; "
+            "the first): include EVERY piece shown — top, bottom or dress, footwear and accessories. Reproduce each "
+            "garment EXACTLY as in its reference image — the SAME print, pattern, artwork, drawing, colors, cut, fabric, "
+            "length and every detail must be IDENTICAL to the reference, copied faithfully. These are REAL products being "
+            "sold, so you must NOT redesign, reinvent, reinterpret, restyle, simplify, crop or change the print or pattern "
+            "of any garment in ANY way — the exact same fabric artwork must appear on the body. Take ONLY the garments; "
             "remove any hanger, clips and background." + peca +
             " Hair and makeup: " + beauty + " — you may arrange the hair to suit the occasion, but ALWAYS keep its real color and real length; keep this styling regardless of the background. "
             "Scene: " + cena + ". " + pose + ". "
