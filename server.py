@@ -587,6 +587,8 @@ class Handler(SimpleHTTPRequestHandler):
                     out["ok"] = False
                     out["error"] = str(e)
             return self._json(200, out)
+        if p == "/version":
+            return self._json(200, {"version": "2026-06-21_fidelidade-roupa+festa+zoomX", "ok": True})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
