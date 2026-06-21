@@ -1,4 +1,4 @@
-# Frases da Irene — Cartao do dia (fonte de leitura)
+# Frases da Irene -- Cartao do dia (fonte de leitura)
 
 Total: 230 frases. Sincronizado com estudio/frases.js.
 
@@ -212,16 +212,16 @@ Total: 230 frases. Sincronizado com estudio/frases.js.
 208. Não diminua o que você faz só porque parece simples. Cuidar de gente nunca é simples.
 209. A sua presença muda o clima da loja. Isso é um dom — cuida dele.
 210. Seja você por inteiro. É a sua versão, não a cópia de alguém, que a cliente lembra.
-211. Tem cliente que entra precisando de roupa e sai precisando ter sido vista. Seja os olhos que enxergam ela inteira.
-212. Pergunta o nome. Chama pelo nome. Pouca coisa faz alguém se sentir tão bem-vinda.
-213. Repara no que ela não diz. Às vezes o "só estou olhando" é um pedido de ajuda com vergonha.
-214. Cada mulher que entra carrega uma história naquele dia. Você pode deixá-la um pouco mais leve.
-215. Não julga pela aparência de quem entra. Trata todas como as mais importantes — porque são.
-216. Elogia de verdade, nunca pra vender. Mulher reconhece elogio sincero de longe.
-217. Quando ela se olhar no espelho e sorrir, esse sorriso é seu também. Você fez aquilo acontecer.
-218. Tem cliente difícil que só está cansada. Um café e um pouco de paciência mudam a história toda.
-219. Vista a cliente pra vida dela, não pra vitrine. O que serve pra ela é o que volta feliz.
-220. Faz cada uma sair sentindo que valeu a pena ter entrado — mesmo quando não levou nada.
+211. Antes de qualquer venda, você é a peça mais importante dessa engrenagem. Sem você, nada gira.
+212. Você cuida de tanta gente o dia todo. Hoje deixa eu cuidar de você: respira, você está indo bem.
+213. Se o dia pesar, lembra que aqui também tem colo. Pode respirar, pode se apoiar — você não está sozinha.
+214. Quando você chega cansada ou segura a barra calada, eu percebo. Você não passa despercebida pra mim.
+215. Você não é mão de obra. É gente que eu escolhi ter por perto — e eu cuido de quem fica por perto.
+216. Tem dia que você segura todo mundo. E quem segura você? Pode contar comigo — eu seguro.
+217. Você merece o mesmo carinho que entrega o dia inteiro. Se ninguém te deu isso hoje, recebe de mim agora.
+218. O motor dessa loja não é a roupa nem a vitrine. É você. E motor bom a gente cuida com carinho.
+219. Quando você se sente vista e cuidada, tudo muda. Por isso eu faço questão: você é vista, você é cuidada.
+220. O seu valor não depende do seu melhor dia. Nos dias difíceis, você continua sendo preciosa pra mim.
 221. Essa loja não é só onde você trabalha. É um pedaço da sua história — e você, da nossa.
 222. Aqui ninguém cresce sozinha. Quando uma brilha, a loja inteira brilha junto.
 223. Cuida da colega como cuida da cliente. Time que se apoia vende mais e sofre menos.
