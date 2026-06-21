@@ -1,4 +1,4 @@
-# Frases da Irene -- Cartao do dia (fonte de leitura)
+# Frases da Irene — Cartao do dia (fonte de leitura)
 
 Total: 230 frases. Sincronizado com estudio/frases.js.
 
@@ -152,83 +152,83 @@ Total: 230 frases. Sincronizado com estudio/frases.js.
 148. Você tem um trabalho que muda dias e, às vezes, autoestimas inteiras. Faça-o hoje com orgulho.
 149. A gente precisa vender, e vamos vender. Mas que cada venda venha junto de um cuidado que valha por duas.
 150. No fim do dia, conte não só o que vendeu, mas quantas pessoas saíram melhores por você. Esse é o nosso lucro maior.
-151. Tem dias que ninguém vai te dizer, então deixa eu dizer: você importa. Muito.
-152. Eu vejo o seu esforço, o seu capricho e o sorriso que você dá mesmo cansada. Você nunca passa batido por aqui.
-153. Antes de tudo que você faz, existe quem você é — e quem você é já basta.
-154. Se hoje você acordar duvidando do seu valor, empresta o meu olhar: daqui de fora, você brilha.
-155. Você merece ser percebida inteira — não só pelo que faz, mas por quem você é.
-156. Não precisa fazer nada extraordinário pra valer a pena. Você já vale, do jeitinho que é.
-157. No meio da correria do mundo, alguém pensa em você com carinho hoje. Sou eu.
-158. Você é importante antes de qualquer coisa que faça. O seu valor não se mede, se sente.
-159. Tem gente que passa e some. Você é das que deixam saudade quando não estão.
-160. Que bom que você existe. De verdade — o mundo fica mais bonito com você nele.
-161. Bom dia de quem acordou inteira. Vai com calma, vai com fé — você dá conta, você sempre deu.
-162. Respira fundo. O dia é novo, e você merece vivê-lo leve.
-163. Levanta o queixo e começa devagar. Não existe pressa pra ser quem você já é.
-164. Não espera o dia ficar bom pra sorrir. Sorri primeiro — o resto costuma seguir.
-165. Hoje, antes de qualquer coisa, lembra: você é capaz, você é suficiente, você é mais forte do que pensa.
-166. Que esse dia seja gentil com você do mesmo jeito que você é gentil com todo mundo.
-167. Acorda sabendo: você não precisa carregar o mundo. Só precisa ser você, e isso já é muito.
-168. Toda manhã é uma chance nova de recomeçar. E você é boa em recomeçar.
-169. Veste a coragem junto com a roupa. Hoje você se tem, e isso basta.
-170. Que o seu café de hoje seja quentinho e o seu coração, leve. Você merece um bom dia.
-171. Obrigada por existir do jeito que você existe. Gente como você faz falta no mundo.
-172. Eu sou grata por ter você por perto. Não pelo que você faz — por quem você é.
-173. Tem dias que eu só queria te abraçar e dizer: obrigada por ser essa pessoa.
-174. Você espalha cuidado por onde passa. Obrigada por esse seu jeito raro de ser.
-175. Sou grata pelos seus dias bons e pelos difíceis também — porque em todos você foi você.
-176. Obrigada por cada vez que você foi gentil quando podia não ser. Isso diz tudo sobre você.
-177. Eu te admiro. E queria que você se enxergasse com o mesmo carinho que eu enxergo.
-178. Se um dia eu esquecer de dizer, fica registrado: ter você por perto é uma sorte minha.
-179. Obrigada por ser luz nos dias nublados. Você nem imagina quanta gente você ilumina.
-180. Do fundo do coração: que bom que a vida colocou você no meu caminho.
-181. Recebe esse carinho hoje: você é amada, você é cuidada, você não está sozinha.
-182. Se ninguém te abraçou hoje, segura esse abraço meu. Bem apertado.
-183. Você cuida de tanta gente. Hoje deixa alguém cuidar de você — começa por você mesma.
-184. Vai com leveza. Você é amada hoje exatamente como está, sem precisar provar nada.
-185. Tem colo aqui pra você sempre que precisar. Você não carrega nada sozinha.
-186. Seja gentil com você hoje. Você fala com tanta gente com doçura — fala assim consigo também.
-187. Você merece descanso, carinho e paz. Não esquece de cuidar de quem mais importa: você.
-188. Hoje eu queria que você se sentisse tão especial quanto você é. Porque você é, e muito.
-189. Guarda esse carinho pra quando o dia apertar: alguém te ama e torce por você sempre.
-190. Você é preciosa. Não pelo que faz — só por ser você. Nunca esquece disso.
-191. Dia difícil não diminui você. Você continua inteira, mesmo quando está cansada.
-192. Tá pesado? Respira. Isso passa, e você fica — mais forte do que imagina.
-193. Não leva pra casa o peso de hoje. Você merece chegar em casa leve.
-194. Nem todo dia precisa ser dos grandes. Tem dia que a vitória é atravessar com o coração inteiro.
-195. O seu valor não depende do seu melhor dia. Nos dias cinzas, você continua valiosa.
-196. Quando tudo apertar, respira e seja gentil com você. O resto a gente resolve com calma.
-197. Você não está sozinha no que sente. Tem gente que te entende e segura a sua mão.
-198. Dias ruins não duram pra sempre, mas a sua força, sim. Aguenta firme, eu tô aqui.
-199. Se precisar parar pra respirar, pode. Cuidar de você também é uma forma de coragem.
-200. Maré baixa faz parte. A cheia volta — e te encontra de pé, como sempre.
-201. Não tente ser ninguém além de você. O seu jeito de ser já é a sua maior beleza.
-202. Não se compare. A sua luz é só sua, e ninguém brilha igual a você.
-203. O seu jeito doce não é fraqueza. É uma das coisas mais bonitas que você tem.
-204. Confia em você. Tem uma sabedoria sua, calma e bonita, que poucos têm.
-205. Você é mais forte do que o seu dia mais inseguro te conta. Acredita em mim.
-206. Errar não te faz menos. Quem se importa de verdade às vezes tropeça — e tudo bem.
-207. A sua presença muda o ambiente. Onde você chega, fica mais quente. Isso é um dom.
-208. Não diminua quem você é. Cabe muita grandeza num coração simples como o seu.
-209. Você tem um valor que não se explica — se sente quando você está por perto.
-210. Seja você por inteiro, sem pedir desculpa. É essa sua versão que o mundo precisa.
-211. Antes de qualquer coisa, você é o que essa casa tem de mais importante. Sem você, falta alma.
-212. Você cuida de todo mundo o dia inteiro. Hoje deixa eu cuidar de você: respira, está tudo bem.
-213. Se o dia pesar, lembra que aqui tem colo. Pode se apoiar — você não está sozinha.
-214. Quando você chega cansada ou fica quieta segurando a barra, eu percebo. Você não passa despercebida.
-215. Você não é número pra mim. É gente que eu escolhi ter por perto, e eu cuido de quem amo por perto.
-216. Tem dia que você segura todo mundo. E quem segura você? Pode contar comigo — eu seguro.
-217. Você merece o mesmo carinho que entrega o dia inteiro. Se ninguém te deu isso hoje, recebe de mim agora.
-218. O que faz essa casa bonita não são as paredes. É você. E eu cuido de você com carinho.
-219. Quando você se sente vista e cuidada, o seu dia inteiro muda. Por isso eu insisto: você é cuidada.
-220. Pode confiar: aqui você sempre vai ter alguém que te vê, te valoriza e torce por você. Sempre.
-221. Aqui não é só um lugar onde você passa o dia. É um pedaço da sua história — e você, da nossa.
-222. Você faz parte de uma família que escolheu caminhar junta. E família a gente não larga.
-223. Quando uma de vocês está bem, todas ficam mais leves. A gente se cuida por aqui.
-224. Cuida da colega como gostaria de ser cuidada. Vocês são apoio uma da outra, sempre.
-225. Você não está sozinha. Tem gente do seu lado que torce por você e segura a sua mão.
-226. A colega do seu lado não é rival. É irmã de caminhada — dividam o peso e a alegria.
-227. Se um dia você se sentir pequena, lembra: aqui você é parte de algo bonito e grande.
-228. A gente comemora junto e chora junto. Sempre foi assim, e sempre vai ser.
-229. Você é nome, é história, é parte de quem nós somos. Nunca só mais uma.
-230. No fim do dia, o que fica não é o que se fez — é o carinho que a gente construiu junto. E hoje teve.
+151. A venda paga as contas, e isso é digno. Mas o que a cliente leva pra sempre é ter se sentido importante pra alguém. Essa moeda, distribua sem medir.
+152. Você não vende espelhos — devolve a muita mulher a coragem de se olhar num. Hoje, fica do lado de quem tiver medo do reflexo.
+153. Começa o dia sabendo o que eu sei faz tempo: tem quem venda, e tem quem cuida vendendo. Você é das que cuidam — e isso é raro.
+154. Vai chegar gente carregando um dia que você não vê. Você não tira o peso todo, mas faz a mulher sair mais leve. Esse é o seu dom.
+155. Antes de oferecer, pergunta. A roupa certa quase sempre mora na história que ela conta sem perceber. Hoje, escuta com o coração.
+156. Você passa o dia cuidando de todo mundo. Lembra de cuidar de você também — eu cuido melhor das minhas quando elas se cuidam.
+157. No fim do dia, o caixa conta o que entrou. Mas tem uma conta que só o coração faz: quantas mulheres saíram gostando mais de si por sua causa.
+158. Respira e confia: você tem mãos que acolhem e um olhar que vê beleza onde a própria mulher não vê. Esse dom já está pronto em você.
+159. Tem cliente que entra só comprando roupa e sai levando um dia melhor. A diferença entre uma coisa e outra é você.
+160. A pressa fecha uma venda; a presença abre uma porta que fica aberta a vida toda. Hoje, escolhe a porta.
+161. Não existe mulher feia entrando aqui. Existe mulher que ainda não foi olhada com carinho. Hoje, seja esse olhar.
+162. Comece o dia de cabeça erguida: o que você faz não é pouca coisa. Fazer alguém gostar de si é das coisas mais bonitas que existem.
+163. A cliente esquece o que você vendeu, mas nunca esquece como você a fez se sentir. Capricha na lembrança que você vai deixar hoje.
+164. Você tem um jeito que é só seu — e é justamente ele que faz a mulher confiar. Não troque o seu jeito por pressa nenhuma.
+165. Tem dia que a maior venda é um abraço disfarçado de atendimento. Fica atenta: hoje pode chegar alguém precisando bem mais que de roupa.
+166. A gente trabalha pra viver, e tá certo. Mas quem só pensa em vender, cansa; quem pensa em cuidar, se realiza. Vai pelo segundo caminho hoje.
+167. Você não precisa empurrar nada. Quando a mulher se sente cuidada de verdade, ela mesma se decide — e sai grata, não convencida.
+168. Olha pra quem chega calada e de ombro caído. Atrás do silêncio quase sempre tem uma mulher pedindo pra ser vista. Veja-a.
+169. O provador é um lugar sagrado: é ali que a mulher se encontra ou se esconde. Faça dele um lugar seguro hoje.
+170. Você tem o dom de transformar "não fica bom em mim" em "nossa, sou eu mesma?". Esse milagre pequeno é a sua marca.
+171. Comece o dia leve. Você não está aqui por acaso: tem mão boa, tem escuta e tem coração — e isso não se aprende, se é.
+172. A confiança que você devolve a uma mulher hoje, ela leva pra um casamento, uma entrevista, uma vida. Você veste muito mais que um corpo.
+173. Não tenha pressa de vender; tenha vontade de entender. O "sim" é só a consequência bonita de alguém que se sentiu compreendida.
+174. Cada elogio sincero que você dá não custa nada e vale uma semana inteira na memória de alguém. Hoje, não economize elogio.
+175. Você é mais forte do que o seu dia mais cansado faz você acreditar. Começa devagar, mas começa — e o resto vem.
+176. A mulher que chega apressada também merece um minuto de calma. Seja a pausa boa no meio do corre dela.
+177. Tem trabalho que enche o bolso e tem trabalho que enche a alma. O seu, feito com amor, enche os dois. Faça com amor hoje.
+178. Confie no seu olhar: você enxerga na cliente a beleza que ela perdeu de vista. Hoje, mostre essa beleza com delicadeza.
+179. No fim das contas, a gente não vende roupa — vende o jeito que a mulher vai se sentir vestindo ela. Venda esse sentimento com carinho.
+180. Você tem o poder raro de fazer uma desconhecida se sentir acolhida como amiga em cinco minutos. Use esse poder o dia inteiro.
+181. Tem dia que vai render menos, e tudo bem. O seu valor não se mede pelo caixa; se mede pelo bem que você espalha. E disso você nunca vende pouco.
+182. A roupa certa não é a que veste o corpo; é a que devolve o sorriso. Procure o sorriso primeiro, que o resto se ajeita.
+183. Decora o nome dela, pergunta da família, lembra do que ela levou da última vez. Ser lembrada é o carinho que mais surpreende hoje em dia.
+184. Você ilumina o ambiente sem nem perceber. Hoje, deixa essa luz tocar quem chegar apagada — tem gente que precisa só de um pouco da sua.
+185. A gente sustenta a casa com o que vende, é verdade. Mas dorme em paz com o que cuidou. Cuide bastante hoje pra dormir tranquila.
+186. Você não atende clientes; você acolhe mulheres. Essa diferença é tudo — e é o que sempre fez essa loja ser a nossa.
+187. Confie em você como eu confio. Já vi você fazer bonito mais vezes do que você lembra — e hoje vai ser mais uma.
+188. Cada mulher que sai daqui mais feliz do que entrou é uma vitória que meta nenhuma mede. Colecione essas vitórias hoje.
+189. A paciência é uma forma de amor que tem tempo. Dê à cliente indecisa o tempo de se reencontrar — esse tempo vira a sua melhor venda.
+190. Você tem dentro de si uma delicadeza que muita gente perdeu pelo caminho. Não deixe o cansaço esconder ela hoje.
+191. O preço a cliente esquece no caminho de casa; o cuidado ela conta pras amigas no jantar. Invista no que ela vai contar.
+192. Tem mulher que entra aqui se achando invisível. Quando você olha pra ela de verdade, faz ela existir de novo. Faça isso hoje.
+193. A gente vive de venda, mas se realiza de gente. Vá atrás dos dois com o coração aberto, sem nunca trocar a ordem.
+194. Você é capaz de coisas grandes com gestos pequenos: um copo d'água, uma escuta, um "que linda você ficou". Use os pequenos hoje.
+195. Comece o dia agradecida pelo que você sabe fazer: poucas pessoas têm a chance de deixar o mundo mais gentil, uma mulher por vez. Você tem.
+196. O cansaço passa, o mau humor passa, mas o carinho que você plantou fica de raiz. Plante bastante hoje.
+197. Não deixe ninguém te chamar de "só uma vendedora". Você segura a mão de quem treme na frente do espelho — isso é grande demais pra esse "só".
+198. Hoje, fale menos e escute mais. No meio da conversa, sem querer, ela te entrega o desejo dela de bandeja — e você só confirma.
+199. A beleza que você revela numa mulher, ela leva pra casa e guarda pra vida. Que trabalho lindo é o seu — honre ele hoje.
+200. Vai com calma, mas vai inteira. Estar presente de verdade com uma pessoa por vez vale mais que atender dez com pressa.
+201. Tem dias nublados em que a gente duvida de tudo. Nesses dias, lembra: o bem que você faz não some porque o céu fechou. Você continua sendo luz.
+202. A cliente difícil quase sempre é uma mulher cansada de não ser ouvida. Ouça-a com paciência e veja a dureza virar gratidão.
+203. Você devolve autoestima de graça, todo dia, sem se dar conta do tamanho disso. Hoje, se dá conta — e se orgulha.
+204. Comece o dia escolhendo enxergar o melhor de cada mulher que chegar. O que a gente procura com bondade, a gente encontra.
+205. Nenhuma mulher é pequena demais pra merecer o seu melhor. Trate a mais tímida como trataria a mais importante — porque, pra você, ela é.
+206. A venda fecha a conta do mês; o carinho fecha a fidelidade de uma vida. Trabalhe pela conta, mas invista na vida.
+207. Você tem mãos que cuidam e olhos que enxergam beleza. Junte os dois hoje e veja o que acontece com quem passar por você.
+208. Tem mulher que vai se reencontrar no espelho hoje, depois de muito tempo — por sua causa. Que privilégio bonito é o seu.
+209. Seja gentil também com você no meio do dia. A mesma doçura que você dá às clientes, guarda um gole pra você.
+210. O dom que você tem não cabe num crachá de "vendedora". Você cuida de gente, e cuidar de gente é coisa de alma grande.
+211. Hoje, observe a cliente quando ela se vira de frente pro espelho. O suspiro dela vale mais que qualquer elogio que você inventar.
+212. A pressa atrapalha o encontro; a calma costura ele. Vá devagar hoje — o devagar bem-feito vende mais que a correria.
+213. Você é capaz de fazer uma mulher se sentir em casa numa loja cheia de estranhos. Esse aconchego é raro — espalhe sem economia.
+214. Não é a vitrine que faz a cliente voltar; é o jeito que você cuidou dela da última vez. Você é o motivo — e isso diz tudo.
+215. Comece o dia confiando: você tem sensibilidade pra perceber o que ninguém percebe. É o seu maior trunfo — use sem medo.
+216. Toda mulher carrega uma história que não cabe na etiqueta. Quem escuta a história acerta a roupa e ainda ganha o coração.
+217. Você faz parte da história bonita dessa loja. Cada mulher bem cuidada leva um pedacinho do seu carinho pra fora daqui.
+218. Hoje, ofereça a peça que você daria pra alguém que ama. Esse cuidado a cliente sente na pele, mesmo sem saber explicar.
+219. O sustento vem do trabalho; a alegria vem do amor que você põe nele. Põe amor de sobra hoje — sobra alegria pra você também.
+220. Você não está aqui só pra vender; está pra lembrar a cada mulher que ela merece se sentir bonita. Cumpra essa missão hoje.
+221. Tem gestos que valem o dia: chamar pelo nome, oferecer um café, dizer "ficou linda em você" e ser sincera. Faça um desses hoje.
+222. A mulher cansada que chega quer mais que uma roupa nova: quer um pedaço de gentileza. E disso você tem de sobra pra dar.
+223. Confie no seu coração na hora de atender. A técnica ajuda, mas é o afeto que conquista — e o seu afeto é o seu diferencial.
+224. Vai com leveza hoje. A sua presença já melhora o dia de quem cruza com você, antes mesmo de você dizer qualquer coisa.
+225. Cada vez que você troca um número por um nome, faz alguém se sentir gente. Faça isso o dia inteiro.
+226. Você tem o dom de transformar o comum em especial. Um atendimento seu pode ser o ponto alto da semana de alguém. Capricha.
+227. A gente colhe em fidelidade o que planta em carinho. Plante hoje pensando na cliente que volta amanhã só pra te ver.
+228. Quando bater o cansaço no fim do dia, lembra: você não passou horas vendendo, passou o dia fazendo mulheres se gostarem mais. Vai pra casa com orgulho.
+229. Você é luz pra muita gente que chega apagada. Comece o seu dia já aceso por dentro, que o resto se acende em você.
+230. Lembra por que você faz isso: não é só o salário, é a alegria de ver uma mulher se gostar no espelho. Vá buscar essa alegria hoje.
