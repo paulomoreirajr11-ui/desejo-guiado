@@ -430,7 +430,7 @@ def pick_cena(ocasiao):
     return pool[_scene_idx[ocasiao]]
 
 BEAUTY = {
- "Festa": "elegant evening glam makeup with defined eyes and luminous skin, and beautifully styled evening hair",
+ "Festa": "soft minimal makeup and an elegant hairstyle that simply suits the dress",
  "Trabalho": "polished natural makeup and a neat, sophisticated hairstyle",
  "Dia a dia": "fresh natural everyday makeup and soft, natural hair",
  "Casual": "light fresh makeup and relaxed natural hair",
