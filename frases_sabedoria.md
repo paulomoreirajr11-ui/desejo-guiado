@@ -152,83 +152,83 @@ Total: 230 frases. Sincronizado com estudio/frases.js.
 148. Você tem um trabalho que muda dias e, às vezes, autoestimas inteiras. Faça-o hoje com orgulho.
 149. A gente precisa vender, e vamos vender. Mas que cada venda venha junto de um cuidado que valha por duas.
 150. No fim do dia, conte não só o que vendeu, mas quantas pessoas saíram melhores por você. Esse é o nosso lucro maior.
-151. Tem dias que ninguém vai te dizer, então deixa eu dizer: o que você faz aqui importa — e importa muito.
-152. Você não é "mais uma" na loja. Tira o avental e fica faltando alguém. Esse alguém é você.
-153. Eu reparei em você. No capricho que ninguém pediu, no sorriso que você deu mesmo cansada. Eu vejo, sim.
-154. Seu valor não está na venda de hoje. Está em quem você é com a loja cheia e com a loja vazia — e nas duas você é firme.
-155. Se um dia duvidar que faz diferença, lembra: cliente que volta, volta por causa de gente. E a gente, aqui, é você.
-156. Você merece ser vista inteira — não só pelo que entrega, mas por quem é enquanto entrega.
-157. Não precisa gritar pra ser notada. O seu cuidado fala sozinho, e eu escuto.
-158. Tem quem ocupe um lugar. Você ocupa um espaço que é só seu — e que ninguém preenche igual.
-159. No meio da correria, alguém aqui sabe o seu nome, conhece o seu esforço e torce por você. Sou eu.
-160. Antes de bater meta, você já vale. A venda é consequência de quem você é — nunca o contrário.
-161. Bom dia de quem acordou inteira: hoje tem café, gente bonita pra atender e você, que já sabe fazer dar certo.
-162. Respira fundo antes de abrir a porta. O dia ainda é uma folha em branco — e a letra é sua.
-163. Levanta o queixo. A loja fica mais bonita quando você entra acreditando que vai ser um bom dia.
-164. Não espera o dia ficar bom pra sorrir. Sorri primeiro — o dia costuma seguir o seu sorriso.
-165. Hoje pode ser dos grandes. E mesmo que seja dos quietos, você vai atravessar com elegância.
-166. Começa devagar, mas começa inteira. Uma cliente bem atendida já faz o dia valer.
-167. O melhor da manhã não é o que você vai vender — é a chance nova de ser gente boa com quem chegar.
-168. Toda manhã o comércio recomeça do zero. Que bênção poder recomeçar todo dia.
-169. Veste a roupa e veste a coragem. Hoje você representa uma marca linda que também se chama você.
-170. Que o seu primeiro "bom dia" de hoje seja tão verdadeiro que a cliente leve ele pra casa.
-171. Eu não cheguei aqui sozinha. Cada uma de vocês carrega um pedaço desse sonho — e eu sou grata todo dia.
-172. Obrigada por cuidar da minha loja como se fosse sua. Pra mim, já é.
-173. Tem dias que eu nem preciso estar lá, porque sei que vocês estão. Isso não tem preço.
-174. O meu nome está na fachada, mas é o trabalho de vocês que faz ele significar alguma coisa. Obrigada.
-175. Vocês são as filhas que o trabalho me deu. E mãe nenhuma esquece de agradecer.
-176. Cada venda de vocês vira sustento de muita gente. Vocês movem mais coisa do que imaginam.
-177. Eu levantei as paredes; vocês deram alma a elas. A parte mais difícil foi de vocês.
-178. Se um dia eu esquecer de dizer, fica registrado aqui: eu tenho orgulho de cada uma de vocês.
-179. Obrigada pelos dias em que vocês deram o melhor mesmo sem ninguém vendo. Eu vi.
-180. A loja é minha no papel. No coração, ela é nossa.
-181. Vender não é convencer, é entender. Escuta primeiro — a venda vem depois, sozinha.
-182. A cliente não compra a roupa, compra como ela se sente na roupa. Cuida do sentimento.
-183. Quem atende com pressa vende uma vez. Quem atende com cuidado cria uma cliente pra vida.
-184. Antes de mostrar o preço, mostra que você se importa. O resto fica mais fácil.
-185. Não venda o que está encalhado. Venda o que combina com a mulher na sua frente — a confiança dela volta sempre.
-186. Às vezes o maior presente não é fechar a venda, é dizer: esse não é o seu, deixa eu achar um melhor.
-187. A melhor vendedora não é a que mais fala. É a que faz a cliente se sentir a pessoa mais importante da loja.
-188. A cliente sente quando você quer ajudar e quando você só quer vender. Sempre escolhe ajudar.
-189. Uma venda honesta hoje vale dez clientes amanhã. Paciência também é estratégia.
-190. No fim, você não vende roupa. Você entrega autoestima num cabide.
-191. Dia devagar não é dia perdido. É a loja te dando fôlego pra receber bem quem chega amanhã.
-192. Movimento fraco passa. O seu jeito de atender é que fica — continua caprichando.
-193. Tem dia que a vitória é manter a vitrine bonita e o sorriso de pé. Isso também é trabalhar bem.
-194. Não leva o dia ruim pra casa. Ele fica na loja, junto com o avental.
-195. Nem todo dia floresce. Mas quem rega sempre, colhe quando menos espera.
-196. Respira. Você não controla o movimento, mas controla o cuidado — e o cuidado é o que volta.
-197. Um dia quieto é a chance de organizar, aprender e descansar a alma. Aproveita.
-198. Você é boa no que faz mesmo quando o caixa não mostra. O seu valor não cabe num relatório.
-199. Quando o dia apertar, lembra por que você começou. Esse motivo é mais forte que qualquer meta.
-200. Calma: maré baixa também faz parte do mar. A cheia volta — e te encontra pronta.
-201. Não copie ninguém. A sua maneira de atender é o que essa loja tem de mais raro.
-202. Não meça o seu passo pelo dos outros. A sua constância de todo dia é o que segura essa casa de pé.
-203. Tem coisas que só você faz do seu jeito. Isso não é detalhe — é o seu diferencial.
-204. Você tem olho pra beleza que a cliente ainda não percebeu em si. Isso é um dom — usa com confiança.
-205. O seu jeito meigo não é fraqueza. É a sua força mais bonita. Usa sem medo.
-206. Erra, aprende, levanta. Quem se importa de verdade às vezes tropeça — e tudo bem.
-207. Você é mais capaz do que o seu dia mais inseguro te conta. Acredita em mim, eu vejo de fora.
-208. Não diminua o que você faz só porque parece simples. Cuidar de gente nunca é simples.
-209. A sua presença muda o clima da loja. Isso é um dom — cuida dele.
-210. Seja você por inteiro. É a sua versão, não a cópia de alguém, que a cliente lembra.
-211. Antes de qualquer venda, você é a peça mais importante dessa engrenagem. Sem você, nada gira.
-212. Você cuida de tanta gente o dia todo. Hoje deixa eu cuidar de você: respira, você está indo bem.
-213. Se o dia pesar, lembra que aqui também tem colo. Pode respirar, pode se apoiar — você não está sozinha.
-214. Quando você chega cansada ou segura a barra calada, eu percebo. Você não passa despercebida pra mim.
-215. Você não é mão de obra. É gente que eu escolhi ter por perto — e eu cuido de quem fica por perto.
+151. Tem dias que ninguém vai te dizer, então deixa eu dizer: você importa. Muito.
+152. Eu vejo o seu esforço, o seu capricho e o sorriso que você dá mesmo cansada. Você nunca passa batido por aqui.
+153. Antes de tudo que você faz, existe quem você é — e quem você é já basta.
+154. Se hoje você acordar duvidando do seu valor, empresta o meu olhar: daqui de fora, você brilha.
+155. Você merece ser percebida inteira — não só pelo que faz, mas por quem você é.
+156. Não precisa fazer nada extraordinário pra valer a pena. Você já vale, do jeitinho que é.
+157. No meio da correria do mundo, alguém pensa em você com carinho hoje. Sou eu.
+158. Você é importante antes de qualquer coisa que faça. O seu valor não se mede, se sente.
+159. Tem gente que passa e some. Você é das que deixam saudade quando não estão.
+160. Que bom que você existe. De verdade — o mundo fica mais bonito com você nele.
+161. Bom dia de quem acordou inteira. Vai com calma, vai com fé — você dá conta, você sempre deu.
+162. Respira fundo. O dia é novo, e você merece vivê-lo leve.
+163. Levanta o queixo e começa devagar. Não existe pressa pra ser quem você já é.
+164. Não espera o dia ficar bom pra sorrir. Sorri primeiro — o resto costuma seguir.
+165. Hoje, antes de qualquer coisa, lembra: você é capaz, você é suficiente, você é mais forte do que pensa.
+166. Que esse dia seja gentil com você do mesmo jeito que você é gentil com todo mundo.
+167. Acorda sabendo: você não precisa carregar o mundo. Só precisa ser você, e isso já é muito.
+168. Toda manhã é uma chance nova de recomeçar. E você é boa em recomeçar.
+169. Veste a coragem junto com a roupa. Hoje você se tem, e isso basta.
+170. Que o seu café de hoje seja quentinho e o seu coração, leve. Você merece um bom dia.
+171. Obrigada por existir do jeito que você existe. Gente como você faz falta no mundo.
+172. Eu sou grata por ter você por perto. Não pelo que você faz — por quem você é.
+173. Tem dias que eu só queria te abraçar e dizer: obrigada por ser essa pessoa.
+174. Você espalha cuidado por onde passa. Obrigada por esse seu jeito raro de ser.
+175. Sou grata pelos seus dias bons e pelos difíceis também — porque em todos você foi você.
+176. Obrigada por cada vez que você foi gentil quando podia não ser. Isso diz tudo sobre você.
+177. Eu te admiro. E queria que você se enxergasse com o mesmo carinho que eu enxergo.
+178. Se um dia eu esquecer de dizer, fica registrado: ter você por perto é uma sorte minha.
+179. Obrigada por ser luz nos dias nublados. Você nem imagina quanta gente você ilumina.
+180. Do fundo do coração: que bom que a vida colocou você no meu caminho.
+181. Recebe esse carinho hoje: você é amada, você é cuidada, você não está sozinha.
+182. Se ninguém te abraçou hoje, segura esse abraço meu. Bem apertado.
+183. Você cuida de tanta gente. Hoje deixa alguém cuidar de você — começa por você mesma.
+184. Vai com leveza. Você é amada hoje exatamente como está, sem precisar provar nada.
+185. Tem colo aqui pra você sempre que precisar. Você não carrega nada sozinha.
+186. Seja gentil com você hoje. Você fala com tanta gente com doçura — fala assim consigo também.
+187. Você merece descanso, carinho e paz. Não esquece de cuidar de quem mais importa: você.
+188. Hoje eu queria que você se sentisse tão especial quanto você é. Porque você é, e muito.
+189. Guarda esse carinho pra quando o dia apertar: alguém te ama e torce por você sempre.
+190. Você é preciosa. Não pelo que faz — só por ser você. Nunca esquece disso.
+191. Dia difícil não diminui você. Você continua inteira, mesmo quando está cansada.
+192. Tá pesado? Respira. Isso passa, e você fica — mais forte do que imagina.
+193. Não leva pra casa o peso de hoje. Você merece chegar em casa leve.
+194. Nem todo dia precisa ser dos grandes. Tem dia que a vitória é atravessar com o coração inteiro.
+195. O seu valor não depende do seu melhor dia. Nos dias cinzas, você continua valiosa.
+196. Quando tudo apertar, respira e seja gentil com você. O resto a gente resolve com calma.
+197. Você não está sozinha no que sente. Tem gente que te entende e segura a sua mão.
+198. Dias ruins não duram pra sempre, mas a sua força, sim. Aguenta firme, eu tô aqui.
+199. Se precisar parar pra respirar, pode. Cuidar de você também é uma forma de coragem.
+200. Maré baixa faz parte. A cheia volta — e te encontra de pé, como sempre.
+201. Não tente ser ninguém além de você. O seu jeito de ser já é a sua maior beleza.
+202. Não se compare. A sua luz é só sua, e ninguém brilha igual a você.
+203. O seu jeito doce não é fraqueza. É uma das coisas mais bonitas que você tem.
+204. Confia em você. Tem uma sabedoria sua, calma e bonita, que poucos têm.
+205. Você é mais forte do que o seu dia mais inseguro te conta. Acredita em mim.
+206. Errar não te faz menos. Quem se importa de verdade às vezes tropeça — e tudo bem.
+207. A sua presença muda o ambiente. Onde você chega, fica mais quente. Isso é um dom.
+208. Não diminua quem você é. Cabe muita grandeza num coração simples como o seu.
+209. Você tem um valor que não se explica — se sente quando você está por perto.
+210. Seja você por inteiro, sem pedir desculpa. É essa sua versão que o mundo precisa.
+211. Antes de qualquer coisa, você é o que essa casa tem de mais importante. Sem você, falta alma.
+212. Você cuida de todo mundo o dia inteiro. Hoje deixa eu cuidar de você: respira, está tudo bem.
+213. Se o dia pesar, lembra que aqui tem colo. Pode se apoiar — você não está sozinha.
+214. Quando você chega cansada ou fica quieta segurando a barra, eu percebo. Você não passa despercebida.
+215. Você não é número pra mim. É gente que eu escolhi ter por perto, e eu cuido de quem amo por perto.
 216. Tem dia que você segura todo mundo. E quem segura você? Pode contar comigo — eu seguro.
 217. Você merece o mesmo carinho que entrega o dia inteiro. Se ninguém te deu isso hoje, recebe de mim agora.
-218. O motor dessa loja não é a roupa nem a vitrine. É você. E motor bom a gente cuida com carinho.
-219. Quando você se sente vista e cuidada, tudo muda. Por isso eu faço questão: você é vista, você é cuidada.
-220. O seu valor não depende do seu melhor dia. Nos dias difíceis, você continua sendo preciosa pra mim.
-221. Essa loja não é só onde você trabalha. É um pedaço da sua história — e você, da nossa.
-222. Aqui ninguém cresce sozinha. Quando uma brilha, a loja inteira brilha junto.
-223. Cuida da colega como cuida da cliente. Time que se apoia vende mais e sofre menos.
-224. As paredes mudam, as coleções mudam. O que fica é a gente que dá alma a essa casa.
-225. Você faz parte de algo maior que uma venda: uma família que escolheu trabalhar junta.
-226. Divide o que você sabe. A vendedora do seu lado não é concorrente — é irmã de jornada.
-227. Quando bater orgulho de onde você trabalha, saiba que esse orgulho é mútuo.
-228. Aqui a gente comemora junto e segura a mão junto. Sempre foi assim, sempre vai ser.
-229. Você não é número nessa loja. É nome, é história, é parte de quem nós somos.
-230. No fim do expediente, a gente não fecha só uma loja. Guarda, com carinho, mais um dia que foi nosso.
+218. O que faz essa casa bonita não são as paredes. É você. E eu cuido de você com carinho.
+219. Quando você se sente vista e cuidada, o seu dia inteiro muda. Por isso eu insisto: você é cuidada.
+220. Pode confiar: aqui você sempre vai ter alguém que te vê, te valoriza e torce por você. Sempre.
+221. Aqui não é só um lugar onde você passa o dia. É um pedaço da sua história — e você, da nossa.
+222. Você faz parte de uma família que escolheu caminhar junta. E família a gente não larga.
+223. Quando uma de vocês está bem, todas ficam mais leves. A gente se cuida por aqui.
+224. Cuida da colega como gostaria de ser cuidada. Vocês são apoio uma da outra, sempre.
+225. Você não está sozinha. Tem gente do seu lado que torce por você e segura a sua mão.
+226. A colega do seu lado não é rival. É irmã de caminhada — dividam o peso e a alegria.
+227. Se um dia você se sentir pequena, lembra: aqui você é parte de algo bonito e grande.
+228. A gente comemora junto e chora junto. Sempre foi assim, e sempre vai ser.
+229. Você é nome, é história, é parte de quem nós somos. Nunca só mais uma.
+230. No fim do dia, o que fica não é o que se fez — é o carinho que a gente construiu junto. E hoje teve.
