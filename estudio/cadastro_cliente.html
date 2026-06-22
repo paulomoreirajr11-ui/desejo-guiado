@@ -150,6 +150,7 @@ function renderLista(){
 
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
 renderLista();
+(function(){try{var synced=JSON.parse(localStorage.getItem('mira_cli_synced')||'[]');var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';var arr=JSON.parse(localStorage.getItem('mira_clientes')||'[]');arr.forEach(function(c){if(!c||!c.nome||synced.indexOf(c.nome)>=0)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:v,cliente:c.nome,foto:c.foto,manequim:c.tamanho,ocasioes:(c.ocasioes||[]).join(', ')})}).then(function(){synced.push(c.nome);localStorage.setItem('mira_cli_synced',JSON.stringify(synced));}).catch(function(){});});}catch(e){}})();
 </script>
 </body>
 </html>
