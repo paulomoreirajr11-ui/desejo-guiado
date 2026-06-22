@@ -61,6 +61,9 @@
   <div class="cards" id="stats"></div>
   <h2 class="sec">Por vendedora</h2>
   <div id="porvend"></div>
+  <h2 class="sec">Clientes (fichas) por vendedora</h2>
+  <input id="buscacli" placeholder="🔍 Buscar por vendedora ou cliente" style="width:100%;max-width:420px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;margin-bottom:10px;background:var(--panel);color:var(--off);">
+  <div id="fichas"></div>
   <h2 class="sec">Reações das clientes</h2>
   <div class="atfeed" id="reacoes"></div>
   <h2 class="sec">Reservas no provador</h2>
@@ -84,6 +87,7 @@ async function carregar(){
   let reservas=[]; try{reservas=(await (await fetch('/reserva')).json()).reservas||[];}catch(e){}
   let looks={}; try{looks=(await (await fetch('/look')).json()).looks||{};}catch(e){}
   let claims={}; try{claims=(await (await fetch('/claim')).json()).claims||{};}catch(e){}
+  let fichas=[]; try{fichas=(await (await fetch('/ficha')).json()).fichas||[];}catch(e){}window._fichas=fichas;renderFichas((document.getElementById('buscacli')||{}).value||'');
   const today=hoje(), vends={};
   log.forEach(e=>{const v=e.vend||'(sem nome)';vends[v]=vends[v]||{total:0,hoje:0,last:'',cli:''};vends[v].total++;if((e.ts||'').slice(0,10)===today)vends[v].hoje++;if((e.ts||'')>vends[v].last){vends[v].last=e.ts||'';vends[v].cli=e.cliente||'';}});
   const hojeLooks=log.filter(e=>(e.ts||'').slice(0,10)===today).length;
@@ -106,6 +110,8 @@ async function carregar(){
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
   document.querySelectorAll('.liberar').forEach(function(b){b.onclick=async function(){if(!confirm('Liberar '+b.dataset.v+'? Ela poderá registrar um novo celular ao abrir o link de novo.'))return;try{await fetch('/claim/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:b.dataset.v})});}catch(e){}carregar();};});
 }
+function renderFichas(term){term=(term||'').trim().toLowerCase();var fs=(window._fichas||[]).filter(function(f){return !term||((f.vend||'')+' '+(f.cliente||'')).toLowerCase().includes(term);});fs.sort(function(a,b){return ((a.vend||'')+(a.cliente||'')).localeCompare((b.vend||'')+(b.cliente||''));});var el=document.getElementById('fichas');if(!el)return;if(!fs.length){el.innerHTML='<div class="empty">Nenhuma ficha de cliente ainda. Conforme as vendedoras preenchem as fichas, elas aparecem aqui (em silêncio).</div>';return;}el.innerHTML='<table><tr><th>Vendedora</th><th>Cliente</th><th>Manequim</th><th>Sapato</th><th>Aniversário</th><th>Telefone</th><th>Notas</th></tr>'+fs.map(function(f){return '<tr><td class="v">'+(f.vend||'—')+'</td><td>'+(f.cliente||'')+'</td><td>'+(f.manequim||'')+'</td><td>'+(f.sapato||'')+'</td><td>'+(f.aniversario||'')+'</td><td>'+(f.telefone||'')+'</td><td>'+(f.notas||'')+'</td></tr>';}).join('')+'</table>';}
+var _bc=document.getElementById('buscacli');if(_bc)_bc.oninput=function(){renderFichas(this.value);};
 document.getElementById('reload').onclick=carregar;
 carregar();
 </script>

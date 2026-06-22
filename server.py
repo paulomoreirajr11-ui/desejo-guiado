@@ -697,6 +697,19 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, out)
         if p == "/version":
             return self._json(200, {"version": "2026-06-21_fidelidade-roupa+festa+zoomX", "ok": True})
+        if p == "/ficha":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            vend = (q.get("vend") or [""])[0]
+            out = []
+            if SB_ON:
+                try:
+                    params = "select=vend,cliente,manequim,sapato,telefone,aniversario,notas&order=cliente.asc"
+                    if vend:
+                        params = "vend=eq." + urllib.parse.quote(vend) + "&" + params
+                    out = sb_req("GET", "fichas", params) or []
+                except Exception as e:
+                    return self._json(200, {"fichas": [], "error": str(e)})
+            return self._json(200, {"fichas": out})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
@@ -810,6 +823,32 @@ class Handler(SimpleHTTPRequestHandler):
                         pass
                 claims = load_claims(); claims.pop(vend, None); save_claims(claims)
                 return self._json(200, {"ok": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/ficha":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                vend = (d.get("vend") or "").strip()
+                cliente = (d.get("cliente") or "").strip()
+                if not cliente:
+                    return self._json(200, {"ok": False, "skip": "sem nome"})
+                row = {"vend": vend, "cliente": cliente,
+                       "manequim": d.get("manequim", ""), "sapato": d.get("sapato", ""),
+                       "telefone": d.get("telefone", ""), "aniversario": d.get("aniversario", ""),
+                       "notas": d.get("notas", ""),
+                       "ts": datetime.datetime.now().isoformat(timespec="seconds")}
+                if not SB_ON:
+                    return self._json(200, {"ok": False, "sb": False})
+                try:
+                    ex = sb_req("GET", "fichas", "vend=eq." + urllib.parse.quote(vend) + "&cliente=eq." + urllib.parse.quote(cliente) + "&select=id")
+                    if ex:
+                        sb_req("PATCH", "fichas", "id=eq." + str(ex[0]["id"]), body=row)
+                    else:
+                        sb_req("POST", "fichas", body=row)
+                    return self._json(200, {"ok": True})
+                except Exception as e:
+                    return self._json(200, {"ok": False, "error": str(e)})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
         if p != "/generate":
