@@ -268,6 +268,18 @@ const ESTOQUE=[
  {f:'n26_bolsa_1',cat:'Acessórios',nome:'Bolsa caramelo 2026',tam:null},
  {f:'n26_bolsa_2',cat:'Acessórios',nome:'Bolsa corrente 2026',tam:null},
  {f:'n26_bolsa_3',cat:'Acessórios',nome:'Bolsa suede 2026',tam:null},
+ {f:'n26_oculos_1',cat:'Acessórios',nome:'Óculos gatinho 2026',tam:null},
+ {f:'n26_oculos_2',cat:'Acessórios',nome:'Óculos quadrado 2026',tam:null},
+ {f:'n26_oculos_3',cat:'Acessórios',nome:'Óculos dourado 2026',tam:null},
+ {f:'n26_brinco_1',cat:'Acessórios',nome:'Brinco gota ouro 2026',tam:null},
+ {f:'n26_brinco_2',cat:'Acessórios',nome:'Brinco pérola 2026',tam:null},
+ {f:'n26_brinco_3',cat:'Acessórios',nome:'Argola ouro 2026',tam:null},
+ {f:'n26_pulseira_1',cat:'Acessórios',nome:'Bracelete ouro 2026',tam:null},
+ {f:'n26_pulseira_2',cat:'Acessórios',nome:'Pulseira riviera 2026',tam:null},
+ {f:'n26_pulseira_3',cat:'Acessórios',nome:'Pulseira berloques 2026',tam:null},
+ {f:'n26_anel_1',cat:'Acessórios',nome:'Anel esmeralda 2026',tam:null},
+ {f:'n26_anel_2',cat:'Acessórios',nome:'Anéis empilhados 2026',tam:null},
+ {f:'n26_anel_3',cat:'Acessórios',nome:'Solitário 2026',tam:null},
 ];
 const OCASIOES=['Dia a dia','Trabalho','Casual','Jantar','Festa Dia','Festa Noite','Casamento Dia','Casamento Noite','Viagem','Praia','Academia'];
 const RESULTS={
@@ -356,7 +368,7 @@ function renderGrid(){
  gridEl.innerHTML='';
  const items=[...Object.values(CAPT),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];
  items.forEach(e=>{const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(S.pecas.includes(e.f)?' on':'')+(ok?'':' nofit');
-  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
+  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
   d.onclick=()=>{if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
  gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
