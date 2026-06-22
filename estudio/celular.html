@@ -108,6 +108,23 @@
   <span style="flex:1;line-height:1.3;">📲 No Android, toque em <b>Abrir no Chrome</b> pra funcionar 100%.</span>
   <a id="chromego" href="#" style="background:#fff;color:#1E5631;font-weight:700;padding:8px 12px;border-radius:9px;text-decoration:none;white-space:nowrap;">Abrir no Chrome ›</a>
 </div>
+<div id="captcat" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.72);z-index:72;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--ink);width:100%;max-width:460px;border-radius:18px 18px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow:auto;">
+    <div style="font-family:Fraunces,serif;font-size:18px;color:var(--off);margin-bottom:12px;">Cadastrar peça</div>
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+      <img id="captthumb" style="width:78px;height:104px;object-fit:cover;border-radius:10px;flex-shrink:0;background:var(--panel2);">
+      <div style="flex:1;">
+        <input id="captnome" placeholder="Nome da peça (opcional)" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--off);border-radius:10px;padding:11px;font-size:14px;font-family:inherit;box-sizing:border-box;">
+        <div style="color:var(--mut);font-size:12px;margin-top:9px;">Toque na categoria pra ela aparecer no filtro:</div>
+      </div>
+    </div>
+    <div id="captcats" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button id="captcancel" type="button" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">Cancelar</button>
+      <button id="captsalvar" type="button" style="flex:2;background:#C7A34A;border:none;color:#1E1A15;border-radius:12px;padding:13px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">Salvar no estoque</button>
+    </div>
+  </div>
+</div>
 <div class="app">
   <header>
     <img src="logo.png" alt="Irene Moreira" style="height:42px;width:auto;display:block;">
@@ -366,14 +383,19 @@ function fitOK(e){if(!S.pessoa||!S.pessoa.manequim||!e.tam)return true;return e.
 const gridEl=$('grid');
 function renderGrid(){
  gridEl.innerHTML='';
- const items=[...Object.values(CAPT),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];
+ const items=[...Object.values(CAPT).filter(e=>S.cat==='Todas'||e.cat===S.cat),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];
  items.forEach(e=>{const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(S.pecas.includes(e.f)?' on':'')+(ok?'':' nofit');
   d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
   d.onclick=()=>{if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
  gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
 }
-$('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const id='capt_'+Date.now();CAPT[id]={f:id,cap:c.toDataURL('image/jpeg',.8),nome:'Foto nova',cat:'Acessórios',tam:null};saveCapt();S.pecas.push(id);S.cat='Todas';[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent==='Todas'));renderGrid();upd();toast('📷 peça fotografada → no estoque ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+$('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);abrirCategoria(c.toDataURL('image/jpeg',.8));};img.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
+var _captData=null,_captCat=null;
+(function(){var cont=$('captcats');if(!cont)return;cats.filter(function(c){return c!=='Todas';}).forEach(function(c){var b=document.createElement('button');b.type='button';b.textContent=c;b.style.cssText='background:var(--panel2);border:1px solid var(--line);color:var(--off);border-radius:999px;padding:8px 13px;font-size:13px;font-family:inherit;cursor:pointer;';b.onclick=function(){_captCat=c;[...cont.children].forEach(function(x){x.style.background='var(--panel2)';x.style.color='var(--off)';x.style.borderColor='var(--line)';});b.style.background='#C7A34A';b.style.color='#1E1A15';b.style.borderColor='#C7A34A';};cont.appendChild(b);});})();
+function abrirCategoria(d){_captData=d;_captCat=null;$('captthumb').src=d;$('captnome').value='';[...$('captcats').children].forEach(function(x){x.style.background='var(--panel2)';x.style.color='var(--off)';x.style.borderColor='var(--line)';});$('captcat').style.display='flex';}
+function salvarCategoria(){if(!_captData)return;var cat=_captCat||'Acessórios';var nome=($('captnome').value||'').trim()||cat;var id='capt_'+Date.now();CAPT[id]={f:id,cap:_captData,nome:nome,cat:cat,tam:null};saveCapt();S.pecas.push(id);S.cat=cat;[...chipsEl.children].forEach(function(x){x.classList.toggle('on',x.textContent===cat);});renderGrid();upd();$('captcat').style.display='none';_captData=null;toast('📷 peça no estoque ✓ ('+cat+')');}
+$('captsalvar').onclick=salvarCategoria;$('captcancel').onclick=function(){$('captcat').style.display='none';_captData=null;};
 
 function carregarFotoCliente(f,fonte){if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var _nm='';try{var _pn=prompt('Nome da cliente? (pode deixar em branco)');if(_pn&&_pn.trim())_nm=_pn.trim();}catch(e){}
 const p={key:'foto_'+Date.now(),nome:(_nm||(fonte==='camera'?'Foto câmera':'Foto galeria')),manequim:null,tag:(_nm?'cliente':(fonte==='camera'?'câmera':'rede social')),foto:c.toDataURL('image/jpeg',.85),estilo:'',fonte:fonte};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast(fonte==='camera'?'📷 foto na loja ✓ (IA corrige)':'📲 foto da rede social ✓ (rosto travado)');};img.src=ev.target.result;};rd.readAsDataURL(f);}
