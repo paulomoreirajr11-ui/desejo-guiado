@@ -44,6 +44,15 @@
   .ctile img{width:100%;height:150px;object-fit:cover;display:block;}
   .ctile .nm{font-size:11px;padding:6px 8px;color:var(--mut);line-height:1.3;}
   .empty{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:12px;}
+  .ficgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+  .ficard{display:flex;gap:11px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px;}
+  .ficard img{width:66px;height:88px;object-fit:cover;border-radius:9px;flex-shrink:0;background:var(--panel2);}
+  .ficnoimg{width:66px;height:88px;border-radius:9px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mut);text-align:center;flex-shrink:0;line-height:1.2;}
+  .ficbody{flex:1;min-width:0;}
+  .ficnome{font-family:'Fraunces';font-size:15px;color:var(--off);}
+  .ficvend{font-size:11px;color:var(--gold2);margin:1px 0 6px;}
+  .ficmeta{font-size:12px;color:var(--mut);margin-top:2px;}
+  .ficnota{font-size:12px;color:var(--off);margin-top:5px;line-height:1.35;}
 </style>
 </head>
 <body>
@@ -110,7 +119,7 @@ async function carregar(){
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
   document.querySelectorAll('.liberar').forEach(function(b){b.onclick=async function(){if(!confirm('Liberar '+b.dataset.v+'? Ela poderá registrar um novo celular ao abrir o link de novo.'))return;try{await fetch('/claim/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:b.dataset.v})});}catch(e){}carregar();};});
 }
-function renderFichas(term){term=(term||'').trim().toLowerCase();var fs=(window._fichas||[]).filter(function(f){return !term||((f.vend||'')+' '+(f.cliente||'')).toLowerCase().includes(term);});fs.sort(function(a,b){return ((a.vend||'')+(a.cliente||'')).localeCompare((b.vend||'')+(b.cliente||''));});var el=document.getElementById('fichas');if(!el)return;if(!fs.length){el.innerHTML='<div class="empty">Nenhuma ficha de cliente ainda. Conforme as vendedoras preenchem as fichas, elas aparecem aqui (em silêncio).</div>';return;}el.innerHTML='<table><tr><th>Vendedora</th><th>Cliente</th><th>Manequim</th><th>Sapato</th><th>Aniversário</th><th>Telefone</th><th>Notas</th></tr>'+fs.map(function(f){return '<tr><td class="v">'+(f.vend||'—')+'</td><td>'+(f.cliente||'')+'</td><td>'+(f.manequim||'')+'</td><td>'+(f.sapato||'')+'</td><td>'+(f.aniversario||'')+'</td><td>'+(f.telefone||'')+'</td><td>'+(f.notas||'')+'</td></tr>';}).join('')+'</table>';}
+function renderFichas(term){term=(term||'').trim().toLowerCase();var fs=(window._fichas||[]).filter(function(f){return !term||((f.vend||'')+' '+(f.cliente||'')).toLowerCase().includes(term);});fs.sort(function(a,b){return ((a.vend||'')+(a.cliente||'')).localeCompare((b.vend||'')+(b.cliente||''));});var el=document.getElementById('fichas');if(!el)return;if(!fs.length){el.innerHTML='<div class="empty">Nenhuma ficha de cliente ainda. Conforme as vendedoras preenchem as fichas, elas aparecem aqui (em silêncio).</div>';return;}el.innerHTML='<div class="ficgrid">'+fs.map(function(f){return '<div class="ficard">'+(f.foto?'<img src="'+f.foto+'">':'<div class="ficnoimg">sem<br>foto</div>')+'<div class="ficbody"><div class="ficnome">'+(f.cliente||'cliente')+'</div><div class="ficvend">'+(f.vend||'—')+'</div><div class="ficmeta">'+[(f.manequim?'Mnq '+f.manequim:''),(f.sapato?'Calç '+f.sapato:''),(f.aniversario?'🎂 '+f.aniversario:'')].filter(Boolean).join(' · ')+'</div>'+(f.telefone?'<div class="ficmeta">📞 '+f.telefone+'</div>':'')+(f.notas?'<div class="ficnota">'+f.notas+'</div>':'')+'</div></div>';}).join('')+'</div>';}
 var _bc=document.getElementById('buscacli');if(_bc)_bc.oninput=function(){renderFichas(this.value);};
 document.getElementById('reload').onclick=carregar;
 carregar();

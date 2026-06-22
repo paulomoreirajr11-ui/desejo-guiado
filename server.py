@@ -703,7 +703,7 @@ class Handler(SimpleHTTPRequestHandler):
             out = []
             if SB_ON:
                 try:
-                    params = "select=vend,cliente,manequim,sapato,telefone,aniversario,notas&order=cliente.asc"
+                    params = "select=vend,cliente,foto,manequim,sapato,telefone,aniversario,notas&order=cliente.asc"
                     if vend:
                         params = "vend=eq." + urllib.parse.quote(vend) + "&" + params
                     out = sb_req("GET", "fichas", params) or []
@@ -833,7 +833,7 @@ class Handler(SimpleHTTPRequestHandler):
                 cliente = (d.get("cliente") or "").strip()
                 if not cliente:
                     return self._json(200, {"ok": False, "skip": "sem nome"})
-                row = {"vend": vend, "cliente": cliente,
+                row = {"vend": vend, "cliente": cliente, "foto": d.get("foto", ""),
                        "manequim": d.get("manequim", ""), "sapato": d.get("sapato", ""),
                        "telefone": d.get("telefone", ""), "aniversario": d.get("aniversario", ""),
                        "notas": d.get("notas", ""),
