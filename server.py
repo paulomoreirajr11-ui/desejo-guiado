@@ -548,6 +548,39 @@ BEAUTY = {
  "Viagem": "fresh radiant makeup with a healthy glow and effortless natural hair",
  "Jantar": "soft glamorous evening makeup with a warm glow and elegant loose waves",
 }
+LAYER_BASE  = ("camis","blus","regata","body","cropp","t-shirt","tshirt","top ","chemise","vestido","gola alta")
+LAYER_MID   = ("colete","macac","macaqu","jardineira","salopete","suspens","avental")
+LAYER_OUTER = ("casaco","blazer","jaqueta","cardig","sobretudo","trench","palet","kimono","poncho","parka","capa ")
+
+def _layer_of(nome):
+    n = " " + (nome or "").lower() + " "
+    for k in LAYER_OUTER:
+        if k in n: return 3
+    for k in LAYER_MID:
+        if k in n: return 2
+    for k in LAYER_BASE:
+        if k in n: return 1
+    return 0
+
+def layering_hint(nomes):
+    """Descobre a ordem das camadas pelos nomes das peças: base por baixo, meio, externa por cima."""
+    tag = [(_layer_of(n), n) for n in nomes]
+    tag = sorted([t for t in tag if t[0] > 0], key=lambda x: x[0])
+    if len(tag) < 2:
+        return ""
+    base  = [n for (l, n) in tag if l == 1]
+    mid   = [n for (l, n) in tag if l == 2]
+    outer = [n for (l, n) in tag if l == 3]
+    parts = []
+    if base:  parts.append("the " + " and ".join(base) + " worn UNDERNEATH as the base layer (closest to the body)")
+    if mid:   parts.append("the " + " and ".join(mid) + " layered ON TOP of the base")
+    if outer: parts.append("the " + " and ".join(outer) + " worn OVER everything as the outermost layer")
+    if len(parts) < 2:
+        return ""
+    return (" LAYERING ORDER (very important — keep this exact order): " + ", then ".join(parts) +
+            ". The base layer stays underneath with its sleeves, collar or hem visible coming out from beneath the piece on top; "
+            "never swap this order and never hide the base layer.")
+
 def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
     pose = {"Clássico":"poised graceful posture","Romântico":"soft delicate pose","Sensual":"confident tasteful pose",
             "Minimalista":"calm refined stance","Dramático":"strong editorial pose","Esportivo":"dynamic confident posture"}.get(estilo, "confident elegant pose")
@@ -555,6 +588,7 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
     if isinstance(pecas, (list, tuple)):
         nomes = [str(x) for x in pecas if x]
         peca = (" The complete look includes: " + ", ".join(nomes) + ".") if nomes else ""
+        peca += layering_hint(nomes)
     else:
         peca = (" The garment is a " + pecas + ".") if pecas else ""
     if fundo == "estudio":
@@ -696,7 +730,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-06-21_fidelidade-roupa+festa+zoomX", "ok": True})
+            return self._json(200, {"version": "2026-06-23_camadas-ordem", "ok": True})
         if p == "/ficha":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             vend = (q.get("vend") or [""])[0]
