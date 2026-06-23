@@ -130,7 +130,7 @@
 </div>
 <div class="app">
   <header>
-    <img src="logo.png" alt="Irene Moreira" style="height:42px;width:auto;display:block;">
+    <img id="logobrand" src="logo.png" alt="Irene Moreira" style="height:42px;width:auto;display:block;">
     <span style="flex:1;font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;align-self:center;margin-left:8px;">Desejo Guiado</span>
     <a href="index.html">Início</a>
   </header>
@@ -683,6 +683,14 @@ window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.t
 $('zoom').onclick=function(){this.style.display='none';};
 $('zoomimg').onclick=function(e){e.stopPropagation();this.style.transform=this.style.transform==='scale(2.2)'?'scale(1)':'scale(2.2)';};
 $('zoomx').onclick=function(e){e.stopPropagation();var i=$('zoomimg');if(i)i.style.transform='scale(1)';$('zoom').style.display='none';};
+/* atalho discreto do admin: segurar o logo 1s */
+(function(){var lg=document.getElementById('logobrand');if(!lg)return;var tmr=null;
+function go(){location.href='admin.html';}
+function start(){tmr=setTimeout(go,1000);}
+function cancel(){if(tmr){clearTimeout(tmr);tmr=null;}}
+lg.addEventListener('touchstart',start,{passive:true});lg.addEventListener('touchend',cancel);lg.addEventListener('touchmove',cancel);
+lg.addEventListener('contextmenu',function(e){e.preventDefault();});
+lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.addEventListener('mouseleave',cancel);})();
 </script>
 </body>
 </html>

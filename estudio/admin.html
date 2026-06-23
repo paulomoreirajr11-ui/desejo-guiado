@@ -73,6 +73,9 @@
   <h2 class="sec">Clientes (fichas) por vendedora</h2>
   <input id="buscacli" placeholder="🔍 Buscar por vendedora ou cliente" style="width:100%;max-width:420px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;margin-bottom:10px;background:var(--panel);color:var(--off);">
   <div id="fichas"></div>
+  <h2 class="sec">💚 Gosto agregado — o que a clientela ama</h2>
+  <div class="cards" id="gostostats"></div>
+  <div id="gostobody" style="margin-top:14px;"></div>
   <h2 class="sec">Reações das clientes</h2>
   <div class="atfeed" id="reacoes"></div>
   <h2 class="sec">Reservas no provador</h2>
@@ -85,6 +88,7 @@
   <div class="clubegrid" id="clube"></div>
 </div>
 <script>
+(function(){var PIN='2144';try{if(localStorage.getItem('mira_admin_ok')==='1')return;}catch(e){}var t=null;try{t=prompt('🔒 PIN do administrador:');}catch(e){}if(t===PIN){try{localStorage.setItem('mira_admin_ok','1');}catch(e){}return;}document.body.innerHTML='<div style="text-align:center"><div style="font-size:42px">🔒</div><h2 style="font-family:Fraunces,Georgia,serif;color:#1E1A15;margin:10px 0 4px">Acesso restrito</h2><p style="color:#897F6F">Esta área é só do administrador.</p></div>';document.body.style.cssText='margin:0;font-family:Inter,sans-serif;background:#FAF6EE;display:flex;align-items:center;justify-content:center;height:100vh';throw new Error('admin locked');})();
 function hoje(){return new Date().toISOString().slice(0,10);}
 function fmt(ts){if(!ts)return '';return ts.replace('T',' ').slice(0,16);}
 function pecasTxt(p){return Array.isArray(p)?p.join(' + '):(p||'');}
@@ -115,6 +119,21 @@ async function carregar(){
   var lk=lkArr.filter(function(l){return l&&l.reacao;});
   lk.sort(function(a,b){return (b.reacao_ts||b.ts||'').localeCompare(a.reacao_ts||a.ts||'');});
   document.getElementById('reacoes').innerHTML=lk.length?lk.map(function(l){return '<div class="atrow"><span class="who">'+(EMO[l.reacao]||'•')+' '+(l.cliente||'cliente')+'</span><span><b>'+(l.reacao||'')+'</b>'+(Array.isArray(l.pecas)&&l.pecas.length?' · '+l.pecas.join(' + '):'')+(l.vend?' · '+l.vend:'')+'</span><span class="when">'+fmt(l.reacao_ts||l.ts)+'</span></div>';}).join(''):'<div class="empty">Nenhuma reação ainda. Quando a cliente tocar uma tecla no look enviado, aparece aqui.</div>';
+  // 3o tijolo - gosto agregado da clientela
+  var amadas={},occGer={},rcount={},ocFic={};
+  lkArr.forEach(function(l){if(!l)return;if(l.reacao){rcount[l.reacao]=(rcount[l.reacao]||0)+1;if(l.reacao==='Acertou em mim'||l.reacao==='Quero provar'){(Array.isArray(l.pecas)?l.pecas:[]).forEach(function(p){if(p)amadas[p]=(amadas[p]||0)+1;});}}});
+  log.forEach(function(e){var o=(e.ocasiao||'').trim();if(o)occGer[o]=(occGer[o]||0)+1;});
+  fichas.forEach(function(f){(''+(f.ocasioes||'')).split(',').forEach(function(o){o=o.trim();if(o)ocFic[o]=(ocFic[o]||0)+1;});});
+  var topAma=Object.entries(amadas).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+  var topOcc=Object.entries(occGer).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+  var topFic=Object.entries(ocFic).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+  var totReac=Object.keys(rcount).reduce(function(s,k){return s+rcount[k];},0);
+  var totPos=(rcount['Acertou em mim']||0)+(rcount['Quero provar']||0);
+  var taxa=totReac?Math.round(totPos/totReac*100)+'%':'—';
+  document.getElementById('gostostats').innerHTML=card(totReac,'reações no total')+card(rcount['Quero provar']||0,'quero provar 🛍️')+card(taxa,'taxa de acerto 💚');
+  function gtab(t,c,rows){if(!rows.length)return '';return '<table><tr><th>'+t+'</th><th>'+c+'</th></tr>'+rows.map(function(x){return '<tr><td class="v">'+x[0]+'</td><td>'+x[1]+'</td></tr>';}).join('')+'</table>';}
+  var gb=gtab('Peça mais amada','💚',topAma)+gtab('Ocasião mais pedida','looks',topOcc)+gtab('O que as clientes gostam','clientes',topFic);
+  document.getElementById('gostobody').innerHTML=gb?('<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start;">'+gb+'</div>'):'<div class="empty">Conforme as clientes reagirem aos looks, o gosto da clientela aparece aqui: peças campeãs, ocasiões mais pedidas e preferências.</div>';
   var ck=Object.keys(claims);
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
   document.querySelectorAll('.liberar').forEach(function(b){b.onclick=async function(){if(!confirm('Liberar '+b.dataset.v+'? Ela poderá registrar um novo celular ao abrir o link de novo.'))return;try{await fetch('/claim/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:b.dataset.v})});}catch(e){}carregar();};});
