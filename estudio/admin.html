@@ -53,6 +53,16 @@
   .ficvend{font-size:11px;color:var(--gold2);margin:1px 0 6px;}
   .ficmeta{font-size:12px;color:var(--mut);margin-top:2px;}
   .ficnota{font-size:12px;color:var(--off);margin-top:5px;line-height:1.35;}
+  .ficard img{cursor:pointer;}
+  .lookbar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+  .lookgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;}
+  .lktile{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel2);cursor:pointer;transition:transform .1s;}
+  .lktile:active{transform:scale(.97);}
+  .lktile img{width:100%;height:148px;object-fit:cover;display:block;}
+  .lktile .cap{font-size:10px;padding:5px 7px;color:var(--mut);line-height:1.3;}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(20,16,10,.93);z-index:200;align-items:center;justify-content:center;}
+  #lightbox img{max-width:94vw;max-height:90vh;object-fit:contain;transform:scale(1);transition:transform .15s ease;cursor:zoom-in;}
+  #lbx{position:absolute;top:14px;right:18px;font-size:26px;line-height:1;color:#fff;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);border-radius:50%;z-index:201;}
 </style>
 </head>
 <body>
@@ -76,6 +86,12 @@
   <h2 class="sec">💚 Gosto agregado — o que a clientela ama</h2>
   <div class="cards" id="gostostats"></div>
   <div id="gostobody" style="margin-top:14px;"></div>
+  <h2 class="sec">📸 Looks gerados pelas vendedoras</h2>
+  <div class="lookbar">
+    <select id="filtrolooks" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--panel);color:var(--off);"><option value="">Todas as vendedoras</option></select>
+    <span style="font-size:12px;color:var(--mut);">toque numa imagem para ampliar e dar zoom</span>
+  </div>
+  <div class="lookgrid" id="looksger"></div>
   <h2 class="sec">Reações das clientes</h2>
   <div class="atfeed" id="reacoes"></div>
   <h2 class="sec">Reservas no provador</h2>
@@ -87,6 +103,7 @@
   <h2 class="sec">Clube — posts</h2>
   <div class="clubegrid" id="clube"></div>
 </div>
+<div id="lightbox"><div id="lbx">✕</div><img id="lbimg" alt=""></div>
 <script>
 (function(){var PIN='2144';try{if(localStorage.getItem('mira_admin_ok')==='1')return;}catch(e){}var t=null;try{t=prompt('🔒 PIN do administrador:');}catch(e){}if(t===PIN){try{localStorage.setItem('mira_admin_ok','1');}catch(e){}return;}document.body.innerHTML='<div style="text-align:center"><div style="font-size:42px">🔒</div><h2 style="font-family:Fraunces,Georgia,serif;color:#1E1A15;margin:10px 0 4px">Acesso restrito</h2><p style="color:#897F6F">Esta área é só do administrador.</p></div>';document.body.style.cssText='margin:0;font-family:Inter,sans-serif;background:#FAF6EE;display:flex;align-items:center;justify-content:center;height:100vh';throw new Error('admin locked');})();
 function hoje(){return new Date().toISOString().slice(0,10);}
@@ -134,12 +151,34 @@ async function carregar(){
   function gtab(t,c,rows){if(!rows.length)return '';return '<table><tr><th>'+t+'</th><th>'+c+'</th></tr>'+rows.map(function(x){return '<tr><td class="v">'+x[0]+'</td><td>'+x[1]+'</td></tr>';}).join('')+'</table>';}
   var gb=gtab('Peça mais amada','💚',topAma)+gtab('Ocasião mais pedida','looks',topOcc)+gtab('O que as clientes gostam','clientes',topFic);
   document.getElementById('gostobody').innerHTML=gb?('<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start;">'+gb+'</div>'):'<div class="empty">Conforme as clientes reagirem aos looks, o gosto da clientela aparece aqui: peças campeãs, ocasiões mais pedidas e preferências.</div>';
+  // galeria de looks gerados
+  var looksAll=lkArr.filter(function(l){return l&&l.img;});
+  looksAll.sort(function(a,b){return (b.ts||'').localeCompare(a.ts||'');});
+  var _selL=document.getElementById('filtrolooks');
+  if(_selL){
+    var _curL=_selL.value;
+    var lv=Array.from(new Set(looksAll.map(function(l){return l.vend||'';}).filter(Boolean))).sort();
+    _selL.innerHTML='<option value="">Todas as vendedoras ('+looksAll.length+')</option>'+lv.map(function(v){return '<option value="'+v+'">'+v+'</option>';}).join('');
+    _selL.value=_curL;
+    window._renderLooks=function(){
+      var f=_selL.value;
+      var list=looksAll.filter(function(l){return !f||l.vend===f;}).slice(0,40);
+      document.getElementById('looksger').innerHTML=list.length?list.map(function(l){return '<div class="lktile"><img loading="lazy" src="'+l.img+'"><div class="cap">'+(l.cliente||'cliente')+(l.vend?' · '+l.vend:'')+'</div></div>';}).join(''):'<div class="empty">Nenhum look gerado ainda. Quando as meninas gerarem looks, eles aparecem aqui.</div>';
+    };
+    _selL.onchange=window._renderLooks;
+    window._renderLooks();
+  }
   var ck=Object.keys(claims);
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
   document.querySelectorAll('.liberar').forEach(function(b){b.onclick=async function(){if(!confirm('Liberar '+b.dataset.v+'? Ela poderá registrar um novo celular ao abrir o link de novo.'))return;try{await fetch('/claim/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:b.dataset.v})});}catch(e){}carregar();};});
 }
 function renderFichas(term){term=(term||'').trim().toLowerCase();var fs=(window._fichas||[]).filter(function(f){return !term||((f.vend||'')+' '+(f.cliente||'')).toLowerCase().includes(term);});fs.sort(function(a,b){return ((a.vend||'')+(a.cliente||'')).localeCompare((b.vend||'')+(b.cliente||''));});var el=document.getElementById('fichas');if(!el)return;if(!fs.length){el.innerHTML='<div class="empty">Nenhuma ficha de cliente ainda. Conforme as vendedoras preenchem as fichas, elas aparecem aqui (em silêncio).</div>';return;}el.innerHTML='<div class="ficgrid">'+fs.map(function(f){return '<div class="ficard">'+(f.foto?'<img src="'+f.foto+'">':'<div class="ficnoimg">sem<br>foto</div>')+'<div class="ficbody"><div class="ficnome">'+(f.cliente||'cliente')+'</div><div class="ficvend">'+(f.vend||'—')+'</div><div class="ficmeta">'+[(f.manequim?'Mnq '+f.manequim:''),(f.sapato?'Calç '+f.sapato:''),(f.aniversario?'🎂 '+f.aniversario:'')].filter(Boolean).join(' · ')+'</div>'+(f.telefone?'<div class="ficmeta">📞 '+f.telefone+'</div>':'')+(f.ocasioes?'<div class="ficmeta">💛 '+f.ocasioes+'</div>':'')+(f.notas?'<div class="ficnota">'+f.notas+'</div>':'')+'</div></div>';}).join('')+'</div>';}
 var _bc=document.getElementById('buscacli');if(_bc)_bc.oninput=function(){renderFichas(this.value);};
+window.openLB=function(src){var lb=document.getElementById('lightbox'),i=document.getElementById('lbimg');if(!lb||!i||!src)return;i.src=src;i.style.transform='scale(1)';i.style.cursor='zoom-in';lb.style.display='flex';};
+function _closeLB(){var lb=document.getElementById('lightbox');if(lb)lb.style.display='none';}
+(function(){var lb=document.getElementById('lightbox');if(!lb)return;lb.onclick=_closeLB;var x=document.getElementById('lbx');if(x)x.onclick=function(e){e.stopPropagation();_closeLB();};var i=document.getElementById('lbimg');if(i)i.onclick=function(e){e.stopPropagation();var big=this.style.transform==='scale(2.2)';this.style.transform=big?'scale(1)':'scale(2.2)';this.style.cursor=big?'zoom-in':'zoom-out';};})();
+var _lg=document.getElementById('looksger');if(_lg)_lg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src);});
+var _fc=document.getElementById('fichas');if(_fc)_fc.addEventListener('click',function(e){if(e.target.tagName==='IMG'&&e.target.closest('.ficard'))openLB(e.target.src);});
 document.getElementById('reload').onclick=carregar;
 carregar();
 </script>
