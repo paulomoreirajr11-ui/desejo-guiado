@@ -405,12 +405,13 @@ const gridEl=$('grid');
 var _buscaRoupa='';
 $('buscaroupa').oninput=function(){_buscaRoupa=(this.value||'').trim().toLowerCase();$('buscaroupax').style.display=_buscaRoupa?'block':'none';renderGrid();};
 $('buscaroupax').onclick=function(){$('buscaroupa').value='';_buscaRoupa='';this.style.display='none';renderGrid();};
+function isJoia(e){var s=((e.f||'')+' '+(e.nome||'')).toLowerCase();return /joia_|anel|brinco|pulseira|colar|pingente|gargantilha|argola|berloque|solit/.test(s);}
 function renderGrid(){
  gridEl.innerHTML='';
  let items=[...Object.values(CAPT).filter(e=>S.cat==='Todas'||e.cat===S.cat),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];if(_buscaRoupa)items=items.filter(e=>((e.nome||'')+' '+(e.cat||'')).toLowerCase().includes(_buscaRoupa));
- items.forEach(e=>{const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(S.pecas.includes(e.f)?' on':'')+(ok?'':' nofit');
-  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+'<div class="tz">'+tamLabel(e)+'</div></div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
-  d.onclick=()=>{if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
+ items.forEach(e=>{const vit=isJoia(e);const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(vit?' vit':'')+((!vit&&S.pecas.includes(e.f))?' on':'')+(ok?'':' nofit');
+  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+(vit?'<div class="tz">💎 vitrine · toque pra ver</div>':'<div class="tz">'+tamLabel(e)+'</div>')+'</div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
+  d.onclick=()=>{if(vit){openZoom(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2');return;}if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
  gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
 }
@@ -508,7 +509,7 @@ function showLook(img,pecas){
   upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
 ger.onclick=()=>{
- const nomes=S.pecas.map(f=>(CAPT[f]?CAPT[f].nome:(byF(f)?byF(f).nome:f)));
+ const _look=S.pecas.filter(f=>!isJoia(CAPT[f]||byF(f)||{f:f}));const nomes=_look.map(f=>(CAPT[f]?CAPT[f].nome:(byF(f)?byF(f).nome:f)));
  const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
  const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
  ger.disabled=true;
@@ -521,7 +522,7 @@ ger.onclick=()=>{
  $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ gerando na nuvem…</span>'+S.pessoa.nome+' · '+S.occ+' · '+S.pecas.length+' peça(s) (uns segundos)</div>';
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
- const garments=S.pecas.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
+ const garments=_look.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
  fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')})})
   .then(r=>r.json()).then(function(d){upd();
     if(d.image){showLook(d.image,nomes);}
