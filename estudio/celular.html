@@ -626,6 +626,7 @@ function fraseLook(){var nome=nomeCliente();var ola=nome?('Oi '+nome+'! '):'Oi! 
 async function enviar(){
  const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
  if(!send.length){toast('Selecione ao menos 1 look');return;}
+ try{send.forEach(function(it){fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})}).catch(function(){});});}catch(e){}
  const msg=fraseLook();
  try{const files=[];for(const it of send){const r=await fetch(it.img);let bl=await r.blob();bl=await watermarkBlob(bl);files.push(new File([bl],'look.jpg',{type:'image/jpeg'}));}
   if(files.length&&navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text:msg});toast('Aberto pra enviar '+files.length+' ✓');return;}}catch(e){}
