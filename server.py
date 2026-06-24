@@ -896,6 +896,8 @@ class Handler(SimpleHTTPRequestHandler):
                 g = body.get("garment", "")
                 garments = [g] if g else []
             prompt = build_prompt(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
+            if body.get("prompt_override"):
+                prompt = body.get("prompt_override")
             uris = [to_uri(body.get("person", ""))] + [to_uri(g) for g in garments if g]
             url = fal_generate(prompt, uris)
             if not url: return self._json(502, {"error": "a nuvem nao devolveu imagem"})
