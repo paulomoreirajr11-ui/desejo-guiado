@@ -14,6 +14,7 @@ reservas.json
 looks.json
 claims.json
 *.pdf
+!estudio/guia_foto.pdf
 
 # Privacidade — fotos de clientes e midias soltas NUNCA no repo publico
 .claude/
