@@ -123,6 +123,7 @@
       </div>
     </div>
     <div id="captcats" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px;"></div>
+    <button id="captshare" type="button" data-on="0" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer;margin-bottom:12px;text-align:left;">⬜ 🌐 Deixar pra todas (Mesa Geral)</button>
     <div style="display:flex;gap:8px;">
       <button id="captcancel" type="button" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">Cancelar</button>
       <button id="captsalvar" type="button" style="flex:2;background:#C7A34A;border:none;color:#1E1A15;border-radius:12px;padding:13px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">Salvar no estoque</button>
@@ -344,6 +345,9 @@ const LETTER2NUM={PP:36,P:38,M:40,G:44,GG:48,XGG:50};
 const $=id=>document.getElementById(id);
 const byF=f=>ESTOQUE.find(e=>e.f===f)||CAPT[f];
 let CAPT=JSON.parse(localStorage.getItem('mira_capt')||'{}');
+let SHARED=[];
+function pecaByF(f){return CAPT[f]||SHARED.find(function(p){return p.f===f;})||(typeof byF==='function'?byF(f):null);}
+function carregarMesaGeral(){try{fetch('/pecas').then(function(r){return r.json();}).then(function(d){SHARED=(d.pecas||[]).map(function(p){p.shared=1;return p;});if(typeof renderGrid==='function')renderGrid();}).catch(function(){});}catch(e){}}
 let FOTOS=JSON.parse(localStorage.getItem('mira_fotos')||'[]');
 let FICHAS=JSON.parse(localStorage.getItem('mira_fichas')||'{}');
 function saveCapt(){try{var ks=Object.keys(CAPT).sort();while(ks.length>24){delete CAPT[ks.shift()];}localStorage.setItem('mira_capt',JSON.stringify(CAPT));}catch(e){}}
@@ -410,9 +414,9 @@ $('buscaroupax').onclick=function(){$('buscaroupa').value='';_buscaRoupa='';this
 function isJoia(e){var s=((e.f||'')+' '+(e.nome||'')).toLowerCase();return /joia_|anel|brinco|pulseira|colar|pingente|gargantilha|argola|berloque|solit/.test(s);}
 function renderGrid(){
  gridEl.innerHTML='';
- let items=[...Object.values(CAPT).filter(e=>S.cat==='Todas'||e.cat===S.cat),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];if(_buscaRoupa)items=items.filter(e=>((e.nome||'')+' '+(e.cat||'')).toLowerCase().includes(_buscaRoupa));
+ let items=[...Object.values(CAPT).filter(e=>S.cat==='Todas'||e.cat===S.cat),...SHARED.filter(e=>S.cat==='Todas'||e.cat===S.cat),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];if(_buscaRoupa)items=items.filter(e=>((e.nome||'')+' '+(e.cat||'')).toLowerCase().includes(_buscaRoupa));
  items.forEach(e=>{const vit=isJoia(e);const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(vit?' vit':'')+((!vit&&S.pecas.includes(e.f))?' on':'')+(ok?'':' nofit');
-  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+(vit?'<div class="tz">💎 vitrine · toque pra ver</div>':'<div class="tz">'+tamLabel(e)+'</div>')+'</div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
+  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+(vit?'<div class="tz">💎 vitrine · toque pra ver</div>':'<div class="tz">'+tamLabel(e)+'</div>')+'</div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap&&!e.shared?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
   d.onclick=()=>{if(vit){openZoom(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2');return;}if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
  gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
@@ -421,8 +425,9 @@ $('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileRe
 var _captData=null,_captCat=null;
 (function(){var cont=$('captcats');if(!cont)return;cats.filter(function(c){return c!=='Todas';}).forEach(function(c){var b=document.createElement('button');b.type='button';b.textContent=c;b.style.cssText='background:var(--panel2);border:1px solid var(--line);color:var(--off);border-radius:999px;padding:8px 13px;font-size:13px;font-family:inherit;cursor:pointer;';b.onclick=function(){_captCat=c;[...cont.children].forEach(function(x){x.style.background='var(--panel2)';x.style.color='var(--off)';x.style.borderColor='var(--line)';});b.style.background='#C7A34A';b.style.color='#1E1A15';b.style.borderColor='#C7A34A';};cont.appendChild(b);});})();
 function abrirCategoria(d){_captData=d;_captCat=null;$('captthumb').src=d;$('captnome').value='';[...$('captcats').children].forEach(function(x){x.style.background='var(--panel2)';x.style.color='var(--off)';x.style.borderColor='var(--line)';});$('captcat').style.display='flex';}
-function finalizarCapt(cat){if(!_captData)return;var nome=($('captnome').value||'').trim()||(cat||'Foto nova');var tam=parseTam($('capttam').value);var id='capt_'+Date.now();CAPT[id]={f:id,cap:_captData,nome:nome,cat:cat,tam:tam};saveCapt();S.pecas.push(id);var alvo=cat||'Todas';S.cat=alvo;[...chipsEl.children].forEach(function(x){x.classList.toggle('on',x.textContent===alvo);});renderGrid();upd();$('captcat').style.display='none';_captData=null;$('captnome').value='';$('capttam').value='';toast('📷 no estoque ✓ ('+alvo+')');}
+function finalizarCapt(cat){if(!_captData)return;var nome=($('captnome').value||'').trim()||(cat||'Foto nova');var tam=parseTam($('capttam').value);var shared=$('captshare')&&$('captshare').dataset.on==='1';var id=(shared?'share_':'capt_')+Date.now();var peca={f:id,cap:_captData,nome:nome,cat:cat,tam:tam};if(shared){peca.shared=1;SHARED.unshift(peca);fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku:id,img:_captData,cat:cat,nome:nome,tam:tam,vend:S.vend})}).catch(function(){});}else{CAPT[id]=peca;saveCapt();}S.pecas.push(id);var alvo=cat||'Todas';S.cat=alvo;[...chipsEl.children].forEach(function(x){x.classList.toggle('on',x.textContent===alvo);});renderGrid();upd();$('captcat').style.display='none';_captData=null;$('captnome').value='';$('capttam').value='';if($('captshare')){$('captshare').dataset.on='0';$('captshare').innerHTML='⬜ 🌐 Deixar pra todas (Mesa Geral)';$('captshare').style.borderColor='var(--line)';$('captshare').style.color='var(--mut)';}toast(shared?'🌐 na Mesa Geral ✓':'📷 no estoque ✓ ('+alvo+')');}
 $('captsalvar').onclick=function(){finalizarCapt(_captCat||'');};$('captpular').onclick=function(){finalizarCapt('');};$('captcancel').onclick=function(){$('captcat').style.display='none';_captData=null;};
+$('captshare').onclick=function(){var willOn=this.dataset.on!=='1';this.dataset.on=willOn?'1':'0';this.innerHTML=(willOn?'✅':'⬜')+' 🌐 Deixar pra todas (Mesa Geral)';this.style.borderColor=willOn?'var(--gold)':'var(--line)';this.style.color=willOn?'var(--off)':'var(--mut)';};
 
 function carregarFotoCliente(f,fonte){if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=820,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var _nm='';try{var _pn=prompt('Nome da cliente? (pode deixar em branco)');if(_pn&&_pn.trim())_nm=_pn.trim();}catch(e){}
 const p={key:'foto_'+Date.now(),nome:(_nm||(fonte==='camera'?'Foto câmera':'Foto galeria')),manequim:null,tag:(_nm?'cliente':(fonte==='camera'?'câmera':'rede social')),foto:c.toDataURL('image/jpeg',.85),estilo:'',fonte:fonte};FOTOS.unshift(p);saveFotos();S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast(fonte==='camera'?'📷 foto na loja ✓ (IA corrige)':'📲 foto da rede social ✓ (rosto travado)');};img.src=ev.target.result;};rd.readAsDataURL(f);}
@@ -511,7 +516,7 @@ function showLook(img,pecas){
   upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
 ger.onclick=()=>{
- const _look=S.pecas.filter(f=>!isJoia(CAPT[f]||byF(f)||{f:f}));const nomes=_look.map(f=>(CAPT[f]?CAPT[f].nome:(byF(f)?byF(f).nome:f)));
+ const _look=S.pecas.filter(f=>!isJoia(pecaByF(f)||{f:f}));const nomes=_look.map(f=>{var e=pecaByF(f);return e&&e.nome?e.nome:f;});
  const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
  const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
  ger.disabled=true;
@@ -524,7 +529,7 @@ ger.onclick=()=>{
  $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ gerando na nuvem…</span>'+S.pessoa.nome+' · '+S.occ+' · '+S.pecas.length+' peça(s) (uns segundos)</div>';
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
- const garments=_look.map(f=>(CAPT[f]?CAPT[f].cap:srv('estoque/'+f+'.jpg')));
+ const garments=_look.map(f=>{var e=pecaByF(f);return e&&e.cap?e.cap:srv('estoque/'+f+'.jpg');});
  fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')})})
   .then(r=>r.json()).then(function(d){upd();
     if(d.image){showLook(d.image,nomes);}
@@ -695,7 +700,7 @@ function _saud(){var h=new Date().getHours();return h<12?'Bom dia':(h<18?'Boa ta
 function mostrarSabedoria(){try{var fr=window.FRASES_SABEDORIA;if(!fr||!fr.length)return;var vend=S.vend||'';var k='mira_sabedoria_'+vend;var hoje=new Date().toISOString().slice(0,10);if(localStorage.getItem(k)===hoje)return;var pos=VENDEDORAS.indexOf(vend);if(pos<0)pos=0;var off=pos*Math.max(1,Math.floor(fr.length/VENDEDORAS.length));var d=new Date();var ini=new Date(d.getFullYear(),0,0);var dia=Math.floor((d-ini)/86400000);var idx=((dia+off)%fr.length+fr.length)%fr.length;var nome=(vend||'').split(' ')[0];$('sabola').textContent=_saud()+(nome?', '+nome:'')+' 💛';$('sabfrase').textContent='“'+fr[idx]+'”';$('sabedoria').style.display='flex';localStorage.setItem(k,hoje);}catch(e){}}
 if($('sabok'))$('sabok').onclick=function(){$('sabedoria').style.display='none';};
 if($('sabedoria'))$('sabedoria').onclick=function(e){if(e.target===this)this.style.display='none';};
-renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();mostrarSabedoria();
+renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();mostrarSabedoria();carregarMesaGeral();
 (function(){try{var ua=navigator.userAgent||'';if(/Android/i.test(ua)&&(/; wv\)/.test(ua)||/(FBAN|FBAV|Instagram|Line|WhatsApp)/i.test(ua))){var bar=document.getElementById('chromebar'),go=document.getElementById('chromego');if(bar&&go){go.href='intent://'+location.href.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';bar.style.display='flex';document.body.style.paddingTop='46px';}}}catch(e){}})();
 window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
 $('zoom').onclick=function(){this.style.display='none';};

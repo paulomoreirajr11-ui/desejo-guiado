@@ -54,6 +54,22 @@ def save_clube(posts):
     except Exception:
         pass
 
+# ---- Mesa Geral (estoque compartilhado entre todas as vendedoras) ----
+def _ptam(t):
+    try:
+        return json.loads(t) if t else None
+    except Exception:
+        return None
+def load_pecas():
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "pecas", "select=*&order=ts.desc") or []
+            return [{"f": r.get("sku"), "cap": r.get("img"), "cat": r.get("cat"),
+                     "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "vend": r.get("vend")} for r in rows]
+        except Exception:
+            pass
+    return []
+
 # ---- Registro de uso por vendedora (painel do admin) ----
 USO_FILE = os.path.join(ROOT, "uso_log.json")
 def load_uso():
@@ -691,6 +707,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(200, {"posts": load_clube()})
         if p == "/uso":
             return self._json(200, {"log": load_uso()})
+        if p == "/pecas":
+            return self._json(200, {"pecas": load_pecas()})
         if p == "/reserva":
             return self._json(200, {"reservas": load_reservas()})
         if p == "/look":
@@ -857,6 +875,31 @@ class Handler(SimpleHTTPRequestHandler):
                         pass
                 claims = load_claims(); claims.pop(vend, None); save_claims(claims)
                 return self._json(200, {"ok": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/pecas":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                if d.get("del"):
+                    if SB_ON:
+                        try:
+                            sb_req("DELETE", "pecas", "sku=eq." + urllib.parse.quote(str(d.get("del"))))
+                        except Exception:
+                            pass
+                    return self._json(200, {"ok": True})
+                if not d.get("img") or not d.get("sku"):
+                    return self._json(200, {"ok": False, "skip": "sem img/sku"})
+                row = {"sku": d.get("sku"), "img": d.get("img"), "cat": d.get("cat"),
+                       "nome": d.get("nome"), "tam": json.dumps(d.get("tam")) if d.get("tam") is not None else None,
+                       "vend": d.get("vend")}
+                if not SB_ON:
+                    return self._json(200, {"ok": False, "sb": False})
+                try:
+                    sb_req("POST", "pecas", body=row)
+                    return self._json(200, {"ok": True, "sku": d.get("sku")})
+                except Exception as e:
+                    return self._json(200, {"ok": False, "error": str(e)})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
         if p == "/ficha":
