@@ -54,7 +54,7 @@
   .chip.on{background:var(--gold);color:#1A1408;border-color:var(--gold);}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
   .tile{position:relative;border-radius:10px;overflow:hidden;background:var(--panel2);border:2px solid transparent;}
-  .tile img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+  .tile img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
   .tile .nm{font-size:9.5px;color:var(--mut);padding:3px 5px;}
   .tile .tz{font-size:8.5px;color:var(--gold2);}
   .tile.on{border-color:var(--gold);}
@@ -263,8 +263,8 @@ const MODELOS=[
 ];
 const ESTOQUE=[
  {f:'real_pantacourt',cat:'Casual',nome:'Pantacourt laranja',tam:[40,42,44]},
- {f:'gala_vinho',cat:'Festa',nome:'Gala vinho',tam:[36,38,40,42,44]},{f:'gala_paete',cat:'Festa',nome:'Gala paetê',tam:[42,44,46,48]},
- {f:'cocktail_renda',cat:'Festa',nome:'Cocktail renda',tam:[36,38,40,42]},{f:'vestido_midi',cat:'Vestidos',nome:'Midi',tam:[38,40,42,44]},
+ {f:'gala_vinho',cat:'Festa Noite',nome:'Gala vinho',tam:[36,38,40,42,44]},{f:'gala_paete',cat:'Festa Noite',nome:'Gala paetê',tam:[42,44,46,48]},
+ {f:'cocktail_renda',cat:'Festa Noite',nome:'Cocktail renda',tam:[36,38,40,42]},{f:'vestido_midi',cat:'Vestidos',nome:'Midi',tam:[38,40,42,44]},
  {f:'slip_seda',cat:'Vestidos',nome:'Slip seda',tam:[36,38,40]},{f:'maxi_estampa',cat:'Vestidos',nome:'Maxi',tam:[38,40,42,44,46]},
  {f:'macacao',cat:'Casual',nome:'Macacão',tam:[38,40,42]},{f:'alfaiataria',cat:'Terninho',nome:'Alfaiataria',tam:[38,40,42,44]},
  {f:'conjunto_linho',cat:'Conjunto',nome:'Linho',tam:[36,38,40,42,44,46]},{f:'academia_1',cat:'Academia',nome:'Fitness',tam:[36,38,40,42,44]},
@@ -276,9 +276,9 @@ const ESTOQUE=[
  {f:'top_academia',cat:'Academia',nome:'Top academia',tam:[36,38,40,42,44]},
  {f:'acc_bolsa',cat:'Acessórios',nome:'Clutch',tam:null},{f:'acc_scarpin',cat:'Acessórios',nome:'Scarpin',tam:null},
  {f:'acc_brinco',cat:'Acessórios',nome:'Brinco',tam:null},{f:'acc_oculos',cat:'Acessórios',nome:'Óculos',tam:null},
- {f:'n26_festa_1',cat:'Festa',nome:'Gala esmeralda 2026',tam:[36,38,40,42,44]},
- {f:'n26_festa_2',cat:'Festa',nome:'Cocktail paetê 2026',tam:[36,38,40,42]},
- {f:'n26_festa_3',cat:'Festa',nome:'Gala champanhe 2026',tam:[38,40,42,44]},
+ {f:'n26_festa_1',cat:'Festa Noite',nome:'Gala esmeralda 2026',tam:[36,38,40,42,44]},
+ {f:'n26_festa_2',cat:'Festa Noite',nome:'Cocktail paetê 2026',tam:[36,38,40,42]},
+ {f:'n26_festa_3',cat:'Festa Noite',nome:'Gala champanhe 2026',tam:[38,40,42,44]},
  {f:'n26_trab_1',cat:'Terninho',nome:'Terninho azul 2026',tam:[38,40,42,44]},
  {f:'n26_trab_2',cat:'Terninho',nome:'Terninho bege 2026',tam:[38,40,42,44]},
  {f:'n26_trab_3',cat:'Terninho',nome:'Vestido executivo 2026',tam:[38,40,42,44]},
@@ -401,7 +401,7 @@ $('tgc').onclick=()=>{S.tipo='cli';$('tgc').classList.add('on');$('tgi').classLi
 $('tgi').onclick=()=>{S.tipo='iren';$('tgi').classList.add('on');$('tgc').classList.remove('on');S.pessoa=null;S.busca='';var _bc=$('buscacli');if(_bc)_bc.value='';loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
 
 const chipsEl=$('chips');
-const cats=['Todas',...[...new Set(ESTOQUE.map(e=>e.cat))]];
+const cats=['Todas',...[...new Set(ESTOQUE.map(e=>e.cat))].flatMap(c=>c==='Festa'?['Festa Dia','Festa Noite']:[c])];
 cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todas'?' on':'');b.textContent=c;b.onclick=()=>{S.cat=c;[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent===c));renderGrid();};chipsEl.appendChild(b);});
 
 function parseTam(s){s=(s||'').trim();if(!s)return null;function num(t){t=t.trim().toUpperCase();return /^\d+$/.test(t)?+t:(LETTER2NUM[t]||0);}var rm=s.match(/^(.+?)\s*[-–]\s*(.+)$/);if(rm){var a=num(rm[1]),b=num(rm[2]);if(a&&b){if(b<a){var z=a;a=b;b=z;}var arr=[];for(var i=a;i<=b;i++)arr.push(i);return arr;}}var out=[];s.split(/[,;\/\s]+/).forEach(function(t){var n=num(t);if(n)out.push(n);});out=Array.from(new Set(out)).sort(function(x,y){return x-y;});return out.length?out:null;}
@@ -412,14 +412,17 @@ var _buscaRoupa='';
 $('buscaroupa').oninput=function(){_buscaRoupa=(this.value||'').trim().toLowerCase();$('buscaroupax').style.display=_buscaRoupa?'block':'none';renderGrid();};
 $('buscaroupax').onclick=function(){$('buscaroupa').value='';_buscaRoupa='';this.style.display='none';renderGrid();};
 function isJoia(e){var s=((e.f||'')+' '+(e.nome||'')).toLowerCase();return /joia_|anel|brinco|pulseira|colar|pingente|gargantilha|argola|berloque|solit/.test(s);}
+const IS_ADMIN=(function(){try{return localStorage.getItem('mira_admin_ok')==='1';}catch(e){return false;}})();
+const inCat=e=>S.cat==='Todas'||e.cat===S.cat||(e.cat==='Festa'&&(S.cat==='Festa Dia'||S.cat==='Festa Noite'));
 function renderGrid(){
  gridEl.innerHTML='';
- let items=[...Object.values(CAPT).filter(e=>S.cat==='Todas'||e.cat===S.cat),...SHARED.filter(e=>S.cat==='Todas'||e.cat===S.cat),...ESTOQUE.filter(e=>S.cat==='Todas'||e.cat===S.cat)];if(_buscaRoupa)items=items.filter(e=>((e.nome||'')+' '+(e.cat||'')).toLowerCase().includes(_buscaRoupa));
+ let items=[...Object.values(CAPT).filter(inCat),...SHARED.filter(inCat),...ESTOQUE.filter(inCat)];if(_buscaRoupa)items=items.filter(e=>((e.nome||'')+' '+(e.cat||'')).toLowerCase().includes(_buscaRoupa));
  items.forEach(e=>{const vit=isJoia(e);const ok=fitOK(e);const d=document.createElement('div');d.className='tile'+(vit?' vit':'')+((!vit&&S.pecas.includes(e.f))?' on':'')+(ok?'':' nofit');
-  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+(vit?'<div class="tz">💎 vitrine · toque pra ver</div>':'<div class="tz">'+tamLabel(e)+'</div>')+'</div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap&&!e.shared?'<span class="delp" data-d="'+e.f+'">✕</span>':'');
+  d.innerHTML='<img src="'+(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2')+'"><div class="nm">'+e.nome+(vit?'<div class="tz">💎 vitrine · toque pra ver</div>':'<div class="tz">'+tamLabel(e)+'</div>')+'</div>'+(ok?'':'<div class="nf">fora</div>')+(e.cap&&!e.shared?'<span class="delp" data-d="'+e.f+'">✕</span>':'')+(e.shared&&IS_ADMIN?'<span class="delp" data-share="'+e.f+'">✕</span>':'');
   d.onclick=()=>{if(vit){openZoom(e.cap?e.cap:'estoque/'+e.f+'.jpg?v=2');return;}if(!ok){toast('✗ não tem o tamanho de '+S.pessoa.nome);return;}const i=S.pecas.indexOf(e.f);if(i>=0)S.pecas.splice(i,1);else S.pecas.push(e.f);renderGrid();upd();};
   gridEl.appendChild(d);});
- gridEl.querySelectorAll('.delp').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
+ gridEl.querySelectorAll('.delp[data-d]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.d;delete CAPT[f];saveCapt();const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Peça removida ✓');});
+ gridEl.querySelectorAll('.delp[data-share]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();const f=x.dataset.share;const pc=SHARED.find(p=>p.f===f);if(!confirm('Tirar "'+((pc&&pc.nome)||'esta peça')+'" da Mesa Geral? Some pra todas as vendedoras.'))return;fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({del:f})}).catch(function(){});SHARED=SHARED.filter(p=>p.f!==f);const i=S.pecas.indexOf(f);if(i>=0)S.pecas.splice(i,1);renderGrid();upd();toast('Tirado da Mesa Geral ✓');});
 }
 $('cam').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{const img=new Image();img.onload=()=>{const mx=420,c=document.createElement('canvas');let w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);abrirCategoria(c.toDataURL('image/jpeg',.8));};img.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
 var _captData=null,_captCat=null;
