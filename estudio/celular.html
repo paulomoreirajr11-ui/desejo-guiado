@@ -401,7 +401,7 @@ $('tgc').onclick=()=>{S.tipo='cli';$('tgc').classList.add('on');$('tgi').classLi
 $('tgi').onclick=()=>{S.tipo='iren';$('tgi').classList.add('on');$('tgc').classList.remove('on');S.pessoa=null;S.busca='';var _bc=$('buscacli');if(_bc)_bc.value='';loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();};
 
 const chipsEl=$('chips');
-const cats=['Todas',...[...new Set(ESTOQUE.map(e=>e.cat))].flatMap(c=>c==='Festa'?['Festa Dia','Festa Noite']:[c])];
+const cats=['Todas',...new Set([...new Set(ESTOQUE.map(e=>e.cat))].flatMap(c=>/^Festa/.test(c)?['Festa Dia','Festa Noite']:[c]))];
 cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todas'?' on':'');b.textContent=c;b.onclick=()=>{S.cat=c;[...chipsEl.children].forEach(x=>x.classList.toggle('on',x.textContent===c));renderGrid();};chipsEl.appendChild(b);});
 
 function parseTam(s){s=(s||'').trim();if(!s)return null;function num(t){t=t.trim().toUpperCase();return /^\d+$/.test(t)?+t:(LETTER2NUM[t]||0);}var rm=s.match(/^(.+?)\s*[-–]\s*(.+)$/);if(rm){var a=num(rm[1]),b=num(rm[2]);if(a&&b){if(b<a){var z=a;a=b;b=z;}var arr=[];for(var i=a;i<=b;i++)arr.push(i);return arr;}}var out=[];s.split(/[,;\/\s]+/).forEach(function(t){var n=num(t);if(n)out.push(n);});out=Array.from(new Set(out)).sort(function(x,y){return x-y;});return out.length?out:null;}
