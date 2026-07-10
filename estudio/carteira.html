@@ -54,6 +54,7 @@
     <a href="cadastro.html">Estoque</a>
     <a href="cadastro_cliente.html">Clientes</a>
     <a href="carteira.html" class="on">Carteira</a>
+    <a href="mensagens.html">Mensagens</a>
     <a href="clube.html">Clube</a>
   </nav>
 </header>
@@ -175,7 +176,7 @@ function render(){
     else meta='há '+c._dias+'d';
     const m=mesDe(c.aniversario);if(m===mesAtual)meta+='<br>🎁 '+c.aniversario;
     const wa=digits(c.telefone);
-    const waBtn=wa?'<a class="wa" href="https://wa.me/'+wa+'" target="_blank">WhatsApp</a>':'<a class="wa off">WhatsApp</a>';
+    const waBtn='<a class="wa" href="mensagens.html?cliente='+encodeURIComponent(c.nome||'')+'">Mensagem</a>';
     return '<div class="row"><div class="av">'+av+'</div>'
       +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div>'
       +'<div class="meta">'+meta+'</div>'

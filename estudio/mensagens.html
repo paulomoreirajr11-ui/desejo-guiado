@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mensagens — Desejo Guiado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);--wpp:#2E7D5B;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:34px;line-height:1;letter-spacing:.5px;}
+  .brand{display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:16px;letter-spacing:4px;}
+  .btag{font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  nav a{margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;}
+  nav a.on{color:#1A1408;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  .wrap{max-width:640px;margin:0 auto;padding:18px;}
+  .step{font-family:'Fraunces';font-size:15px;margin:18px 0 10px;}
+  .step:first-child{margin-top:4px;}
+  .step b{color:var(--gold);}
+  .search{width:100%;height:44px;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:22px;padding:0 16px;font-family:inherit;font-size:14px;}
+  .clist{display:flex;flex-direction:column;gap:6px;max-height:210px;overflow:auto;margin-top:8px;}
+  .crow{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:8px 11px;cursor:pointer;}
+  .crow:hover{border-color:var(--gold);}
+  .crow .cav{width:34px;height:34px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';color:var(--gold);flex:0 0 34px;overflow:hidden;}
+  .crow .cav img{width:100%;height:100%;object-fit:cover;object-position:top;}
+  .crow .cn{font-size:14.5px;font-weight:500;flex:1;}
+  .crow .ct{font-size:11.5px;color:var(--mut);}
+  .selbox{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--gold);border-radius:13px;padding:11px 13px;}
+  .selbox .cav{width:40px;height:40px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';color:var(--gold);flex:0 0 40px;overflow:hidden;}
+  .selbox .cav img{width:100%;height:100%;object-fit:cover;object-position:top;}
+  .selbox .nm{font-size:16px;font-weight:600;}
+  .selbox .ph{font-size:12px;color:var(--mut);margin-top:1px;}
+  .selbox .ph.no{color:#A8562B;}
+  .selbox .trocar{margin-left:auto;font-size:12px;color:var(--gold2);border:1px solid var(--line);border-radius:16px;padding:7px 12px;background:transparent;cursor:pointer;font-family:inherit;}
+  .tipos{display:flex;flex-wrap:wrap;gap:8px;}
+  .tp{font-size:13.5px;padding:10px 15px;border-radius:20px;border:1.5px solid var(--gold);color:var(--gold2);background:transparent;cursor:pointer;font-family:inherit;}
+  .tp.on{background:var(--gold);color:#1A1408;font-weight:600;}
+  textarea{width:100%;min-height:130px;background:var(--panel);color:var(--off);border:1px solid var(--line);border-radius:13px;padding:13px;font-family:inherit;font-size:15px;line-height:1.5;resize:vertical;}
+  .row2{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap;}
+  .btn{flex:1;min-width:130px;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+  .btn.wpp{background:var(--wpp);color:#eafff0;}
+  .btn.wpp:disabled{opacity:.35;cursor:not-allowed;}
+  .btn.cp{background:var(--panel2);color:var(--off);border:1px solid var(--line);}
+  .trocafrase{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:16px;padding:8px 13px;font-size:12.5px;font-family:inherit;cursor:pointer;margin-top:8px;}
+  .hint{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:12px;text-align:center;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<header>
+  <div class="mono gold-metal">M</div>
+  <div class="brand"><div class="bwm gold-metal">IRENE MOREIRA</div><div class="btag">Desejo Guiado</div></div>
+  <nav style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;">
+    <a href="index.html">Início</a>
+    <a href="estudio.html">Estúdio</a>
+    <a href="carteira.html">Carteira</a>
+    <a href="mensagens.html" class="on">Mensagens</a>
+    <a href="clube.html">Clube</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <p class="step"><b>1 ·</b> Pra quem é a mensagem?</p>
+  <div id="pickwrap">
+    <input class="search" id="q" placeholder="🔍  buscar cliente pelo nome…">
+    <div class="clist" id="clist"></div>
+  </div>
+  <div id="selbox"></div>
+
+  <p class="step"><b>2 ·</b> Que tipo de mensagem?</p>
+  <div class="tipos" id="tipos"></div>
+
+  <p class="step"><b>3 ·</b> A mensagem (ajeite do seu jeito)</p>
+  <div id="msgarea"><div class="hint">Escolha a cliente e o tipo — o texto aparece aqui pra você personalizar. 💛</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const TIPOS=[
+ ['novidade','Novidade'],['posvenda','Pós-venda'],['reativacao','Reativação'],
+ ['aniversario','Aniversário'],['ocasiao','Ocasião'],['boasvindas','Boas-vindas'],
+];
+const TPL={
+ novidade:[
+  "Oi [N]! 💛 Separei uma coisa pensando em você — chegou uma peça que tem tudo a ver com o seu estilo. Posso te mostrar?",
+  "[N], lembrei de você quando essa novidade chegou! Acho que você vai amar. Quer dar uma espiada?",
+  "Oi [N]! Chegaram peças novas com a sua cara. Se quiser, já separo pra você ver com calma 😊",
+ ],
+ posvenda:[
+  "Amei te atender hoje, [N]! Você ficou linda 💛 Qualquer coisa com a peça, é só me chamar.",
+  "[N], foi um prazer te ver hoje! Espero que ame a peça tanto quanto eu amei em você. Depois me conta, tá?",
+  "Obrigada pela confiança, [N]! Ficou perfeito em você. Tô aqui sempre que precisar 😊",
+ ],
+ reativacao:[
+  "Senti sua falta por aqui, [N]! 💛 Chegou uma coleção com a sua cara — quer dar uma espiadinha?",
+  "Oi [N]! Faz um tempinho que a gente não se fala. Separei umas peças que são muito você — posso mostrar?",
+  "[N], passei a manhã montando looks e vários me lembraram de você! Quer ver?",
+ ],
+ aniversario:[
+  "Feliz aniversário, [N]! 🎉 Que seu dia seja tão especial quanto você. Separei uma coisinha pra você comemorar do seu jeito 💛",
+  "Parabéns, [N]! 🥳 Um miminho te espera aqui — passa pra escolher quando quiser!",
+  "[N], hoje é o SEU dia! 🎂 Feliz aniversário — e vem cá que tenho um carinho separado pra você.",
+ ],
+ ocasiao:[
+  "Oi [N]! Vi que você tem um evento chegando — tenho umas ideias que são a sua cara. Quer ver? 💛",
+  "[N], pra aquela ocasião especial, separei peças perfeitas pra você. Posso mostrar?",
+  "Oi [N]! Bora achar o look daquele momento especial? Já tenho umas peças pensadas pra você.",
+ ],
+ boasvindas:[
+  "Que alegria te conhecer, [N]! 💛 Já deixei o seu cantinho aqui comigo — sempre que precisar de um look, é só me chamar.",
+  "Oi [N], seja muito bem-vinda! Vou adorar te ajudar a montar looks que são a sua cara 😊",
+  "[N], que bom ter você por aqui! Qualquer coisa que precisar de moda, pode contar comigo 💛",
+ ],
+};
+const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';
+function digits(s){s=(s||'').replace(/\D/g,'');if(!s)return'';if(s.length<=11)s='55'+s;return s;}
+function primeiro(n){return (n||'').trim().split(/\s+/)[0]||'';}
+function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
+
+let CLIENTES=[], sel=null, tipo=null, variante=0;
+
+async function carregar(){
+  let map={};
+  function put(c){const k=(c.nome||'').trim().toLowerCase();if(!k)return;map[k]=Object.assign(map[k]||{},c);}
+  try{JSON.parse(localStorage.getItem('mira_clientes')||'[]').forEach(c=>put({nome:c.nome,foto:c.foto||'',tam:c.tamanho||'',telefone:c.telefone||''}));}catch(e){}
+  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes)}));}catch(e){}
+  CLIENTES=Object.values(map).sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  renderLista('');
+  const pre=new URLSearchParams(location.search).get('cliente');
+  if(pre){const hit=CLIENTES.find(c=>(c.nome||'').trim().toLowerCase()===pre.trim().toLowerCase());if(hit)escolher(hit);}
+}
+function renderLista(term){
+  term=(term||'').trim().toLowerCase();
+  const arr=CLIENTES.filter(c=>!term||(c.nome||'').toLowerCase().includes(term)).slice(0,40);
+  const el=document.getElementById('clist');
+  if(!CLIENTES.length){el.innerHTML='<div class="hint">Nenhuma cliente ainda. Cadastre na aba <a href="cadastro_cliente.html" style="color:var(--gold2)">Clientes</a>.</div>';return;}
+  el.innerHTML=arr.map((c,i)=>{const ini=(c.nome||'?').charAt(0).toUpperCase();const idx=CLIENTES.indexOf(c);
+   return '<div class="crow" data-i="'+idx+'"><div class="cav">'+(c.foto?'<img src="'+c.foto+'">':ini)+'</div><div class="cn">'+(c.nome||'')+'</div><div class="ct">'+(c.telefone?'📞':'—')+'</div></div>';}).join('')||'<div class="hint">Ninguém com esse nome.</div>';
+  el.querySelectorAll('.crow').forEach(r=>r.onclick=()=>escolher(CLIENTES[+r.dataset.i]));
+}
+function escolher(c){
+  sel=c;
+  document.getElementById('pickwrap').style.display='none';
+  const ini=(c.nome||'?').charAt(0).toUpperCase();
+  const tel=digits(c.telefone);
+  document.getElementById('selbox').innerHTML='<div class="selbox"><div class="cav">'+(c.foto?'<img src="'+c.foto+'">':ini)+'</div><div><div class="nm">'+(c.nome||'')+'</div>'+(tel?'<div class="ph">📞 WhatsApp na ficha ✓</div>':'<div class="ph no">sem telefone na ficha — dá pra copiar o texto</div>')+'</div><button class="trocar" id="btrocar">trocar</button></div>';
+  document.getElementById('btrocar').onclick=()=>{sel=null;document.getElementById('selbox').innerHTML='';document.getElementById('pickwrap').style.display='block';};
+  renderMsg();
+}
+function renderTipos(){
+  document.getElementById('tipos').innerHTML=TIPOS.map(t=>'<button class="tp'+(tipo===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>').join('');
+  document.querySelectorAll('.tp').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;variante=0;renderTipos();renderMsg();});
+}
+function textoAtual(){
+  if(!tipo)return '';
+  const arr=TPL[tipo]||[];const t=arr[variante%arr.length]||'';
+  const nome=sel?primeiro(sel.nome):'[Nome]';
+  return t.replace(/\[N\]/g,nome);
+}
+function renderMsg(){
+  const area=document.getElementById('msgarea');
+  if(!sel){area.innerHTML='<div class="hint">Escolha a cliente primeiro 💛</div>';return;}
+  if(!tipo){area.innerHTML='<div class="hint">Agora escolha o tipo de mensagem acima ☝️</div>';return;}
+  area.innerHTML='<textarea id="msg">'+textoAtual().replace(/</g,'&lt;')+'</textarea>'
+   +'<button class="trocafrase" id="troca">🔁 trocar a frase</button>'
+   +'<div class="row2"><button class="btn wpp" id="wpp">💬 Enviar no WhatsApp</button><button class="btn cp" id="cp">📋 Copiar</button></div>';
+  const tel=digits(sel.telefone);
+  const wpp=document.getElementById('wpp');
+  if(!tel){wpp.disabled=true;wpp.title='Sem telefone na ficha';}
+  document.getElementById('troca').onclick=()=>{variante++;const ta=document.getElementById('msg');ta.value=textoAtual();};
+  wpp.onclick=()=>{const msg=document.getElementById('msg').value;if(tel){window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');}};
+  document.getElementById('cp').onclick=()=>{const msg=document.getElementById('msg').value;(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(()=>toast('Texto copiado ✓')).catch(()=>{const ta=document.getElementById('msg');ta.select();try{document.execCommand('copy');toast('Texto copiado ✓');}catch(e){toast('Selecione e copie 😊');}});};
+}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
+document.getElementById('q').oninput=e=>renderLista(e.target.value);
+renderTipos();renderMsg();carregar();
+</script>
+</body>
+</html>
