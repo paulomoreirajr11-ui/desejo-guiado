@@ -748,7 +748,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-06-23_camadas+galeria-autodeploy", "ok": True})
+            return self._json(200, {"version": "2026-07-10_carteira-v1", "ok": True})
         if p == "/ficha":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             vend = (q.get("vend") or [""])[0]
