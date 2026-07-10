@@ -43,12 +43,15 @@
   .tp{font-size:13.5px;padding:10px 15px;border-radius:20px;border:1.5px solid var(--gold);color:var(--gold2);background:transparent;cursor:pointer;font-family:inherit;}
   .tp.on{background:var(--gold);color:#1A1408;font-weight:600;}
   textarea{width:100%;min-height:130px;background:var(--panel);color:var(--off);border:1px solid var(--line);border-radius:13px;padding:13px;font-family:inherit;font-size:15px;line-height:1.5;resize:vertical;}
-  .row2{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap;}
+  .editdica{font-size:12px;color:var(--mut);margin-top:6px;}
+  .barra{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .veroutra{background:var(--panel2);border:1px solid var(--gold);color:var(--gold2);border-radius:18px;padding:9px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .conta{font-size:11.5px;color:var(--mut);}
+  .row2{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;}
   .btn{flex:1;min-width:130px;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
   .btn.wpp{background:var(--wpp);color:#eafff0;}
   .btn.wpp:disabled{opacity:.35;cursor:not-allowed;}
   .btn.cp{background:var(--panel2);color:var(--off);border:1px solid var(--line);}
-  .trocafrase{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:16px;padding:8px 13px;font-size:12.5px;font-family:inherit;cursor:pointer;margin-top:8px;}
   .hint{color:var(--mut);font-size:13px;padding:14px;border:1px dashed var(--line);border-radius:12px;text-align:center;}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;}
   .toast.show{opacity:1;}
@@ -91,33 +94,135 @@ const TIPOS=[
 const TPL={
  novidade:[
   "Oi [N]! 💛 Separei uma coisa pensando em você — chegou uma peça que tem tudo a ver com o seu estilo. Posso te mostrar?",
-  "[N], lembrei de você quando essa novidade chegou! Acho que você vai amar. Quer dar uma espiada?",
+  "[N], lembrei de você na hora que essa novidade chegou! Acho que você vai amar. Quer dar uma espiada?",
   "Oi [N]! Chegaram peças novas com a sua cara. Se quiser, já separo pra você ver com calma 😊",
+  "[N], acabou de chegar uma coisa que é MUITO você. Vim correndo te avisar 💛",
+  "Oi [N]! Tem novidade fresquinha aqui e uma delas gritou o seu nome. Quer ver?",
+  "[N], sabe quando bate aquele “isso é a cara dela”? Foi assim com essa peça nova. Posso mostrar?",
+  "Oi [N]! 💫 Chegou uma coleção linda — separei o que mais combina com você pra não te tomar tempo.",
+  "[N], novidade na área! E tem uma peça que parece que foi feita pensando em você. Quer espiar?",
+  "Oi [N]! Não resisti e já separei umas peças novas com o seu jeito. Te mostro?",
+  "[N], chegou aquele tipo de peça que você ama. Guardei pra você ver antes de todo mundo 💛",
+  "Oi [N]! Tenho uma coisinha nova que acho que vai te conquistar. Posso te enviar?",
+  "[N], passou uma novidade por aqui e eu já pensei: “isso é dela”. Quer conferir?",
+  "Oi [N]! ✨ Novidades chegaram e separei as que têm mais a ver com você. Bora ver?",
+  "[N], vim te dar a primeira olhada numa peça nova que é super o seu estilo. Topa?",
+  "Oi [N]! Chegou coisa boa 💛 Quer que eu te mande o que separei especialmente pra você?",
+  "[N], tem novidade aqui que combina demais com o que você já ama usar. Posso mostrar?",
+  "Oi [N]! Acabei de receber umas peças e uma delas é a sua cara. Quer ver rapidinho?",
+  "[N], separei uma novidade pensando em você — daquelas que ficam lindas no seu estilo. Te envio?",
+  "Oi [N]! 🥰 Chegou uma peça nova que eu já imaginei em você. Quer dar uma olhadinha?",
+  "[N], novidade quentinha! E tem quase o seu nome escrito nela. Posso te mostrar?",
  ],
  posvenda:[
   "Amei te atender hoje, [N]! Você ficou linda 💛 Qualquer coisa com a peça, é só me chamar.",
   "[N], foi um prazer te ver hoje! Espero que ame a peça tanto quanto eu amei em você. Depois me conta, tá?",
   "Obrigada pela confiança, [N]! Ficou perfeito em você. Tô aqui sempre que precisar 😊",
+  "[N], que alegria te atender! Já quero ver você arrasando com a peça nova 💛",
+  "Oi [N]! Só passei pra agradecer o carinho de hoje. Foi lindo te ver feliz com a escolha ✨",
+  "[N], você ficou maravilhosa hoje! Qualquer dúvida de como combinar, me chama que eu ajudo.",
+  "Adorei nosso momento hoje, [N]! Espero que a peça te faça sorrir toda vez que vestir 💛",
+  "[N], obrigada por hoje! Já tô ansiosa pra saber onde você vai estrear o look 😊",
+  "Oi [N]! Foi um prazer enorme te atender. Se precisar de qualquer coisa, tô por aqui 💛",
+  "[N], ficou tudo lindo em você hoje! Guarda meu contato pra quando bater vontade de novidade.",
+  "Obrigada pela visita, [N]! Você tem um gosto lindo — foi fácil te ajudar 🥰",
+  "[N], espero que ame a peça! Depois me manda uma foto arrasando, adoro ver 💛",
+  "Oi [N]! Que bom te ver hoje. Qualquer ajuste ou dúvida, é só falar comigo, combinado?",
+  "[N], hoje foi especial! Obrigada por confiar no meu olhar. Tô sempre aqui pra você ✨",
+  "Adorei te vestir hoje, [N]! Ficou com a sua cara. Volta sempre que quiser 💛",
+  "[N], muito obrigada pelo dia de hoje! Já separo mentalmente o que combina com o que você levou 😊",
+  "Oi [N]! Foi lindo te ver se sentir bem com a peça. É por isso que eu amo o que faço 💛",
+  "[N], obrigada pela tarde de hoje! Qualquer coisa, do jeitinho que você gosta, me chama.",
+  "Que prazer te atender, [N]! Espero que a peça vire uma das suas favoritas 💛",
+  "[N], valeu demais por hoje! Já tô de olho em coisas que vão combinar com o seu novo look ✨",
  ],
  reativacao:[
   "Senti sua falta por aqui, [N]! 💛 Chegou uma coleção com a sua cara — quer dar uma espiadinha?",
   "Oi [N]! Faz um tempinho que a gente não se fala. Separei umas peças que são muito você — posso mostrar?",
   "[N], passei a manhã montando looks e vários me lembraram de você! Quer ver?",
+  "Oi [N]! Cadê você que sumiu? 😊 Chegou coisa linda que combina demais com o seu estilo.",
+  "[N], saudade de te atender! Tenho novidades que acho que vão te animar. Posso te mandar?",
+  "Oi [N]! Lembrei de você hoje e pensei: “preciso mostrar as novidades pra ela”. Topa ver?",
+  "[N], já faz um tempo, né? 💛 Separei umas peças novas pensando no seu gosto. Quer espiar?",
+  "Oi [N]! Que tal a gente se ver de novo? Chegou coisa que é a sua cara, guardei pra você.",
+  "[N], sumida! 😄 Tô com umas peças aqui que você ia amar. Posso te mostrar?",
+  "Oi [N]! Bateu saudade de montar look pra você. Tenho novidades — quer dar uma olhadinha?",
+  "[N], faz tempo que não te vejo por aqui! Separei algumas coisas com a sua carinha 💛",
+  "Oi [N]! Voltando pra sua vida com novidades 😊 Tem peça nova que combina muito com você.",
+  "[N], que saudade! Chegaram peças que me lembraram do seu estilo na hora. Posso mandar?",
+  "Oi [N]! Já pensou em renovar o guarda-roupa? Tenho umas peças que são a sua cara 💛",
+  "[N], sei que anda corrida, mas separei uma coisinha rápida que você vai amar. Quer ver?",
+  "Oi [N]! Faz um tempão! Vim com novidades fresquinhas pensadas pra você. Topa espiar?",
+  "[N], senti falta do seu sorriso quando acerta o look! 🥰 Chegou coisa boa, quer ver?",
+  "Oi [N]! Que tal você passar aqui um dia desses? Separei peças com a sua cara 💛",
+  "[N], voltei com novidades! E tem uma peça que eu já imaginei em você. Posso mostrar?",
+  "Oi [N]! Passando pra dizer que lembrei de você e das peças novas que combinam contigo. Quer ver?",
  ],
  aniversario:[
   "Feliz aniversário, [N]! 🎉 Que seu dia seja tão especial quanto você. Separei uma coisinha pra você comemorar do seu jeito 💛",
   "Parabéns, [N]! 🥳 Um miminho te espera aqui — passa pra escolher quando quiser!",
   "[N], hoje é o SEU dia! 🎂 Feliz aniversário — e vem cá que tenho um carinho separado pra você.",
+  "Feliz aniversário, [N]! 💛 Que tal comemorar com um look novo? Preparei algo especial pra você.",
+  "[N], parabéns! 🎉 Você merece se sentir linda hoje — e eu tenho a peça perfeita pra isso.",
+  "Oi [N], feliz aniversário! 🥰 Que esse ano seja lindo. Passa aqui que tenho uma surpresinha.",
+  "[N], hoje a gente celebra você! 🎂 Feliz aniversário — separei um presente de aniversariante.",
+  "Parabéns, [N]! ✨ Que seu novo ciclo venha cheio de brilho (e de looks lindos!). Tenho um mimo pra você.",
+  "Feliz aniversário, [N]! 💛 Comemora bonito, você merece. Preparei uma condição especial de niver pra você.",
+  "[N], é seu aniversário! 🎉 Vim te desejar tudo de melhor — e te contar que tem carinho te esperando aqui.",
+  "Oi [N], parabéns! 🥳 Que dia lindo pra se presentear. Separei umas peças que são a sua cara.",
+  "[N], feliz aniversário! 💛 Que você continue linda por dentro e por fora. Tenho uma surpresa pra você.",
+  "Parabéns, [N]! 🎂 Aniversariante merece look novo, né? Vem que eu te ajudo a escolher.",
+  "Feliz aniversário, [N]! ✨ Desejo um ano cheio de conquistas. E um miminho de niver te espera aqui 💛",
+  "[N], hoje é dia de festa! 🎉 Parabéns — separei algo pra você comemorar se sentindo maravilhosa.",
+  "Oi [N], feliz aniversário! 🥰 Que tal começar o novo ano com um look que é a sua cara?",
+  "[N], muitas felicidades! 🎂 Preparei uma surpresa de aniversário pensando exatamente em você.",
+  "Parabéns, [N]! 💛 Que seu dia seja leve e lindo. Passa aqui pra buscar seu carinho de niver.",
+  "Feliz aniversário, [N]! 🎉 Você ilumina — merece brilhar hoje. Tenho a peça certa pra isso.",
+  "[N], é o seu dia! 🥳 Parabéns — vem comemorar que tem mimo de aniversariante te esperando 💛",
  ],
  ocasiao:[
   "Oi [N]! Vi que você tem um evento chegando — tenho umas ideias que são a sua cara. Quer ver? 💛",
   "[N], pra aquela ocasião especial, separei peças perfeitas pra você. Posso mostrar?",
   "Oi [N]! Bora achar o look daquele momento especial? Já tenho umas peças pensadas pra você.",
+  "[N], me conta o que vai rolar que eu já monto o look ideal pra você arrasar 💛",
+  "Oi [N]! Ocasião especial pede look especial. Separei umas peças que vão te deixar linda. Quer ver?",
+  "[N], soube que vem evento por aí! 😊 Tenho a peça certa pra você brilhar. Posso te mostrar?",
+  "Oi [N]! Pra você não penar escolhendo, já separei opções lindas pra aquela ocasião. Topa espiar?",
+  "[N], vamos garantir que você seja a mais elegante do evento? Tenho ideias pra você 💛",
+  "Oi [N]! Que tal a gente montar o look daquele compromisso importante? Separei umas peças.",
+  "[N], evento à vista? ✨ Deixa que eu cuido do seu look — já tenho umas coisas com a sua cara.",
+  "Oi [N]! Pra aquela festa, tenho peças que combinam demais com você. Quer ver?",
+  "[N], me diz o clima do evento que eu te mando as opções perfeitas pra você 💛",
+  "Oi [N]! Ocasião especial merece um look à altura. Separei umas ideias lindas — posso mostrar?",
+  "[N], bora deixar você impecável pra esse compromisso? Tenho as peças certas 😊",
+  "Oi [N]! Já pensou no look do evento? Relaxa que eu já separei umas peças com a sua cara 💛",
+  "[N], pra você chegar arrasando, montei umas opções pensando no seu estilo. Quer espiar?",
+  "Oi [N]! Tem ocasião especial chegando? Deixa comigo — tenho peças que vão te deixar linda.",
+  "[N], vamos achar aquele look que te faz se sentir poderosa no evento? Tenho ideias pra você ✨",
+  "Oi [N]! Separei umas peças perfeitas pra aquele momento especial seu. Posso te enviar? 💛",
+  "[N], me conta a ocasião que eu te ajudo a montar um look inesquecível. Bora?",
  ],
  boasvindas:[
   "Que alegria te conhecer, [N]! 💛 Já deixei o seu cantinho aqui comigo — sempre que precisar de um look, é só me chamar.",
   "Oi [N], seja muito bem-vinda! Vou adorar te ajudar a montar looks que são a sua cara 😊",
   "[N], que bom ter você por aqui! Qualquer coisa que precisar de moda, pode contar comigo 💛",
+  "Oi [N]! Seja bem-vinda 🥰 A partir de agora, tem uma pessoa aqui torcendo pra te ver sempre linda.",
+  "[N], adorei te conhecer! Me conta um pouco do seu estilo que eu já começo a separar coisas pra você.",
+  "Oi [N]! Bem-vinda 💛 Aqui você tem atendimento de verdade — do jeitinho que você gosta.",
+  "[N], que prazer! Agora você tem uma consultora de estilo particular (eu!). Qualquer coisa, me chama 😊",
+  "Oi [N], seja bem-vinda! Vou cuidar pra que você sempre encontre peças com a sua cara aqui 💛",
+  "[N], bem-vinda à família! ✨ Estou aqui pra deixar sua vida mais fácil (e mais linda).",
+  "Oi [N]! Que felicidade te receber. Me conta o que você ama usar que eu penso em você quando chegar novidade.",
+  "[N], seja muito bem-vinda! 💛 Prometo te mostrar só o que combina de verdade com você.",
+  "Oi [N]! Bem-vinda 🥰 Aqui o atendimento é personalizado — você não é só mais uma, é você.",
+  "[N], adorei te conhecer! Já salvei seu contato pra te avisar das novidades com a sua cara 😊",
+  "Oi [N], bem-vinda! Pode contar comigo pra montar looks, tirar dúvidas e te deixar sempre linda 💛",
+  "[N], que bom que você chegou! Vou adorar fazer parte dos seus momentos especiais com a moda ✨",
+  "Oi [N]! Seja bem-vinda. Aqui você tem uma amiga que entende de estilo torcendo por você 💛",
+  "[N], prazer enorme! Me diz suas cores e ocasiões favoritas que eu já começo a te mimar 😊",
+  "Oi [N], bem-vinda! A partir de hoje, sempre que bater a vontade de se sentir linda, me chama 💛",
+  "[N], que alegria! Vou cuidar de você com todo carinho aqui. Qualquer coisa, é só chamar 🥰",
+  "Oi [N]! Seja bem-vinda de coração 💛 Estou aqui pra te ajudar a brilhar do seu jeito.",
  ],
 };
 const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';
@@ -157,11 +262,11 @@ function escolher(c){
 }
 function renderTipos(){
   document.getElementById('tipos').innerHTML=TIPOS.map(t=>'<button class="tp'+(tipo===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>').join('');
-  document.querySelectorAll('.tp').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;variante=0;renderTipos();renderMsg();});
+  document.querySelectorAll('.tp').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;const n=(TPL[tipo]||[0]).length;variante=Math.floor(Math.random()*n);renderTipos();renderMsg();});
 }
 function textoAtual(){
   if(!tipo)return '';
-  const arr=TPL[tipo]||[];const t=arr[variante%arr.length]||'';
+  const arr=TPL[tipo]||[];const t=arr[((variante%arr.length)+arr.length)%arr.length]||'';
   const nome=sel?primeiro(sel.nome):'[Nome]';
   return t.replace(/\[N\]/g,nome);
 }
@@ -169,13 +274,16 @@ function renderMsg(){
   const area=document.getElementById('msgarea');
   if(!sel){area.innerHTML='<div class="hint">Escolha a cliente primeiro 💛</div>';return;}
   if(!tipo){area.innerHTML='<div class="hint">Agora escolha o tipo de mensagem acima ☝️</div>';return;}
+  const total=(TPL[tipo]||[]).length;
   area.innerHTML='<textarea id="msg">'+textoAtual().replace(/</g,'&lt;')+'</textarea>'
-   +'<button class="trocafrase" id="troca">🔁 trocar a frase</button>'
+   +'<div class="editdica">✏️ Pode editar e completar — um detalhe da cliente deixa perfeito 💛</div>'
+   +'<div class="barra"><button class="veroutra" id="troca">💡 não gostei, ver outra</button><span class="conta" id="conta"></span></div>'
    +'<div class="row2"><button class="btn wpp" id="wpp">💬 Enviar no WhatsApp</button><button class="btn cp" id="cp">📋 Copiar</button></div>';
+  document.getElementById('conta').textContent=(((variante%total)+total)%total+1)+' de '+total+' sugestões';
   const tel=digits(sel.telefone);
   const wpp=document.getElementById('wpp');
   if(!tel){wpp.disabled=true;wpp.title='Sem telefone na ficha';}
-  document.getElementById('troca').onclick=()=>{variante++;const ta=document.getElementById('msg');ta.value=textoAtual();};
+  document.getElementById('troca').onclick=()=>{variante++;const ta=document.getElementById('msg');ta.value=textoAtual();document.getElementById('conta').textContent=(((variante%total)+total)%total+1)+' de '+total+' sugestões';};
   wpp.onclick=()=>{const msg=document.getElementById('msg').value;if(tel){window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');}};
   document.getElementById('cp').onclick=()=>{const msg=document.getElementById('msg').value;(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(()=>toast('Texto copiado ✓')).catch(()=>{const ta=document.getElementById('msg');ta.select();try{document.execCommand('copy');toast('Texto copiado ✓');}catch(e){toast('Selecione e copie 😊');}});};
 }
