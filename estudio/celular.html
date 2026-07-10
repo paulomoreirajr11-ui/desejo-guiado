@@ -718,6 +718,8 @@ function cancel(){if(tmr){clearTimeout(tmr);tmr=null;}}
 lg.addEventListener('touchstart',start,{passive:true});lg.addEventListener('touchend',cancel);lg.addEventListener('touchmove',cancel);
 lg.addEventListener('contextmenu',function(e){e.preventDefault();});
 lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.addEventListener('mouseleave',cancel);})();
+/* pre-selecionar a cliente vinda da Carteira ("Montar look") — best-effort, blindado, nao altera nada existente */
+(function(){try{var _pick=localStorage.getItem('mira_carteira_pick');if(!_pick)return;localStorage.removeItem('mira_carteira_pick');setTimeout(function(){try{if(typeof S==='undefined')return;if(S.tipo!=='cli'){var g=document.getElementById('tgc');if(g&&g.onclick)g.onclick();}var arr=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());var hit=arr.find(function(x){return ((x&&x.nome)||'').trim().toLowerCase()===(''+_pick).trim().toLowerCase();});if(hit){S.pessoa=hit;if(typeof loadTray==='function')loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();if(typeof toast==='function')toast('Cliente '+(hit.nome||'')+' pronta ✓');}}catch(e){}},400);}catch(e){}})();
 </script>
 </body>
 </html>

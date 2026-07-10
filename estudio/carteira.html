@@ -116,7 +116,7 @@ async function carregar(){
   // 3) últimas interações (/uso) -> dias desde o último contato
   try{const r=await fetch('/uso');const j=await r.json();(j.log||[]).forEach(u=>{const k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;const t=Date.parse(u.ts);if(!t)return;if(!usoMap[k]||t>usoMap[k])usoMap[k]=t;});}catch(e){}
   CLIENTES=Object.values(map);
-  if(!CLIENTES.length)CLIENTES=DEMO.slice(); // demonstração só quando a carteira está vazia
+  if(!CLIENTES.length&&/[?&]demo=1/.test(location.search))CLIENTES=DEMO.slice(); // demo só com ?demo=1 (pra apresentar)
   CLIENTES.forEach(c=>{const k=(c.nome||'').trim().toLowerCase();
     if(c.last!=null&&usoMap[k]==null){c._dias=c.last;} // demo
     else if(usoMap[k]){c._dias=Math.floor((Date.now()-usoMap[k])/86400000);}
@@ -125,6 +125,13 @@ async function carregar(){
 }
 
 function render(){
+  const lista0=document.getElementById('lista');
+  if(!CLIENTES.length){
+    document.getElementById('filters').innerHTML='';
+    document.getElementById('count').textContent='';
+    lista0.innerHTML='<div class="vazio">Sua carteira ainda está vazia 💛<br>Cadastre suas clientes na aba <a href="cadastro_cliente.html" style="color:var(--gold2);font-weight:600;text-decoration:none">Clientes</a> — elas aparecem aqui.</div>';
+    return;
+  }
   const filtros=document.getElementById('filters');
   const tams=[...new Set(CLIENTES.map(c=>c.tam).filter(Boolean))];
   let html='';
@@ -172,11 +179,12 @@ function render(){
     return '<div class="row"><div class="av">'+av+'</div>'
       +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div>'
       +'<div class="meta">'+meta+'</div>'
-      +'<div class="acts"><a class="look" href="estudio.html" onclick="localStorage.setItem(\'mira_carteira_pick\',\''+(c.nome||'').replace(/\x27/g,'')+'\')">Montar look</a>'+waBtn+'</div></div>';
+      +'<div class="acts"><a class="look" href="#" data-nome="'+(c.nome||'').replace(/"/g,'&quot;')+'" onclick="montarLook(this.getAttribute(\'data-nome\'));return false;">Montar look</a>'+waBtn+'</div></div>';
   }).join('');
 }
 
 document.getElementById('q').oninput=e=>{sel.q=e.target.value.trim().toLowerCase();render();};
+function montarLook(n){var mob=window.innerWidth<760;try{if(mob)localStorage.setItem('mira_carteira_pick',n||'');else localStorage.removeItem('mira_carteira_pick');}catch(e){}location.href=(mob?'celular.html':'estudio.html');}
 carregar();
 </script>
 </body>
