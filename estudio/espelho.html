@@ -21,16 +21,22 @@
   nav a{margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;}
   nav a.on{color:#1A1408;background:var(--gold);border-color:var(--gold);font-weight:500;}
   .wrap{max-width:640px;margin:0 auto;padding:18px;}
-  .streak{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,#FBF6EA,#F1EADB);border:1px solid var(--gold);border-radius:16px;padding:16px 18px;}
-  .streak .fire{font-size:40px;line-height:1;}
-  .streak .n{font-family:'Fraunces';font-size:32px;color:var(--gold2);line-height:1;}
-  .streak .l{font-size:13px;color:var(--mut);margin-top:2px;}
-  .streak .best{margin-left:auto;text-align:right;font-size:12px;color:var(--mut);}
+  .risco{background:#FBEFE9;border:1px solid #D98E5A;border-radius:14px;padding:13px 16px;font-size:14px;color:#9A4A22;display:none;align-items:center;gap:10px;margin-bottom:14px;cursor:pointer;}
+  .risco b{color:#7A3413;}
+  .topcard{display:flex;gap:14px;background:linear-gradient(120deg,#FBF6EA,#F1EADB);border:1px solid var(--gold);border-radius:16px;padding:16px 18px;align-items:center;}
+  .topcard .fire{font-size:40px;line-height:1;}
+  .topcard .n{font-family:'Fraunces';font-size:30px;color:var(--gold2);line-height:1;}
+  .topcard .l{font-size:12.5px;color:var(--mut);margin-top:2px;}
+  .nivelbox{margin-left:auto;text-align:right;min-width:120px;}
+  .nivelbox .nv{font-family:'Fraunces';font-size:17px;color:var(--gold2);}
+  .nivelbox .track{height:7px;background:#E7DCC6;border-radius:5px;overflow:hidden;margin-top:5px;}
+  .nivelbox .fill{height:100%;background:linear-gradient(90deg,var(--gold),#E8CE86);}
+  .nivelbox .prox{font-size:10.5px;color:var(--mut);margin-top:3px;}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px;}
   .card h2{font-family:'Fraunces';font-weight:500;font-size:18px;margin:0 0 4px;}
   .card .sub{font-size:13px;color:var(--mut);margin:0 0 14px;}
   .cta{width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:13px;padding:15px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;}
-  .done{display:flex;align-items:center;gap:10px;color:var(--gold2);font-size:15px;font-weight:500;}
+  .rapido{width:100%;margin-top:9px;background:transparent;border:1px solid var(--line);color:var(--gold2);border-radius:12px;padding:12px;font-size:13.5px;font-family:inherit;cursor:pointer;}
   .q .pilar{font-family:'Fraunces';font-size:20px;margin:2px 0 2px;}
   .q .qtxt{font-size:14px;color:var(--mut);margin-bottom:14px;}
   .faces{display:flex;gap:8px;justify-content:space-between;}
@@ -44,6 +50,15 @@
   .coach .foco{font-family:'Fraunces';font-size:19px;margin:6px 0 8px;}
   .coach .acao{font-size:15px;line-height:1.5;}
   .coach .estim{font-size:13px;color:var(--gold2);font-style:italic;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;}
+  .metapilar{display:flex;flex-wrap:wrap;gap:7px;}
+  .mp{font-size:12.5px;padding:8px 12px;border-radius:16px;border:1px solid var(--line);background:transparent;color:var(--off);cursor:pointer;font-family:inherit;}
+  .mp.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .metaset{display:flex;align-items:center;gap:10px;}
+  .metaset .mi{font-size:26px;}
+  .metaset .mt{flex:1;}
+  .metaset .mt .t{font-family:'Fraunces';font-size:17px;}
+  .metaset .mt .s{font-size:12.5px;color:var(--mut);}
+  .metaset .trocar{font-size:12px;color:var(--gold2);border:1px solid var(--line);border-radius:16px;padding:7px 12px;background:transparent;cursor:pointer;font-family:inherit;}
   .bars{display:flex;flex-direction:column;gap:11px;margin-top:6px;}
   .bar{display:flex;align-items:center;gap:11px;}
   .bar .ic{width:26px;text-align:center;font-size:18px;flex:0 0 26px;}
@@ -52,13 +67,25 @@
   .bar .track{height:9px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:4px;}
   .bar .fill{height:100%;background:linear-gradient(90deg,var(--gold),#E8CE86);border-radius:6px;transition:width .5s;}
   .bar .v{flex:0 0 auto;font-size:12px;color:var(--mut);width:30px;text-align:right;}
+  .spark{display:flex;align-items:flex-end;gap:4px;height:54px;margin-top:6px;}
+  .spark .sb{flex:1;background:linear-gradient(180deg,#E8CE86,var(--gold));border-radius:3px 3px 0 0;min-height:3px;}
+  .selos{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px;margin-top:6px;}
+  .selo1{text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 6px;opacity:.4;}
+  .selo1.ok{opacity:1;border-color:var(--gold);background:#FBF6EA;}
+  .selo1 .ic{font-size:26px;line-height:1;}
+  .selo1 .nm{font-size:10.5px;margin-top:5px;line-height:1.2;font-weight:500;}
+  .selo1 .dc{font-size:9px;color:var(--mut);margin-top:2px;}
+  .rodabtn{width:100%;background:var(--panel2);border:1px solid var(--gold);color:var(--gold2);border-radius:12px;padding:13px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;}
   .selo{position:fixed;inset:0;background:rgba(20,16,10,.55);display:none;align-items:center;justify-content:center;z-index:40;padding:20px;}
   .selo .box{background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:28px 24px;text-align:center;max-width:360px;animation:pop .35s ease-out;}
   @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
   .selo .big{font-size:56px;}
   .selo h3{font-family:'Fraunces';color:var(--gold2);margin:8px 0 6px;font-size:24px;}
-  .selo p{color:var(--off);font-size:14.5px;line-height:1.5;margin:0 0 16px;}
+  .selo p{color:var(--off);font-size:14.5px;line-height:1.5;margin:0 0 8px;}
+  .selo .sab{font-style:italic;color:var(--gold2);font-size:14px;margin:6px 0 16px;}
   .selo button{width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50;}
+  .toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -76,17 +103,18 @@
 </header>
 
 <div class="wrap">
-  <div class="streak" id="streak"></div>
+  <div class="risco" id="risco"></div>
+  <div class="topcard" id="topcard"></div>
   <div class="card" id="checkin"></div>
   <div class="coach" id="coach"></div>
-  <div class="card">
-    <h2>Você, por você mesma</h2>
-    <p class="sub">Sua evolução nos 7 pilares — só sua, ninguém mais vê. 💛</p>
-    <div class="bars" id="bars"></div>
-  </div>
+  <div class="card"><h2>🎯 Meta da semana</h2><p class="sub">Escolha 1 pilar pra focar esta semana — foco dá resultado.</p><div id="meta"></div></div>
+  <div class="card"><h2>Sua evolução</h2><p class="sub">As 7 forças, e como a sua média vem crescendo — só sua, ninguém mais vê. 💛</p><div class="bars" id="bars"></div><div id="tl"></div></div>
+  <div class="card"><h2>🏅 Conquistas</h2><p class="sub">Selos que você desbloqueia praticando. Complete a coleção!</p><div class="selos" id="selos"></div></div>
+  <div class="card"><h2>🤝 Leve pra Roda das Donas</h2><p class="sub">Um resumo da sua semana pra compartilhar no grupo (você escolhe o que mostrar).</p><button class="rodabtn" id="roda">📋 Copiar meu resumo da semana</button></div>
 </div>
 
-<div class="selo" id="selo"><div class="box"><div class="big" id="selobig">🌟</div><h3 id="selot">Feito!</h3><p id="selop"></p><button id="selook">Continuar</button></div></div>
+<div class="selo" id="modal"><div class="box"><div class="big" id="mbig">🌟</div><h3 id="mt">Feito!</h3><p id="mp"></p><div class="sab" id="msab"></div><button id="mok">Continuar</button></div></div>
+<div class="toast" id="toast"></div>
 <script>
 const PILARES=[
  ['carteira','Carteira em dia','📇','Você atualizou/cuidou das fichas das clientes hoje?'],
@@ -107,79 +135,125 @@ const COACH={
  umpct:['Escolha 1 hábito minúsculo de 15 minutos e faça hoje.','1% melhor por dia = 37 vezes melhor no fim do ano.'],
 };
 const FACES=[['😞','Difícil'],['😐','Mais ou menos'],['🙂','Ok'],['😊','Bom'],['🤩','Arrasei']];
+const SABEDORIA=[
+ 'Mais um dia melhor que ontem. 💛','O hábito tá se formando — continua firme!',
+ '1% hoje, 37 vezes melhor no fim do ano.','Você tá construindo o seu nome, dia após dia.',
+ 'Constância vence talento. E você tem os dois.','Quem cuida de si, cuida melhor das clientes.',
+ 'Grandes resultados são feitos de pequenos gestos repetidos.','O cliente é o nosso maior tesouro — e você cuida dele bem.',
+ 'Cada check-in é um investimento em você.','Você não espera o dia ser bom; você faz ele ser.',
+ 'A dona de si nunca para de evoluir. É você.','Disciplina é lembrar do que você quer de verdade.',
+ 'Hoje você ficou 1% mais craque. Amanhã, mais.','O sucesso deixa rastro — e o seu já começou.',
+ 'Você é autora da sua história. Escreva bonito.','Maré alta levanta todos os barcos. Comece pelo seu.',
+];
+const NIVEIS=[['Aprendiz',0],['Craque',7],['Mestra',21],['Lenda',60]];
+
 const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';
 const esKey='mira_espelho_'+vend();
 function hoje(){return new Date().toISOString().slice(0,10);}
 function ontem(){var d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10);}
+function weekId(){var dt=new Date();var oj=new Date(dt.getFullYear(),0,1);var w=Math.ceil((((dt-oj)/86400000)+oj.getDay()+1)/7);return dt.getFullYear()+'-W'+w;}
 function load(){try{return JSON.parse(localStorage.getItem(esKey)||'{}');}catch(e){return {};}}
 function save(d){try{localStorage.setItem(esKey,JSON.stringify(d));}catch(e){}}
-function st(){var d=load();d.scores=d.scores||{};d.streak=d.streak||0;d.best=d.best||0;d.lastDay=d.lastDay||'';d.feitos=d.feitos||0;d.rot=d.rot||0;return d;}
+function st(){var d=load();d.scores=d.scores||{};d.streak=d.streak||0;d.best=d.best||0;d.lastDay=d.lastDay||'';d.feitos=d.feitos||0;d.rot=d.rot||0;d.meta=d.meta||null;d.hist=d.hist||[];return d;}
+function media(d){var v=Object.values(d.scores||{});if(!v.length)return 0;return v.reduce((a,b)=>a+b,0)/v.length;}
+function streakVivo(d){return (d.lastDay===hoje()||d.lastDay===ontem())?d.streak:0;}
+function nivel(f){var cur=NIVEIS[0],nxt=null;for(var i=0;i<NIVEIS.length;i++){if(f>=NIVEIS[i][1])cur=NIVEIS[i];else{nxt=NIVEIS[i];break;}}return {nome:cur[0],base:cur[1],prox:nxt};}
+function selos(d){var pmax=Math.max(0,...(Object.values(d.scores||{}).length?Object.values(d.scores):[0]));return [
+ {id:'primeiro',ic:'🌱',nm:'Primeiro passo',ok:d.feitos>=1,dc:'1º check-in'},
+ {id:'r3',ic:'🔥',nm:'Pegando o ritmo',ok:d.best>=3,dc:'3 dias'},
+ {id:'r7',ic:'🗓️',nm:'Uma semana!',ok:d.best>=7,dc:'7 dias'},
+ {id:'r14',ic:'💪',nm:'Duas semanas',ok:d.best>=14,dc:'14 dias'},
+ {id:'r30',ic:'🏆',nm:'Um mês!',ok:d.best>=30,dc:'30 dias'},
+ {id:'pilar5',ic:'⭐',nm:'Pilar dominado',ok:pmax>=5,dc:'5/5 num pilar'},
+ {id:'const',ic:'💎',nm:'Constante',ok:d.feitos>=30,dc:'30 check-ins'},
+];}
 
-let flow=null; // {pilares:[], idx:0}
+let flow=null, selosAntes=[];
 
-function renderStreak(){
- var d=st();
- document.getElementById('streak').innerHTML='<div class="fire">🔥</div><div><div class="n">'+d.streak+(d.streak===1?' dia':' dias')+'</div><div class="l">melhorando 1% no atendimento</div></div><div class="best">recorde<br><b style="color:var(--gold2);font-size:15px">'+d.best+'</b></div>';
+function renderTop(){
+ var d=st(); var sv=streakVivo(d); var nv=nivel(d.feitos);
+ var pct=nv.prox?Math.round((d.feitos-nv.base)/(nv.prox[1]-nv.base)*100):100;
+ var proxTxt=nv.prox?('faltam '+(nv.prox[1]-d.feitos)+' pra '+nv.prox[0]):'nível máximo 👑';
+ document.getElementById('topcard').innerHTML='<div class="fire">🔥</div><div><div class="n">'+sv+(sv===1?' dia':' dias')+'</div><div class="l">melhorando 1% · recorde '+d.best+'</div></div><div class="nivelbox"><div class="nv">'+nv.nome+'</div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div><div class="prox">'+proxTxt+'</div></div>';
+}
+function renderRisco(){
+ var d=st(); var el=document.getElementById('risco');
+ if(d.lastDay===hoje()){el.style.display='none';return;}
+ if(d.lastDay===ontem()&&d.streak>0){el.style.display='flex';el.innerHTML='<span style="font-size:22px">🔥</span><span>Seu streak de <b>'+d.streak+' dias</b> está em risco! Faça o check-in de hoje pra não perder.</span>';el.onclick=()=>document.getElementById('checkin').scrollIntoView({behavior:'smooth'});}
+ else if(d.best>0){el.style.display='flex';el.innerHTML='<span style="font-size:22px">💛</span><span>Recomece seu streak hoje — 1 check-in e você já está de volta ao jogo.</span>';el.onclick=()=>document.getElementById('checkin').scrollIntoView({behavior:'smooth'});}
+ else el.style.display='none';
 }
 function renderCheckin(){
  var d=st(), el=document.getElementById('checkin');
- if(flow){ // em andamento
-  var pk=flow.pilares[flow.idx]; var P=PILARES.find(p=>p[0]===pk);
+ if(flow){var pk=flow.pilares[flow.idx];var P=PILARES.find(p=>p[0]===pk);
   el.innerHTML='<div class="q"><div class="prog">Pergunta '+(flow.idx+1)+' de '+flow.pilares.length+'</div><div class="pilar">'+P[2]+' '+P[1]+'</div><div class="qtxt">'+P[3]+'</div><div class="faces" id="faces"></div></div>';
-  var f=document.getElementById('faces');
-  FACES.forEach((fa,i)=>{var b=document.createElement('div');b.className='face';b.innerHTML='<div class="em">'+fa[0]+'</div><div class="fl">'+fa[1]+'</div>';b.onclick=()=>responder(pk,i+1);f.appendChild(b);});
-  return;
- }
- if(d.lastDay===hoje()){
-  el.innerHTML='<h2>Check-in de hoje ✓</h2><p class="sub">Você já cuidou de você hoje. Volte amanhã pra manter o 🔥. Orgulho de você!</p>';
-  return;
- }
- el.innerHTML='<h2>Seu desafio de hoje</h2><p class="sub">3 perguntinhas rápidas (uns 30 segundos). Responda com sinceridade — é você com você mesma. 💛</p><button class="cta" id="start">Fazer o check-in de hoje</button>';
+  var f=document.getElementById('faces');FACES.forEach((fa,i)=>{var b=document.createElement('div');b.className='face';b.innerHTML='<div class="em">'+fa[0]+'</div><div class="fl">'+fa[1]+'</div>';b.onclick=()=>responder(pk,i+1);f.appendChild(b);});return;}
+ if(d.lastDay===hoje()){el.innerHTML='<h2>Check-in de hoje ✓</h2><p class="sub">Você já cuidou de você hoje. Volte amanhã pra manter o 🔥. Orgulho de você!</p>';return;}
+ el.innerHTML='<h2>Seu desafio de hoje</h2><p class="sub">3 perguntinhas rápidas (uns 30 segundos). Sinceridade total — é você com você mesma. 💛</p><button class="cta" id="start">Fazer o check-in de hoje</button><button class="rapido" id="rap">✓ Dia corrido? Marcar “fiz meu 1% hoje” num toque</button>';
  document.getElementById('start').onclick=iniciar;
+ document.getElementById('rap').onclick=checkRapido;
 }
-function iniciar(){
- var d=st(); var r=d.rot%PILARES.length; var ps=[];
- for(var i=0;i<3;i++)ps.push(PILARES[(r+i)%PILARES.length][0]);
- flow={pilares:ps,idx:0}; renderCheckin();
-}
-function responder(pilar,nota){
- var d=st(); d.scores[pilar]=nota; save(d);
- flow.idx++;
- if(flow.idx>=flow.pilares.length){finalizar();}
- else renderCheckin();
-}
-function finalizar(){
+function iniciar(){var d=st();selosAntes=selos(d).filter(s=>s.ok).map(s=>s.id);var r=d.rot%PILARES.length;var ps=[];for(var i=0;i<3;i++)ps.push(PILARES[(r+i)%PILARES.length][0]);flow={pilares:ps,idx:0};renderCheckin();}
+function responder(pilar,nota){var d=st();d.scores[pilar]=nota;save(d);flow.idx++;if(flow.idx>=flow.pilares.length)finalizar(false);else renderCheckin();}
+function checkRapido(){var d=st();selosAntes=selos(d).filter(s=>s.ok).map(s=>s.id);finalizar(true);}
+function finalizar(rapido){
  var d=st();
- if(d.lastDay===ontem())d.streak=(d.streak||0)+1;
- else if(d.lastDay!==hoje())d.streak=1;
- d.lastDay=hoje(); d.feitos=(d.feitos||0)+1; d.rot=(d.rot+3)%PILARES.length;
+ if(d.lastDay===ontem())d.streak=(d.streak||0)+1; else if(d.lastDay!==hoje())d.streak=1;
+ d.lastDay=hoje();d.feitos=(d.feitos||0)+1;if(!rapido)d.rot=(d.rot+3)%PILARES.length;
  if(d.streak>d.best)d.best=d.streak;
- save(d); flow=null;
- renderStreak(); renderCheckin(); renderCoach(); renderBars();
- var frases=['Mais um dia melhor que ontem. 💛','O hábito tá se formando — continua!','1% hoje, 37x no ano. Bora!','Você tá construindo o seu nome, dia a dia.'];
- document.getElementById('selobig').textContent=d.streak>=7?'🏆':(d.streak>=3?'🔥':'🌟');
- document.getElementById('selot').textContent=d.streak===1?'Primeiro dia!':(d.streak+' dias seguidos!');
- document.getElementById('selop').textContent=frases[d.feitos%frases.length];
- document.getElementById('selo').style.display='flex';
+ d.hist=(d.hist||[]).concat([{d:hoje(),m:Math.round(media(d)*10)/10}]).slice(-40);
+ save(d);flow=null;
+ var novo=selos(d).find(s=>s.ok&&selosAntes.indexOf(s.id)<0);
+ renderAll();celebrar(d,novo);
 }
-function pilarMaisFraco(){
- var d=st(); var keys=Object.keys(d.scores); if(!keys.length)return null;
- keys.sort((a,b)=>d.scores[a]-d.scores[b]); return keys[0];
+function celebrar(d,novo){
+ var m=document.getElementById('modal');
+ if(novo){document.getElementById('mbig').textContent=novo.ic;document.getElementById('mt').textContent='Conquista: '+novo.nm+'!';document.getElementById('mp').textContent='Você desbloqueou um selo novo. 🎉';}
+ else{document.getElementById('mbig').textContent=d.streak>=7?'🏆':(d.streak>=3?'🔥':'🌟');document.getElementById('mt').textContent=d.streak===1?'Primeiro dia!':(d.streak+' dias seguidos!');document.getElementById('mp').textContent='Streak mantido. Você é dona de si. 💪';}
+ document.getElementById('msab').textContent='“'+SABEDORIA[Math.floor(Math.random()*SABEDORIA.length)]+'”';
+ m.style.display='flex';
 }
+function fracoPilar(d,ignorarMeta){var keys=Object.keys(d.scores);if(!keys.length)return null;keys.sort((a,b)=>d.scores[a]-d.scores[b]);return keys[0];}
 function renderCoach(){
- var el=document.getElementById('coach'); var pk=pilarMaisFraco();
- if(!pk){el.innerHTML='<div class="kk">Seu coach</div><div class="foco">Bora começar? 💛</div><div class="acao">Faça o seu primeiro check-in aí em cima. Em poucos dias você vai ver a sua evolução ganhando forma.</div>';return;}
- var P=PILARES.find(p=>p[0]===pk); var c=COACH[pk];
+ var d=st();var el=document.getElementById('coach');var pk=fracoPilar(d);
+ if(!pk){el.innerHTML='<div class="kk">Seu coach</div><div class="foco">Bora começar? 💛</div><div class="acao">Faça o seu primeiro check-in aí em cima. Em poucos dias você vê a sua evolução ganhando forma.</div>';return;}
+ var P=PILARES.find(p=>p[0]===pk);var c=COACH[pk];
  el.innerHTML='<div class="kk">Seu coach · o próximo 1%</div><div class="foco">'+P[2]+' Foco de hoje: '+P[1]+'</div><div class="acao">'+c[0]+'</div><div class="estim">💡 '+c[1]+'</div>';
 }
-function renderBars(){
- var d=st(); var el=document.getElementById('bars');
- el.innerHTML=PILARES.map(p=>{var s=d.scores[p[0]]||0;var pct=Math.round(s/5*100);
-  return '<div class="bar"><div class="ic">'+p[2]+'</div><div class="bn"><div class="t">'+p[1]+'</div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div></div><div class="v">'+(s?s+'/5':'—')+'</div></div>';}).join('');
+function renderMeta(){
+ var d=st();var el=document.getElementById('meta');var wk=weekId();
+ if(d.meta&&d.meta.week===wk){var P=PILARES.find(p=>p[0]===d.meta.pilar);var s=d.scores[d.meta.pilar]||0;
+  el.innerHTML='<div class="metaset"><div class="mi">'+P[2]+'</div><div class="mt"><div class="t">'+P[1]+'</div><div class="s">seu foco desta semana · hoje em '+(s?s+'/5':'—')+'</div></div><button class="trocar" id="mtrocar">trocar</button></div>';
+  document.getElementById('mtrocar').onclick=()=>{d.meta=null;save(d);renderMeta();};return;}
+ el.innerHTML='<div class="metapilar">'+PILARES.map(p=>'<button class="mp" data-p="'+p[0]+'">'+p[2]+' '+p[1]+'</button>').join('')+'</div>';
+ el.querySelectorAll('.mp').forEach(b=>b.onclick=()=>{var dd=st();dd.meta={pilar:b.dataset.p,week:wk};save(dd);renderMeta();toast('Foco da semana definido! 🎯');});
 }
-document.getElementById('selook').onclick=()=>document.getElementById('selo').style.display='none';
-document.getElementById('selo').onclick=e=>{if(e.target.id==='selo')document.getElementById('selo').style.display='none';};
-renderStreak();renderCheckin();renderCoach();renderBars();
+function renderBars(){
+ var d=st();document.getElementById('bars').innerHTML=PILARES.map(p=>{var s=d.scores[p[0]]||0;var pct=Math.round(s/5*100);var meta=d.meta&&d.meta.week===weekId()&&d.meta.pilar===p[0];
+  return '<div class="bar"><div class="ic">'+p[2]+'</div><div class="bn"><div class="t">'+p[1]+(meta?' <span style="color:var(--gold2);font-size:11px">🎯 foco</span>':'')+'</div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div></div><div class="v">'+(s?s+'/5':'—')+'</div></div>';}).join('');
+}
+function renderTL(){
+ var d=st();var h=(d.hist||[]).slice(-12);var el=document.getElementById('tl');
+ if(h.length<2){el.innerHTML='';return;}
+ var bars=h.map(x=>'<div class="sb" style="height:'+Math.max(6,Math.round((x.m||0)/5*100))+'%" title="'+x.d+': '+x.m+'/5"></div>').join('');
+ el.innerHTML='<div style="font-size:12px;color:var(--mut);margin:14px 0 2px">📈 Sua média nos últimos check-ins</div><div class="spark">'+bars+'</div>';
+}
+function renderSelos(){
+ var d=st();document.getElementById('selos').innerHTML=selos(d).map(s=>'<div class="selo1'+(s.ok?' ok':'')+'"><div class="ic">'+(s.ok?s.ic:'🔒')+'</div><div class="nm">'+s.nm+'</div><div class="dc">'+s.dc+'</div></div>').join('');
+}
+function renderAll(){renderRisco();renderTop();renderCheckin();renderCoach();renderMeta();renderBars();renderTL();renderSelos();}
+document.getElementById('roda').onclick=()=>{
+ var d=st();var scored=Object.keys(d.scores);
+ var forte=scored.length?scored.sort((a,b)=>d.scores[b]-d.scores[a])[0]:null;
+ var foco=(d.meta&&d.meta.week===weekId())?d.meta.pilar:fracoPilar(d);
+ var nomeP=k=>{var P=PILARES.find(p=>p[0]===k);return P?P[2]+' '+P[1]:'—';};
+ var txt='Minha semana no Espelho 🪞\n'+(forte?'Vitória: '+nomeP(forte)+' ⭐\n':'')+(foco?'Meu foco: '+nomeP(foco)+'\n':'')+'Streak: '+streakVivo(d)+' dias 🔥 · Nível: '+nivel(d.feitos).nome;
+ (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Resumo copiado! Cole na Roda 💛')).catch(()=>toast('Seu resumo:\n'+txt));
+};
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2600);}
+document.getElementById('mok').onclick=()=>document.getElementById('modal').style.display='none';
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')document.getElementById('modal').style.display='none';};
+renderAll();
 </script>
 </body>
 </html>
