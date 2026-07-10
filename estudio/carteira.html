@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carteira — Desejo Guiado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:34px;line-height:1;letter-spacing:.5px;}
+  .brand{display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:16px;letter-spacing:4px;}
+  .btag{font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  nav a{margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;}
+  nav a.on{color:#1A1408;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  .wrap{max-width:900px;margin:0 auto;padding:18px;}
+  .search{width:100%;height:46px;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:23px;padding:0 18px;font-family:inherit;font-size:15px;}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;}
+  .chip{font-size:13px;padding:9px 16px;border-radius:20px;border:1.5px solid var(--gold);color:var(--gold2);background:transparent;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .chip.on{background:var(--gold);color:#1A1408;font-weight:600;}
+  .count{font-size:12.5px;color:var(--mut);margin:10px 2px;}
+  .lista{display:flex;flex-direction:column;gap:10px;}
+  .row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+  .av{width:52px;height:52px;border-radius:50%;flex:0 0 52px;object-fit:cover;object-position:top;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-size:22px;color:var(--gold);overflow:hidden;}
+  .av img{width:100%;height:100%;object-fit:cover;object-position:top;}
+  .who{flex:1;min-width:0;}
+  .who .n{font-size:16px;font-weight:600;}
+  .who .m{font-size:12.5px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .meta{text-align:right;flex:0 0 auto;font-size:11.5px;color:var(--mut);}
+  .meta .warn{color:var(--gold2);font-weight:600;}
+  .acts{display:flex;flex-direction:column;gap:6px;flex:0 0 auto;}
+  .acts a{font-size:12px;text-align:center;text-decoration:none;border-radius:16px;padding:7px 12px;font-weight:600;font-family:inherit;white-space:nowrap;}
+  .acts .look{background:var(--gold);color:#1A1408;}
+  .acts .wa{border:1.5px solid var(--gold);color:var(--gold2);}
+  .acts .wa.off{opacity:.35;pointer-events:none;}
+  .vazio{color:var(--mut);font-size:13.5px;text-align:center;padding:40px 10px;}
+  @media(max-width:560px){.acts{flex-direction:row;}.meta{display:none;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="mono gold-metal">M</div>
+  <div class="brand"><div class="bwm gold-metal">IRENE MOREIRA</div><div class="btag">Desejo Guiado</div></div>
+  <nav style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;">
+    <a href="index.html">Início</a>
+    <a href="estudio.html">Estúdio</a>
+    <a href="cadastro.html">Estoque</a>
+    <a href="cadastro_cliente.html">Clientes</a>
+    <a href="carteira.html" class="on">Carteira</a>
+    <a href="clube.html">Clube</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <input class="search" id="q" placeholder="🔍  buscar cliente pelo nome…">
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div class="lista" id="lista"></div>
+</div>
+
+<div style="position:fixed;bottom:18px;right:18px;">
+  <button id="helpbtn" style="width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);">?</button>
+</div>
+<div id="helpov" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.9);z-index:31;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:460px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:24px;">
+    <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0 0 12px;font-size:20px;">Como usar · Carteira</h3>
+    <ol style="color:var(--off);font-size:13.5px;line-height:1.9;padding-left:18px;margin:0;">
+      <li>Use a <b>busca</b> ou os <b>filtros</b> pra achar clientes.</li>
+      <li><b>Veste [tam]</b> mostra quem serve numa peça parada.</li>
+      <li><b>Sumidas +30d</b> mostra quem merece um contato carinhoso.</li>
+      <li><b>Aniversário do mês</b> lembra as datas.</li>
+      <li>Toque em <b>Montar look</b> ou <b>WhatsApp</b> pra agir.</li>
+    </ol>
+    <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi</button>
+  </div>
+</div>
+<script>(function(){var b=document.getElementById('helpbtn'),o=document.getElementById('helpov'),c=document.getElementById('helpclose');b.onclick=function(){o.style.display='flex';};c.onclick=function(){o.style.display='none';};o.onclick=function(e){if(e.target===o)o.style.display='none';};})();</script>
+
+<script>
+const OCASIOES=['Festa','Trabalho','Dia a dia','Praia','Casual','Academia'];
+const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DEMO=[
+ {nome:'Marina Alves',foto:'',tam:'M',ocasioes:['Dia a dia','Casual'],telefone:'19999990001',aniversario:'12/07',arquetipo:'Amante',vip:'Ouro',last:3},
+ {nome:'Patrícia Lopes',foto:'',tam:'G',ocasioes:['Trabalho','Festa'],telefone:'19999990002',aniversario:'28/07',arquetipo:'Governante',vip:'Prata',last:44},
+ {nome:'Cláudia Menezes',foto:'',tam:'GG',ocasioes:['Dia a dia','Festa'],telefone:'',aniversario:'03/11',arquetipo:'Criador',vip:'',last:61},
+ {nome:'Vera Nunes',foto:'',tam:'M',ocasioes:['Trabalho'],telefone:'19999990004',aniversario:'',arquetipo:'Cara comum',vip:'',last:9},
+ {nome:'Taís Ribeiro',foto:'',tam:'P',ocasioes:['Academia','Casual'],telefone:'19999990005',aniversario:'19/07',arquetipo:'Explorador',vip:'',last:120},
+];
+const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';
+function digits(s){s=(s||'').replace(/\D/g,'');if(!s)return'';if(s.length<=11)s='55'+s;return s;}
+function mesDe(a){ // extrai o mês (1-12) de "12/08", "1990-08-12", "12 de agosto" etc.
+  a=(a||'').trim();if(!a)return 0;
+  let m=a.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return +m[2];
+  m=a.match(/^(\d{1,2})[\/\.\-](\d{1,2})/);if(m)return +m[2];
+  return 0;
+}
+function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
+
+let CLIENTES=[], usoMap={};
+let sel={tam:null,occ:null,aniv:false,sumidas:false,vip:false,q:''};
+
+async function carregar(){
+  // 1) locais (mira_clientes)
+  let map={};
+  function put(c){const k=(c.nome||'').trim().toLowerCase();if(!k)return;map[k]=Object.assign(map[k]||{},c);}
+  try{JSON.parse(localStorage.getItem('mira_clientes')||'[]').forEach(c=>put({nome:c.nome,foto:c.foto||'',tam:c.tamanho||c.tam||'',ocasioes:normOcc(c.ocasioes)}));}catch(e){}
+  // 2) servidor (/ficha) — só vem se o Supabase estiver ligado
+  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',sapato:f.sapato||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes),notas:f.notas||'',estilo:f.estilo||'',cores:f.cores||'',arquetipo:f.arquetipo||'',vip:f.vip||''}));}catch(e){}
+  // 3) últimas interações (/uso) -> dias desde o último contato
+  try{const r=await fetch('/uso');const j=await r.json();(j.log||[]).forEach(u=>{const k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;const t=Date.parse(u.ts);if(!t)return;if(!usoMap[k]||t>usoMap[k])usoMap[k]=t;});}catch(e){}
+  CLIENTES=Object.values(map);
+  if(!CLIENTES.length)CLIENTES=DEMO.slice(); // demonstração só quando a carteira está vazia
+  CLIENTES.forEach(c=>{const k=(c.nome||'').trim().toLowerCase();
+    if(c.last!=null&&usoMap[k]==null){c._dias=c.last;} // demo
+    else if(usoMap[k]){c._dias=Math.floor((Date.now()-usoMap[k])/86400000);}
+    else{c._dias=null;}});
+  render();
+}
+
+function render(){
+  const filtros=document.getElementById('filters');
+  const tams=[...new Set(CLIENTES.map(c=>c.tam).filter(Boolean))];
+  let html='';
+  tams.forEach(t=>html+='<button class="chip'+(sel.tam===t?' on':'')+'" data-tam="'+t+'">Veste '+t+'</button>');
+  html+='<button class="chip'+(sel.sumidas?' on':'')+'" data-sumidas="1">Sumidas +30d</button>';
+  html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">Aniversário do mês</button>';
+  html+='<button class="chip'+(sel.vip?' on':'')+'" data-vip="1">★ VIP</button>';
+  OCASIOES.forEach(o=>html+='<button class="chip'+(sel.occ===o?' on':'')+'" data-occ="'+o+'">'+o+'</button>');
+  filtros.innerHTML=html;
+  filtros.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+    if(ch.dataset.tam!=null)sel.tam=(sel.tam===ch.dataset.tam?null:ch.dataset.tam);
+    if(ch.dataset.occ!=null)sel.occ=(sel.occ===ch.dataset.occ?null:ch.dataset.occ);
+    if(ch.dataset.aniv)sel.aniv=!sel.aniv;
+    if(ch.dataset.sumidas)sel.sumidas=!sel.sumidas;
+    if(ch.dataset.vip)sel.vip=!sel.vip;
+    render();
+  });
+
+  const mesAtual=new Date().getMonth()+1;
+  let arr=CLIENTES.filter(c=>{
+    if(sel.q&&!(c.nome||'').toLowerCase().includes(sel.q))return false;
+    if(sel.tam&&c.tam!==sel.tam)return false;
+    if(sel.occ&&!normOcc(c.ocasioes).includes(sel.occ))return false;
+    if(sel.aniv&&mesDe(c.aniversario)!==mesAtual)return false;
+    if(sel.sumidas&&!(c._dias==null||c._dias>=30))return false;
+    if(sel.vip&&!c.vip)return false;
+    return true;
+  });
+  arr.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+
+  document.getElementById('count').textContent=arr.length+' de '+CLIENTES.length+' cliente'+(CLIENTES.length===1?'':'s');
+  const lista=document.getElementById('lista');
+  if(!arr.length){lista.innerHTML='<div class="vazio">Nenhuma cliente com esse filtro. 💛</div>';return;}
+  lista.innerHTML=arr.map(c=>{
+    const ini=(c.nome||'?').trim().charAt(0).toUpperCase();
+    const av=c.foto?'<img src="'+c.foto+'">':ini;
+    const tags=[c.tam?'Tam '+c.tam:'',c.arquetipo||'',normOcc(c.ocasioes).join(' · ')].filter(Boolean).join(' · ');
+    let meta='';
+    if(c._dias==null)meta='<span class="warn">sem contato</span>';
+    else if(c._dias>=30)meta='<span class="warn">há '+c._dias+'d ⚠</span>';
+    else meta='há '+c._dias+'d';
+    const m=mesDe(c.aniversario);if(m===mesAtual)meta+='<br>🎁 '+c.aniversario;
+    const wa=digits(c.telefone);
+    const waBtn=wa?'<a class="wa" href="https://wa.me/'+wa+'" target="_blank">WhatsApp</a>':'<a class="wa off">WhatsApp</a>';
+    return '<div class="row"><div class="av">'+av+'</div>'
+      +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div>'
+      +'<div class="meta">'+meta+'</div>'
+      +'<div class="acts"><a class="look" href="estudio.html" onclick="localStorage.setItem(\'mira_carteira_pick\',\''+(c.nome||'').replace(/\x27/g,'')+'\')">Montar look</a>'+waBtn+'</div></div>';
+  }).join('');
+}
+
+document.getElementById('q').oninput=e=>{sel.q=e.target.value.trim().toLowerCase();render();};
+carregar();
+</script>
+</body>
+</html>

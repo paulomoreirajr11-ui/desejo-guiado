@@ -54,6 +54,7 @@
     <a href="estudio.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Estúdio</a>
     <a href="cadastro.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Estoque</a>
     <a href="cadastro_cliente.html" style="margin:0;font-size:13px;color:#1A1408;background:var(--gold);text-decoration:none;border:1px solid var(--gold);border-radius:20px;padding:8px 16px;font-weight:500;">Clientes</a>
+    <a href="carteira.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Carteira</a>
     <a href="clube.html" style="margin:0;font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;">Clube</a>
   </nav>
 </header>
@@ -72,6 +73,18 @@
 
     <p class="step"><b>4 ·</b> Ocasiões que ela curte <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
     <div class="grp" id="ocasioes"></div>
+
+    <p class="step"><b>5 ·</b> Estilo <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
+    <input type="text" id="estilo" placeholder="ex.: clássico, romântico, moderno">
+
+    <p class="step"><b>6 ·</b> O que ela quer sentir <span style="color:var(--mut);font-size:12px;">(guia o tom do look — opcional)</span></p>
+    <div class="grp" id="arquetipos"></div>
+
+    <p class="step"><b>7 ·</b> Cores que ela ama <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
+    <input type="text" id="cores" placeholder="ex.: nude, vinho, off-white">
+
+    <p class="step"><b>8 ·</b> Cliente VIP <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
+    <div class="grp" id="vips"></div>
 
     <button class="cad" id="cad" disabled>Cadastrar cliente</button>
   </div>
@@ -111,7 +124,7 @@ const CLIENTES_DEMO=[
  {nome:'Taís',tamanho:'P',estilo:'Esportivo',ocasioes:['Academia','Casual'],foto:'clientes/cliente_5.jpg'},
  {nome:'Neusa',tamanho:'GG',estilo:'Clássico',ocasioes:['Festa','Dia a dia'],foto:'clientes/cliente_6.jpg'},
 ];
-let state={foto:null,nome:'',tamanho:null,ocasioes:[]};
+let state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null,vip:''};
 
 const up=document.getElementById('up'), file=document.getElementById('file');
 up.onclick=()=>file.click();
@@ -126,18 +139,27 @@ TAMANHOS.forEach(t=>{const b=document.createElement('button');b.className='b sz'
 const ocEl=document.getElementById('ocasioes');
 OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='b';b.textContent=o;b.onclick=()=>{const i=state.ocasioes.indexOf(o);if(i>=0)state.ocasioes.splice(i,1);else state.ocasioes.push(o);b.classList.toggle('on');};ocEl.appendChild(b);});
 
+const estiloEl=document.getElementById('estilo');estiloEl.oninput=()=>{state.estilo=estiloEl.value.trim();};
+const coresEl=document.getElementById('cores');coresEl.oninput=()=>{state.cores=coresEl.value.trim();};
+const ARQUETIPOS=[['Bela e desejada','Amante'],['Única e autoral','Criador'],['Poderosa e elegante','Governante'],['Livre e aventureira','Explorador'],['Confortável e real','Cara comum'],['Cuidadora','Cuidador']];
+const arqEl=document.getElementById('arquetipos');
+ARQUETIPOS.forEach(function(pair){const b=document.createElement('button');b.className='b';b.textContent=pair[0];b.onclick=()=>{state.arquetipo=(state.arquetipo===pair[1]?null:pair[1]);[...arqEl.children].forEach(x=>x.classList.toggle('on',x===b&&state.arquetipo===pair[1]));};arqEl.appendChild(b);});
+const VIPS=['Prata','Ouro'];
+const vipEl=document.getElementById('vips');
+VIPS.forEach(v=>{const b=document.createElement('button');b.className='b';b.textContent='★ '+v;b.onclick=()=>{state.vip=(state.vip===v?'':v);[...vipEl.children].forEach(x=>x.classList.toggle('on',x===b&&state.vip===v));};vipEl.appendChild(b);});
+
 const cad=document.getElementById('cad');
 function upd(){cad.disabled=!(state.foto&&state.nome&&state.tamanho);}
 
 cad.onclick=()=>{
   const arr=JSON.parse(localStorage.getItem('mira_clientes')||'[]');
-  arr.unshift({foto:state.foto,nome:state.nome,tamanho:state.tamanho,ocasioes:state.ocasioes.slice()});
+  arr.unshift({foto:state.foto,nome:state.nome,tamanho:state.tamanho,ocasioes:state.ocasioes.slice(),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo,vip:state.vip});
   localStorage.setItem('mira_clientes',JSON.stringify(arr));
-  try{var _v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:_v,cliente:state.nome,foto:state.foto,manequim:state.tamanho,ocasioes:(state.ocasioes||[]).join(', ')})}).catch(function(){});}catch(e){}
+  try{var _v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:_v,cliente:state.nome,foto:state.foto,manequim:state.tamanho,ocasioes:(state.ocasioes||[]).join(', '),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo,vip:state.vip})}).catch(function(){});}catch(e){}
   toast('Cliente cadastrada! ✓ Já aparece no Estúdio.');
-  state={foto:null,nome:'',tamanho:null,ocasioes:[]};
+  state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null,vip:''};
   up.innerHTML='<div class="ic">＋</div><div>toque para enviar a foto</div>';
-  nome.value='';[...tamEl.children].forEach(x=>x.classList.remove('on'));[...ocEl.children].forEach(x=>x.classList.remove('on'));
+  nome.value='';estiloEl.value='';coresEl.value='';[...tamEl.children].forEach(x=>x.classList.remove('on'));[...ocEl.children].forEach(x=>x.classList.remove('on'));[...arqEl.children].forEach(x=>x.classList.remove('on'));[...vipEl.children].forEach(x=>x.classList.remove('on'));
   upd();renderLista();
 };
 
@@ -150,7 +172,7 @@ function renderLista(){
 
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
 renderLista();
-(function(){try{var synced=JSON.parse(localStorage.getItem('mira_cli_synced')||'[]');var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';var arr=JSON.parse(localStorage.getItem('mira_clientes')||'[]');arr.forEach(function(c){if(!c||!c.nome||synced.indexOf(c.nome)>=0)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:v,cliente:c.nome,foto:c.foto,manequim:c.tamanho,ocasioes:(c.ocasioes||[]).join(', ')})}).then(function(){synced.push(c.nome);localStorage.setItem('mira_cli_synced',JSON.stringify(synced));}).catch(function(){});});}catch(e){}})();
+(function(){try{var synced=JSON.parse(localStorage.getItem('mira_cli_synced')||'[]');var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';var arr=JSON.parse(localStorage.getItem('mira_clientes')||'[]');arr.forEach(function(c){if(!c||!c.nome||synced.indexOf(c.nome)>=0)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:v,cliente:c.nome,foto:c.foto,manequim:c.tamanho,ocasioes:(c.ocasioes||[]).join(', '),estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,vip:c.vip})}).then(function(){synced.push(c.nome);localStorage.setItem('mira_cli_synced',JSON.stringify(synced));}).catch(function(){});});}catch(e){}})();
 </script>
 </body>
 </html>

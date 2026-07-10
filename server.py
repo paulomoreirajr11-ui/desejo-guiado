@@ -755,7 +755,7 @@ class Handler(SimpleHTTPRequestHandler):
             out = []
             if SB_ON:
                 try:
-                    params = "select=vend,cliente,foto,manequim,sapato,telefone,aniversario,notas,ocasioes&order=cliente.asc"
+                    params = "select=vend,cliente,foto,manequim,sapato,telefone,aniversario,notas,ocasioes,estilo,cores,arquetipo,vip&order=cliente.asc"
                     if vend:
                         params = "vend=eq." + urllib.parse.quote(vend) + "&" + params
                     out = sb_req("GET", "fichas", params) or []
@@ -911,7 +911,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if not cliente:
                     return self._json(200, {"ok": False, "skip": "sem nome"})
                 row = {"vend": vend, "cliente": cliente, "ts": datetime.datetime.now().isoformat(timespec="seconds")}
-                for _k in ("foto", "manequim", "sapato", "telefone", "aniversario", "notas", "ocasioes"):
+                for _k in ("foto", "manequim", "sapato", "telefone", "aniversario", "notas", "ocasioes", "estilo", "cores", "arquetipo", "vip"):
                     if _k in d:
                         row[_k] = d.get(_k)
                 if not SB_ON:
