@@ -287,6 +287,7 @@ document.getElementById('editclose').onclick=function(){document.getElementById(
 document.getElementById('edit').onclick=function(e){if(e.target.id==='edit')this.style.display='none';};
 document.getElementById('editsave').onclick=salvarEdit;
 function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2400);}
+try{if(/[?&]sumidas=1/.test(location.search)){sel.sumidas=true;sel.ord='sumidas';var _os=document.getElementById('ord');if(_os)_os.value='sumidas';}}catch(e){}
 carregar();
 </script>
 </body>

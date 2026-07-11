@@ -143,7 +143,11 @@
   <div class="sess">
     <select id="vend"></select>
   </div>
-  <div id="anivbar" style="display:none;margin:10px 16px 0;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--gold2);cursor:pointer;align-items:center;gap:8px;">🎂 <span id="anivtxt"></span><span style="margin-left:auto;color:var(--mut);font-size:11px;">toque pra ver ›</span></div>
+  <div id="anivbar" style="display:none;"></div>
+  <div id="cockpit" style="display:none;margin:10px 16px 0;background:#FBF6EA;border:1px solid var(--gold);border-radius:14px;padding:10px 14px 6px;">
+    <div style="font-family:'Fraunces';color:var(--gold2);font-size:15px;">☀️ <span id="cocksaud">Bom dia</span> — o que fazer hoje</div>
+    <div id="cocklist"></div>
+  </div>
   <a id="espbar" href="espelho.html" style="display:none;margin:8px 16px 0;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--gold2);text-decoration:none;align-items:center;gap:8px;">🪞 <span id="esptxt"></span><span style="margin-left:auto;color:var(--mut);font-size:11px;">check-in ›</span></a>
 
   <div class="sec">
@@ -386,7 +390,7 @@ const byF=f=>ESTOQUE.find(e=>e.f===f)||CAPT[f];
 let CAPT=JSON.parse(localStorage.getItem('mira_capt')||'{}');
 let SHARED=[];
 function pecaByF(f){return CAPT[f]||SHARED.find(function(p){return p.f===f;})||(typeof byF==='function'?byF(f):null);}
-function carregarMesaGeral(){try{fetch('/pecas').then(function(r){return r.json();}).then(function(d){SHARED=(d.pecas||[]).map(function(p){p.shared=1;return p;});if(typeof renderGrid==='function')renderGrid();}).catch(function(){});}catch(e){}}
+function carregarMesaGeral(){try{fetch('/pecas').then(function(r){return r.json();}).then(function(d){SHARED=(d.pecas||[]).map(function(p){p.shared=1;return p;});if(typeof renderGrid==='function')renderGrid();if(typeof renderCockpit==='function')renderCockpit();}).catch(function(){});}catch(e){}}
 let FOTOS=JSON.parse(localStorage.getItem('mira_fotos')||'[]');
 let FICHAS=JSON.parse(localStorage.getItem('mira_fichas')||'{}');
 function saveCapt(){try{var ks=Object.keys(CAPT).sort();while(ks.length>24){delete CAPT[ks.shift()];}localStorage.setItem('mira_capt',JSON.stringify(CAPT));}catch(e){}}
@@ -500,7 +504,34 @@ var _fsyncT=null;
 function syncFichaBanco(){try{var nome=($('fnome').value||'').trim();if(!nome||!S.vend)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:nome,foto:(S.pessoa&&S.pessoa.foto)||'',manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,vip:$('fvip').value,ocasioes:_focc.join(', ')})}).catch(function(){});}catch(e){}}
 function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,ocasioes:_focc.join(', ')};saveFichas();updFichaWpp();renderAnivBar();clearTimeout(_fsyncT);_fsyncT=setTimeout(syncFichaBanco,900);}
 function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=FOTOS.concat(getClientes());var out=[];people.forEach(function(p){var f=FICHAS[p.key];if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
-function renderAnivBar(){var bar=$('anivbar');if(!bar)return;var arr=aniversariantesDoMes();if(arr.length){bar.style.display='flex';$('anivtxt').textContent=arr.length+(arr.length===1?' aniversariante este mês':' aniversariantes este mês');}else{bar.style.display='none';}}
+function renderAnivBar(){renderCockpit();}
+function _cockGen(n){n=(n||'').trim().toLowerCase();return !n||/^(foto|cliente|oi)/.test(n);}
+async function renderCockpit(){
+ var host=$('cocklist'),card=$('cockpit');if(!host||!card)return;
+ var rows=[];
+ try{var av=aniversariantesDoMes();if(av&&av.length)rows.push({ic:'🎂',t:av.length+(av.length===1?' aniversariante este mês':' aniversariantes este mês'),a:'aniv'});}catch(e){}
+ try{var lk=(typeof loadLooks==='function')?loadLooks():[];if(lk&&lk.length)rows.push({ic:'👗',t:lk.length+(lk.length===1?' look salvo pra reusar':' looks salvos pra reusar'),a:'looks'});}catch(e){}
+ try{if(typeof SHARED!=='undefined'&&SHARED&&SHARED.length)rows.push({ic:'⭐',t:SHARED.length+(SHARED.length===1?' peça da semana pra girar':' peças da semana pra girar'),a:'achados'});}catch(e){}
+ try{
+  var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes()).filter(function(p){return p&&p.key&&/^(foto_|cli_)/.test(p.key)&&!_cockGen(p.nome);});
+  if(pool.length){
+   var log=[];try{log=(await (await fetch('/uso')).json()).log||[];}catch(e){}
+   var last={};log.forEach(function(u){if(S.vend&&u.vend&&u.vend!==S.vend)return;var k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;var t=Date.parse(u.ts);if(t&&(!last[k]||t>last[k]))last[k]=t;});
+   var sum=pool.filter(function(p){var t=last[(p.nome||'').trim().toLowerCase()];if(!t)return true;return (Date.now()-t)/86400000>=30;});
+   if(sum.length)rows.push({ic:'😴',t:sum.length+(sum.length===1?' cliente sem contato há tempos':' clientes sem contato há tempos'),a:'sumidas'});
+  }
+ }catch(e){}
+ if(!rows.length){card.style.display='none';return;}
+ host.innerHTML=rows.map(function(r){return '<div class="cockrow" data-a="'+r.a+'" style="display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--line);cursor:pointer;"><span style="font-size:19px;">'+r.ic+'</span><span style="flex:1;font-size:13.5px;color:var(--off);">'+r.t+'</span><span style="color:var(--gold2);font-size:16px;">›</span></div>';}).join('');
+ host.querySelectorAll('.cockrow').forEach(function(el){el.onclick=function(){var a=el.getAttribute('data-a');
+  if(a==='aniv'){abrirAniv();}
+  else if(a==='looks'){if(typeof renderLooks==='function')renderLooks();var lm=$('looks');if(lm)lm.style.display='flex';}
+  else if(a==='sumidas'){location.href='carteira.html?sumidas=1';}
+  else if(a==='achados'){if(typeof toast==='function')toast('⭐ As peças da semana estão no estoque — monte um look 💛');var g=$('grid');if(g)g.scrollIntoView({behavior:'smooth'});}
+ };});
+ try{var nm=(S.vend||'').split(' ')[0];var h=new Date().getHours();var saud=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');var st=$('cocksaud');if(st)st.textContent=saud+(nm?', '+nm:'');}catch(e){}
+ card.style.display='block';
+}
 function abrirAniv(){var arr=aniversariantesDoMes();var el=$('anivlist');el.innerHTML=arr.length?arr.map(function(a){var tel=(a.telefone||'').replace(/\D/g,'');return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);"><div style="flex:1;"><div style="font-weight:500;">'+(a.nome||'cliente')+'</div><div style="font-size:12px;color:var(--mut);">🎂 dia '+a.dia+'</div></div>'+(tel.length>=10?'<a href="https://wa.me/55'+tel+'" style="font-size:20px;text-decoration:none;">🟢</a>':'')+'<button class="anivsel" data-k="'+a.key+'" style="background:var(--gold);color:#1A1408;border:none;border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">👗 Fazer look</button></div>';}).join(''):'<div style="color:var(--mut);font-size:13px;padding:10px 0;">Ninguém faz aniversário este mês.</div>';el.querySelectorAll('.anivsel').forEach(function(b){b.onclick=function(){var k=b.getAttribute('data-k');var p=FOTOS.concat(getClientes()).find(function(x){return x.key===k;});if(p){S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();}$('aniv').style.display='none';toast('Cliente selecionada — monte o look 💝');};});$('aniv').style.display='flex';}
 if($('anivbar'))$('anivbar').onclick=abrirAniv;
 if($('anivclose'))$('anivclose').onclick=function(){$('aniv').style.display='none';};
