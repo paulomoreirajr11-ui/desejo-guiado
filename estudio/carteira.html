@@ -170,10 +170,19 @@ function mesDe(a){ // extrai o mês (1-12) de "12/08", "1990-08-12", "12 de agos
   m=a.match(/^(\d{1,2})[\/\.\-](\d{1,2})/);if(m)return +m[2];
   return 0;
 }
+function diasAteAniv(a){ // dias até o próximo aniversário (0=hoje), -1 se sem data
+  a=(a||'').trim();if(!a)return -1;var d,m;
+  var mm=a.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(mm){m=+mm[2];d=+mm[3];}else{var m2=a.match(/^(\d{1,2})[\/\.\-](\d{1,2})/);if(!m2)return -1;d=+m2[1];m=+m2[2];}
+  if(!m||!d)return -1;
+  var hj=new Date();hj.setHours(0,0,0,0);var prox=new Date(hj.getFullYear(),m-1,d);prox.setHours(0,0,0,0);
+  if(prox<hj)prox=new Date(hj.getFullYear()+1,m-1,d);
+  return Math.round((prox-hj)/86400000);
+}
 function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
 
 let CLIENTES=[], usoMap={};
-let sel={tam:null,sapato:null,occ:null,aniv:false,sumidas:false,q:'',ord:'nome'};
+let sel={tam:null,sapato:null,occ:null,aniv:false,anivSem:false,sumidas:false,q:'',ord:'nome'};
 
 async function carregar(){
   // 1) locais (mira_clientes)
@@ -205,12 +214,14 @@ function render(){
   const filtros=document.getElementById('filters');
   let html='';
   html+='<button class="chip'+(sel.sumidas?' on':'')+'" data-sumidas="1">😴 Sumidas +30d</button>';
+  html+='<button class="chip'+(sel.anivSem?' on':'')+'" data-anivsem="1">🎂 Aniversário da semana</button>';
   html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">🎂 Aniversário do mês</button>';
   OCASIOES.forEach(o=>html+='<button class="chip'+(sel.occ===o?' on':'')+'" data-occ="'+o+'">'+o+'</button>');
   filtros.innerHTML=html;
   filtros.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
     if(ch.dataset.occ!=null)sel.occ=(sel.occ===ch.dataset.occ?null:ch.dataset.occ);
     if(ch.dataset.aniv)sel.aniv=!sel.aniv;
+    if(ch.dataset.anivsem)sel.anivSem=!sel.anivSem;
     if(ch.dataset.sumidas)sel.sumidas=!sel.sumidas;
     render();
   });
@@ -222,6 +233,7 @@ function render(){
     if(sel.sapato&&!sapMatch(c.sapato,sel.sapato))return false;
     if(sel.occ&&!normOcc(c.ocasioes).includes(sel.occ))return false;
     if(sel.aniv&&mesDe(c.aniversario)!==mesAtual)return false;
+    if(sel.anivSem){var _da=diasAteAniv(c.aniversario);if(!(_da>=0&&_da<=7))return false;}
     if(sel.sumidas&&!(c._dias==null||c._dias>=30))return false;
     return true;
   });
@@ -241,7 +253,10 @@ function render(){
     if(c._dias==null)meta='<span class="warn">sem interação ainda</span>';
     else if(c._dias>=30)meta='<span class="warn">😴 sumida há '+c._dias+'d</span>';
     else meta='🕐 última há '+c._dias+'d';
-    if(c.aniversario){const m=mesDe(c.aniversario);meta+='<br>'+(m===mesAtual?'🎁 <b>'+c.aniversario+'</b> · faz aniversário este mês!':'🎂 '+c.aniversario);}
+    if(c.aniversario){var _da=diasAteAniv(c.aniversario);const m=mesDe(c.aniversario);
+      if(_da===0)meta+='<br><span class="warn">🎁 faz aniversário HOJE!</span>';
+      else if(_da>0&&_da<=7)meta+='<br><span class="warn">🎁 aniversário em '+_da+' dia'+(_da===1?'':'s')+'!</span>';
+      else meta+='<br>'+(m===mesAtual?'🎁 '+c.aniversario+' · este mês':'🎂 '+c.aniversario);}
     const wa=digits(c.telefone);
     const waBtn='<a class="wa" href="mensagens.html?cliente='+encodeURIComponent(c.nome||'')+'">Mensagem</a>';
     const dn=(c.nome||'').replace(/"/g,'&quot;');
