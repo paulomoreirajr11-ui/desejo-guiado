@@ -138,7 +138,7 @@
     <span style="flex:1;font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;align-self:center;margin-left:8px;">Desejo Guiado</span>
     <a href="carteira.html">Carteira</a>
     <a href="mensagens.html">Mensagens</a>
-    <a href="espelho.html">Espelho</a>
+    <a href="espelho.html" style="position:relative;">Espelho<span id="navespbadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:#C0392B;color:#fff;border-radius:9px;font-size:10px;font-weight:700;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;">0</span></a>
     <a href="index.html">Início</a>
   </header>
   <div class="sess">
@@ -510,6 +510,15 @@ function _cockGen(n){n=(n||'').trim().toLowerCase();return !n||/^(foto|cliente|o
 async function renderCockpit(){
  var host=$('cocklist'),card=$('cockpit');if(!host||!card)return;
  var rows=[];
+ try{
+   var _meta={},_hoje={};
+   try{_meta=(await (await fetch('/meta')).json()).meta||{};}catch(e){}
+   try{_hoje=(await (await fetch('/placar?periodo=hoje&vend='+encodeURIComponent(S.vend||''))).json()).eu||{};}catch(e){}
+   var _mdefs=[['looks','gerados'],['enviados','enviados'],['reativadas','reativadas'],['fichas','fichas']],_mfalta=0,_mcats=0;
+   _mdefs.forEach(function(d){var mm=+(_meta[d[0]]||0);if(mm<=0)return;_mcats++;var alvo=Math.max(1,Math.min(5,Math.ceil(mm/26)));_mfalta+=Math.max(0,alvo-(+(_hoje[d[1]]||0)));});
+   var _nb=$('navespbadge');if(_nb){if(_mcats&&_mfalta>0){_nb.textContent=_mfalta;_nb.style.display='inline-flex';}else{_nb.style.display='none';}}
+   if(_mcats){rows.push(_mfalta>0?{ic:'🎯',t:'Meta de hoje — faltam '+_mfalta+' pra fechar seu dia',a:'espelho'}:{ic:'🎉',t:'Meta de hoje fechada! Arrasou',a:'espelho'});}
+ }catch(e){}
  try{var av=aniversariantesDoMes();if(av&&av.length)rows.push({ic:'🎂',t:av.length+(av.length===1?' aniversariante este mês':' aniversariantes este mês'),a:'aniv'});}catch(e){}
  try{var lk=(typeof loadLooks==='function')?loadLooks():[];if(lk&&lk.length)rows.push({ic:'👗',t:lk.length+(lk.length===1?' look salvo pra reusar':' looks salvos pra reusar'),a:'looks'});}catch(e){}
  try{if(typeof SHARED!=='undefined'&&SHARED&&SHARED.length)rows.push({ic:'⭐',t:SHARED.length+(SHARED.length===1?' peça da semana pra girar':' peças da semana pra girar'),a:'achados'});}catch(e){}
@@ -528,6 +537,7 @@ async function renderCockpit(){
   if(a==='aniv'){abrirAniv();}
   else if(a==='looks'){if(typeof renderLooks==='function')renderLooks();var lm=$('looks');if(lm)lm.style.display='flex';}
   else if(a==='sumidas'){location.href='carteira.html?sumidas=1';}
+  else if(a==='espelho'){location.href='espelho.html';}
   else if(a==='achados'){if(typeof toast==='function')toast('⭐ As peças da semana estão no estoque — monte um look 💛');var g=$('grid');if(g)g.scrollIntoView({behavior:'smooth'});}
  };});
  try{var nm=(S.vend||'').split(' ')[0];var h=new Date().getHours();var saud=h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');var st=$('cocksaud');if(st)st.textContent=saud+(nm?', '+nm:'');}catch(e){}

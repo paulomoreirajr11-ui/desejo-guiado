@@ -105,6 +105,7 @@
 <div class="wrap">
   <div class="risco" id="risco"></div>
   <div class="topcard" id="topcard"></div>
+  <div class="card" id="metahojecard" style="display:none;"><h2>☀️ Meta de hoje</h2><p class="sub">Suas metinhas do dia — zere todas e feche seu 1%! 🔥</p><div id="metahoje"></div></div>
   <div class="card"><h2>📊 Seu esforço de verdade</h2><p class="sub">O que o sistema registrou no seu nome, sem você preencher nada — a sua evolução real. 💛</p><div id="esfper"></div><div id="esforco"></div></div>
   <div class="card" id="metacard" style="display:none;"><h2>🎯 Meta do mês</h2><p class="sub">O alvo da loja neste mês — e o quanto falta pra você bater. 🔥</p><div id="metaprog"></div></div>
   <div class="card" id="checkin"></div>
@@ -291,6 +292,22 @@ async function carregarMetaMes(){
   card.style.display='block';
 }
 carregarMetaMes();
+async function carregarMetaHoje(){
+  var card=document.getElementById('metahojecard'),host=document.getElementById('metahoje');if(!card||!host)return;
+  var meta={},hoje={};
+  try{meta=(await (await fetch('/meta')).json()).meta||{};}catch(e){}
+  try{hoje=(await (await fetch('/placar?periodo=hoje&vend='+encodeURIComponent(vend()))).json()).eu||{};}catch(e){}
+  var div=26;
+  var defs=[['looks','gerados','👗','Montar looks','estudio.html'],['enviados','enviados','💬','Contatar clientes','estudio.html'],['reativadas','reativadas','🔔','Resgatar sumida','carteira.html?sumidas=1'],['fichas','fichas','📇','Fichas em dia','carteira.html']];
+  var rows=[],totalCat=0,feitas=0;
+  defs.forEach(function(d){var mm=+(meta[d[0]]||0);if(mm<=0)return;var alvo=Math.max(1,Math.min(5,Math.ceil(mm/div)));var atual=+(hoje[d[1]]||0);var falta=Math.max(0,alvo-atual),ok=falta<=0;totalCat++;if(ok)feitas++;rows.push({d:d,alvo:alvo,atual:atual,falta:falta,ok:ok});});
+  if(!totalCat){card.style.display='none';return;}
+  var html='';
+  if(feitas===totalCat){html+='<div style="background:#EAF6EF;border:1px solid #2E7D5B;border-radius:12px;padding:12px;text-align:center;margin-bottom:10px;color:#2E7D5B;font-weight:600;">🎉 1% de hoje feito! Zerou tudo — arrasou!</div>';}
+  html+=rows.map(function(r){var badge=r.ok?'<span style="background:#EAF6EF;color:#2E7D5B;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap;">✓ feito</span>':'<span style="background:#FBE9E7;color:#C0392B;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap;">faltam '+r.falta+'</span>';return '<a href="'+r.d[4]+'" style="display:flex;align-items:center;gap:10px;padding:11px 2px;border-top:1px solid var(--line,rgba(40,32,18,.14));text-decoration:none;color:inherit;"><span style="font-size:20px;">'+r.d[2]+'</span><span style="flex:1;font-size:14px;">'+r.d[3]+' <span style="color:var(--mut,#897F6F);font-size:12px;">('+r.atual+'/'+r.alvo+')</span></span>'+badge+'</a>';}).join('');
+  host.innerHTML=html;card.style.display='block';
+}
+carregarMetaHoje();
 </script>
 </body>
 </html>
