@@ -441,6 +441,10 @@ function adotarFicha(f){try{if(!f||!f.cliente)return;var nm=(''+f.cliente).trim(
  var person=getClientes().find(function(x){return x.key===k;});
  if(person){S.pessoa=person;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();toast('Cliente '+nm+' pronta ✓ — complete o que faltar e monte o look');}
 }catch(e){}}
+/* pool = clientes do aparelho + carteira do banco (deduplicado por nome); e ficha de qualquer um deles */
+function poolCli(){var base=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());var have={};base.forEach(function(m){have[_cnE(m.nome)]=1;});for(var i=0;i<CARTEIRA.length;i++){var f=CARTEIRA[i];var nn=_cnE(f.cliente);if(!nn||have[nn])continue;have[nn]=1;base.push(_mkFichaPerson(f,i));}return base;}
+function _fichaDe(m){return (m&&FICHAS[m.key])||(m&&m._ficha)||{};}
+function _backupFoto(nome,foto){try{nome=(''+(nome||'')).trim();if(!nome||/^(foto|cliente|oi)/i.test(nome)||!foto||!S.vend)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:nome,foto:foto})}).catch(function(){});}catch(e){}}
 const pessoasEl=$('pessoas');
 function renderPessoas(){
  let arr=S.tipo==='cli'?FOTOS.concat(getClientes()):MODELOS;
@@ -525,7 +529,7 @@ function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{}
 var _fsyncT=null;
 function syncFichaBanco(){try{var nome=($('fnome').value||'').trim();if(!nome||!S.vend)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:nome,foto:(S.pessoa&&S.pessoa.foto)||'',manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,ocasioes:_focc.join(', ')})}).catch(function(){});}catch(e){}}
 function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,ocasioes:_focc.join(', ')};saveFichas();updFichaWpp();renderAnivBar();clearTimeout(_fsyncT);_fsyncT=setTimeout(syncFichaBanco,900);}
-function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=FOTOS.concat(getClientes());var out=[];people.forEach(function(p){var f=FICHAS[p.key];if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
+function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=poolCli();var out=[];people.forEach(function(p){var f=_fichaDe(p);if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
 function renderAnivBar(){renderCockpit();}
 function _cockGen(n){n=(n||'').trim().toLowerCase();return !n||/^(foto|cliente|oi)/.test(n);}
 async function renderCockpit(){
@@ -544,11 +548,11 @@ async function renderCockpit(){
  try{var lk=(typeof loadLooks==='function')?loadLooks():[];if(lk&&lk.length)rows.push({ic:'👗',t:lk.length+(lk.length===1?' look salvo pra reusar':' looks salvos pra reusar'),a:'looks'});}catch(e){}
  try{if(typeof SHARED!=='undefined'&&SHARED&&SHARED.length)rows.push({ic:'⭐',t:SHARED.length+(SHARED.length===1?' peça da semana pra girar':' peças da semana pra girar'),a:'achados'});}catch(e){}
  try{
-  var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes()).filter(function(p){return p&&p.key&&/^(foto_|cli_)/.test(p.key)&&!_cockGen(p.nome);});
+  var pool=poolCli().filter(function(p){return p&&p.nome&&!_cockGen(p.nome);});
   if(pool.length){
    var log=[];try{log=(await (await fetch('/uso')).json()).log||[];}catch(e){}
    var last={};log.forEach(function(u){if(S.vend&&u.vend&&u.vend!==S.vend)return;var k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;var t=Date.parse(u.ts);if(t&&(!last[k]||t>last[k]))last[k]=t;});
-   var sum=pool.filter(function(p){var t=last[(p.nome||'').trim().toLowerCase()];if(!t)return true;return (Date.now()-t)/86400000>=30;});
+   var sum=pool.filter(function(p){var k=(p.nome||'').trim().toLowerCase();var t=last[k]||null;var uc=p._ficha&&p._ficha.ult_compra;if(uc){var tc=Date.parse(uc);if(tc&&(!t||tc>t))t=tc;}if(!t)return false;return (Date.now()-t)/86400000>=30;});
    if(sum.length)rows.push({ic:'😴',t:sum.length+(sum.length===1?' cliente sem contato há tempos':' clientes sem contato há tempos'),a:'sumidas'});
   }
  }catch(e){}
@@ -581,7 +585,8 @@ $('trocafoto').onchange=function(e){var f=e.target.files[0];if(!f||!S.pessoa)ret
  if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.foto=du;saveFotos();}
  else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].foto=du;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}
  var arr=FOTOS.concat(getClientes());S.pessoa=arr.find(function(x){return x.key===key;})||S.pessoa;
- renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📸 Foto trocada — histórico mantido ✓');
+ _backupFoto(S.pessoa&&S.pessoa.nome,du);
+ renderPessoas();renderGrid();renderBig();renderBand();upd();toast('📸 Foto trocada — salva no sistema ✓');
  };img.src=ev.target.result;};rd.readAsDataURL(f);e.target.value='';};
 const occEl=$('occ');
 OCASIOES.forEach(o=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>{S.occ=o;[...occEl.children].forEach(x=>x.classList.toggle('on',x.textContent===o));upd();};occEl.appendChild(b);});
@@ -598,7 +603,7 @@ function gnext(){if(S.view<S.bandeja.length-1){S.view++;renderBig();renderBand()
 function updWpp(){const n=S.bandeja.filter(b=>b.img&&b.sel!==false).length;const w=$('wpp');w.disabled=!n;w.innerHTML='<span>🟢</span> Enviar '+(n?'('+n+') ':'')+'no WhatsApp';const c=$('clube');if(c)c.disabled=!n;const rb=$('reservar');if(rb)rb.disabled=!S.bandeja.some(b=>b.img);const rp=$('resposta');if(rp)rp.disabled=!S.bandeja.some(b=>b.img);}
 function renderBig(){
   const r=$('res');
-  if(!S.bandeja.some(b=>b.img)){r.innerHTML='<div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div>';updWpp();return;}
+  if(!S.bandeja.some(b=>b.img)){var _ph=(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto)?('<span class="big">Falta a foto de '+(S.pessoa.nome||'sua cliente')+'</span>toque em “Trocar a foto desta cliente” pra ela aparecer vestida'):'<span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião';r.innerHTML='<div class="ph">'+_ph+'</div>';updWpp();return;}
   if(S.view<0)S.view=0;if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;
   let it=S.bandeja[S.view];
   if(!it||!it.img){const ids=S.bandeja.map((b,i)=>b.img?i:-1).filter(i=>i>=0);S.view=ids[ids.length-1];it=S.bandeja[S.view];}
@@ -625,6 +630,7 @@ function showLook(img,pecas){
   upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
 ger.onclick=()=>{
+ if(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto){var tr=$('trocar');toast('Falta a foto de '+(S.pessoa.nome||'sua cliente')+' pra vestir — toque em “Trocar a foto desta cliente” 💛');if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(function(){tr.style.boxShadow='';},2400);}return;}
  const _look=S.pecas.filter(f=>!isJoia(pecaByF(f)||{f:f}));const nomes=_look.map(f=>{var e=pecaByF(f);return e&&e.nome?e.nome:f;});
  const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
  const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
@@ -827,16 +833,16 @@ if($('looks'))$('looks').onclick=function(e){if(e.target===this)this.style.displ
 
 /* Bloco 2b — pra quem serve o look (o MIRA sugere, ela decide) */
 function _lookPecas(){return (S.pecas||[]).filter(function(f){return !isJoia(pecaByF(f)||{f:f});});}
-function _pManequim(m){var f=FICHAS[m.key]||{};var mq=m.manequim||null;if(!mq&&f.manequim){var t=(''+f.manequim).match(/\d+/);if(t)mq=+t[0];}return mq;}
+function _pManequim(m){var f=_fichaDe(m);var mq=m.manequim||null;if(!mq&&f.manequim){var t=(''+f.manequim).match(/\d+/);if(t)mq=+t[0];}return mq;}
 function _vesteLook(mq){if(!mq)return null;var ps=_lookPecas();for(var i=0;i<ps.length;i++){var e=pecaByF(ps[i]);if(e&&e.tam&&e.tam.length&&e.tam.indexOf(mq)<0)return false;}return true;}
 function sugestoesLook(){
  var anivK={};try{aniversariantesDoMes().forEach(function(a){anivK[a.key]=a.dia;});}catch(e){}
  var occ=(S.occ||'').toLowerCase();
- var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());
+ var pool=poolCli();
  var seen={},out=[];
  pool.forEach(function(m){
   if(!m||!m.key||seen[m.key])return;seen[m.key]=1;
-  var f=FICHAS[m.key]||{};
+  var f=_fichaDe(m);
   if(/^(foto|cliente)\b/i.test(m.nome||'')&&!f.telefone&&!f.manequim)return;
   var mq=_pManequim(m),veste=_vesteLook(mq);
   if(veste===false)return;
@@ -862,11 +868,13 @@ function renderPquem(){
  el.querySelectorAll('.pqcard').forEach(function(c){c.onclick=function(){sugerirPessoa(c.getAttribute('data-key'));};});
 }
 function sugerirPessoa(key){
- var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());
+ var pool=poolCli();
  var m=pool.find(function(x){return x.key===key;});if(!m)return;
+ var pm=$('pquem');
+ if(m.fromCarteira){if(pm)pm.style.display='none';adotarFicha(m._ficha);return;}
  S.tipo='cli';var tgc=$('tgc'),tgi=$('tgi');if(tgc)tgc.classList.add('on');if(tgi)tgi.classList.remove('on');
  S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();
- var pm=$('pquem');if(pm)pm.style.display='none';
+ if(pm)pm.style.display='none';
  toast((S.pessoa&&S.pecas.length&&S.occ)?('Pronto! Toque em gerar pra vestir '+(m.nome||'a cliente')+' 💛'):('Agora escolha a ocasião e gere 💛'));
 }
 if($('praquem'))$('praquem').onclick=function(){if(!_lookPecas().length){toast('Monte um look primeiro 💛');return;}renderPquem();var pm=$('pquem');if(pm)pm.style.display='flex';};
