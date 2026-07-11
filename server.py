@@ -280,6 +280,52 @@ def build_placar(periodo="mes"):
     rows.sort(key=lambda r: (-r["enviados"], -r["gerados"], -r["fichas"]))
     return rows
 
+# ---- Meta do mês (o admin define; a vendedora vê o progresso) ----
+META_FILE = os.path.join(ROOT, "metas.json")
+def _mes_atual():
+    return datetime.datetime.now().strftime("%Y-%m")
+def load_meta(mes):
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "metas", "mes=eq." + urllib.parse.quote(mes) + "&select=*") or []
+            return rows[0] if rows else {}
+        except Exception:
+            pass
+    try:
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            return (json.load(f) or {}).get(mes, {})
+    except Exception:
+        return {}
+def _mint(v):
+    try:
+        s = str(v).strip()
+        return int(s) if s not in ("", "None") else None
+    except Exception:
+        return None
+def save_meta(mes, body):
+    row = {"mes": mes, "fichas": _mint(body.get("fichas")), "looks": _mint(body.get("looks")),
+           "enviados": _mint(body.get("enviados")), "reativadas": _mint(body.get("reativadas")),
+           "atualizado": datetime.datetime.now().isoformat(timespec="seconds")}
+    if SB_ON:
+        try:
+            sb_req("POST", "metas", body=row, prefer="resolution=merge-duplicates")
+            return row
+        except Exception:
+            pass
+    try:
+        d = {}
+        try:
+            with open(META_FILE, "r", encoding="utf-8") as f:
+                d = json.load(f) or {}
+        except Exception:
+            d = {}
+        d[mes] = row
+        with open(META_FILE, "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False)
+    except Exception:
+        pass
+    return row
+
 # ---- POOL de cenas por ocasiao (25 cada, 9 estilos; rotaciona automatico -> anti-carimbo) ----
 POOLS = {
  "Festa Dia": [
@@ -829,7 +875,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-11_oferta", "ok": True})
+            return self._json(200, {"version": "2026-07-11_metas", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -843,6 +889,10 @@ class Handler(SimpleHTTPRequestHandler):
                 pos = next((i + 1 for i, r in enumerate(rows) if r["vend"] == vend), None)
                 return self._json(200, {"periodo": periodo, "eu": mine, "posicao": pos, "total": len(rows)})
             return self._json(200, {"periodo": periodo, "placar": rows})
+        if p == "/meta":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            mes = (q.get("mes") or [_mes_atual()])[0]
+            return self._json(200, {"mes": mes, "meta": load_meta(mes)})
         if p == "/ficha":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             vend = (q.get("vend") or [""])[0]
@@ -994,6 +1044,14 @@ class Handler(SimpleHTTPRequestHandler):
                     return self._json(200, {"ok": True, "sku": d.get("sku")})
                 except Exception as e:
                     return self._json(200, {"ok": False, "error": str(e)})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/meta":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                mes = (d.get("mes") or _mes_atual())
+                return self._json(200, {"ok": True, "meta": save_meta(mes, d)})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
         if p == "/ficha":

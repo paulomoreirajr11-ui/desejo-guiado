@@ -106,6 +106,7 @@
   <div class="risco" id="risco"></div>
   <div class="topcard" id="topcard"></div>
   <div class="card"><h2>📊 Seu esforço de verdade</h2><p class="sub">O que o sistema registrou no seu nome, sem você preencher nada — a sua evolução real. 💛</p><div id="esfper"></div><div id="esforco"></div></div>
+  <div class="card" id="metacard" style="display:none;"><h2>🎯 Meta do mês</h2><p class="sub">O alvo da loja neste mês — e o quanto falta pra você bater. 🔥</p><div id="metaprog"></div></div>
   <div class="card" id="checkin"></div>
   <div class="coach" id="coach"></div>
   <div class="card"><h2>🎯 Meta da semana</h2><p class="sub">Escolha 1 pilar pra focar esta semana — foco dá resultado.</p><div id="meta"></div></div>
@@ -275,6 +276,21 @@ async function carregarEsforco(){
   }).join('')+'</div>';
 }
 carregarEsforco();
+async function carregarMetaMes(){
+  var card=document.getElementById('metacard'),host=document.getElementById('metaprog');if(!card||!host)return;
+  var meta={},eu={};
+  try{meta=(await (await fetch('/meta')).json()).meta||{};}catch(e){}
+  try{eu=(await (await fetch('/placar?periodo=mes&vend='+encodeURIComponent(vend()))).json()).eu||{};}catch(e){}
+  var defs=[['looks','gerados','👗','Looks montados'],['enviados','enviados','💬','Enviados no zap'],['fichas','fichas','📇','Fichas'],['reativadas','reativadas','🔔','Sumidas reativadas']];
+  var rows=defs.filter(function(d){return meta[d[0]]!=null && +meta[d[0]]>0;});
+  if(!rows.length){card.style.display='none';return;}
+  host.innerHTML=rows.map(function(d){
+    var alvo=+meta[d[0]],atual=+(eu[d[1]]||0),pct=Math.min(100,Math.round(atual/alvo*100)),falta=Math.max(0,alvo-atual),bateu=atual>=alvo;
+    return '<div style="margin:12px 0;"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>'+d[2]+' '+d[3]+'</span><span style="color:var(--gold2,#8C6B22);font-weight:600;">'+atual+'/'+alvo+(bateu?' ✅':'')+'</span></div><div style="height:9px;background:var(--panel2,#F1EADB);border-radius:20px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+(bateu?'#2E7D5B':'var(--gold,#B0872E)')+';border-radius:20px;"></div></div><div style="font-size:11px;color:var(--mut,#897F6F);margin-top:3px;">'+(bateu?'Meta batida! Arrasou 🎉':'faltam '+falta+' 🔥')+'</div></div>';
+  }).join('');
+  card.style.display='block';
+}
+carregarMetaMes();
 </script>
 </body>
 </html>

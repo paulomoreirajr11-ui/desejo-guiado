@@ -70,6 +70,8 @@
   .ptbl th:first-child,.ptbl td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);}
   .ptbl td.lead{background:rgba(176,135,46,.18);font-weight:700;color:var(--gold2);}
   .ptbl td .rk{color:var(--mut);font-size:11px;margin-right:6px;}
+  .metaf{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--mut);}
+  .metaf input{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px;font-family:inherit;font-size:14px;color:var(--off);}
 </style>
 </head>
 <body>
@@ -97,6 +99,16 @@
     <button class="perbtn" data-p="sempre">Tudo</button>
   </div>
   <div style="overflow-x:auto;"><div id="placar"></div></div>
+  <h2 class="sec">🎯 Meta do mês</h2>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;">Defina o alvo do mês. Deixe em branco o que não quiser medir. Cada vendedora vê o quanto falta no Espelho dela.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;max-width:640px;">
+    <label class="metaf">👗 Looks montados<input id="m_looks" type="number" min="0" placeholder="ex: 40"></label>
+    <label class="metaf">💬 Enviados (WhatsApp)<input id="m_enviados" type="number" min="0" placeholder="ex: 30"></label>
+    <label class="metaf">📇 Fichas<input id="m_fichas" type="number" min="0" placeholder="ex: 15"></label>
+    <label class="metaf">🔔 Sumidas reativadas<input id="m_reativadas" type="number" min="0" placeholder="ex: 8"></label>
+  </div>
+  <button class="btn" id="metasave" style="margin-top:12px;background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:600;padding:10px 18px;">Salvar meta do mês</button>
+  <span id="metamsg" style="margin-left:10px;font-size:12px;color:var(--gold2);"></span>
   <h2 class="sec">Por vendedora</h2>
   <div id="porvend"></div>
   <h2 class="sec">Clientes (fichas) por vendedora</h2>
@@ -232,6 +244,9 @@ async function carregarPlacar(periodo){
   if(bar){ bar.querySelectorAll('.perbtn').forEach(function(b){ b.onclick=function(){ bar.querySelectorAll('.perbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); carregarPlacar(b.dataset.p); }; }); }
   carregarPlacar('mes');
 })();
+async function carregarMeta(){var m={};try{m=(await (await fetch('/meta')).json()).meta||{};}catch(e){}['looks','enviados','fichas','reativadas'].forEach(function(k){var el=document.getElementById('m_'+k);if(el)el.value=(m[k]!=null?m[k]:'');});}
+if(document.getElementById('metasave'))document.getElementById('metasave').onclick=async function(){var body={};['looks','enviados','fichas','reativadas'].forEach(function(k){body[k]=document.getElementById('m_'+k).value;});var msg=document.getElementById('metamsg');msg.textContent='salvando…';try{await fetch('/meta',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});msg.textContent='✓ meta salva';}catch(e){msg.textContent='erro';}setTimeout(function(){msg.textContent='';},2500);};
+carregarMeta();
 document.getElementById('reload').addEventListener('click',function(){var on=document.querySelector('#placarper .perbtn.on');carregarPlacar(on?on.dataset.p:'mes');});
 document.getElementById('reload').onclick=carregar;
 carregar();
