@@ -171,6 +171,10 @@
     </div>
     <div class="chips" id="chips"></div>
     <div class="grid" id="grid"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="novo" id="savelook" style="flex:1;margin:0;border-color:var(--gold);color:var(--gold2);">💾 Salvar look</button>
+      <button class="novo" id="meuslooks" style="flex:1;margin:0;border-color:var(--gold);color:var(--gold2);">📋 Meus looks</button>
+    </div>
   </div>
 
   <div class="sec">
@@ -219,6 +223,16 @@
     </div>
     <p style="font-size:11.5px;color:var(--mut);margin:0 0 8px;">Mande um look de presente 💝</p>
     <div id="anivlist"></div>
+  </div>
+</div>
+<div id="looks" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
+  <div style="max-width:460px;width:100%;background:var(--ink);border-radius:18px 18px 0 0;padding:18px 18px 28px;max-height:82vh;overflow:auto;box-shadow:0 -8px 30px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0;font-size:19px;flex:1;">📋 Meus looks (cardápio)</h3>
+      <button id="looksclose" style="background:transparent;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--mut);margin:0 0 10px;">Toque num look → ele carrega as peças. Aí é só escolher a pessoa e gerar. 💛</p>
+    <div id="lookslist"></div>
   </div>
 </div>
 <div id="ficha" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
@@ -716,6 +730,25 @@ async function enviarResposta(){
 $('resposta').onclick=enviarResposta;
 $('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.classList.remove('on'));renderGrid();upd();renderBig();toast('Monte o próximo look ✓');};
 $('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
+
+/* ---- Bloco 2: Biblioteca de looks (cardápio) — receita de peças, pessoa trocável ---- */
+function looksKey(){return 'mira_looks_'+(S.vend||'x');}
+function loadLooks(){try{return JSON.parse(localStorage.getItem(looksKey())||'[]');}catch(e){return [];}}
+function saveLooks(a){try{localStorage.setItem(looksKey(),JSON.stringify(a));}catch(e){}}
+function lookPieceImg(f){var e=(typeof pecaByF==='function'?pecaByF(f):null)||{};return e.cap?e.cap:('estoque/'+f+'.jpg?v=2');}
+function lookPieceNome(f){var e=(typeof pecaByF==='function'?pecaByF(f):null)||{};return e.nome||'';}
+function salvarLook(){var pcs=(S.pecas||[]).filter(function(f){return !isJoia(pecaByF(f)||{f:f});});if(!pcs.length){toast('Escolha as peças primeiro 💛');return;}var a=loadLooks();a.unshift({id:'lk'+Math.random().toString(36).slice(2,9),pecas:S.pecas.slice(),occ:S.occ||'',ts:Date.now()});saveLooks(a.slice(0,80));toast('Look salvo no cardápio ✓');}
+function renderLooks(){var a=loadLooks();var el=$('lookslist');if(!el)return;if(!a.length){el.innerHTML='<div style="color:var(--mut);font-size:13px;padding:18px 0;text-align:center;">Nenhum look salvo ainda.<br>Monte um look e toque em “💾 Salvar look”.</div>';return;}
+ el.innerHTML=a.map(function(lk){var thumbs=(lk.pecas||[]).slice(0,4).map(function(f){return '<img src="'+lookPieceImg(f)+'" style="width:44px;height:56px;object-fit:cover;border-radius:7px;background:var(--panel2);">';}).join('');var nomes=(lk.pecas||[]).map(lookPieceNome).filter(Boolean).slice(0,3).join(' + ');
+  return '<div class="lookcard" data-id="'+lk.id+'" style="display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px;margin-bottom:9px;cursor:pointer;"><div style="display:flex;gap:3px;flex:0 0 auto;">'+thumbs+'</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">'+lk.pecas.length+' peça'+(lk.pecas.length===1?'':'s')+(lk.occ?' · '+lk.occ:'')+'</div><div style="font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(nomes||'look salvo')+'</div></div><button class="lookdel" data-id="'+lk.id+'" style="background:transparent;border:none;color:var(--bordo);font-size:17px;cursor:pointer;flex:0 0 auto;padding:6px;">🗑</button></div>';}).join('');
+ el.querySelectorAll('.lookcard').forEach(function(c){c.onclick=function(e){if(e.target.classList.contains('lookdel'))return;usarLook(c.getAttribute('data-id'));};});
+ el.querySelectorAll('.lookdel').forEach(function(b){b.onclick=function(e){e.stopPropagation();saveLooks(loadLooks().filter(function(x){return x.id!==b.getAttribute('data-id');}));renderLooks();toast('Look apagado');};});
+}
+function usarLook(id){var lk=loadLooks().find(function(x){return x.id===id;});if(!lk)return;S.pecas=(lk.pecas||[]).slice();if(lk.occ){S.occ=lk.occ;try{[...occEl.children].forEach(function(x){x.classList.toggle('on',(x.textContent||'').trim()===lk.occ);});}catch(e){}}try{renderGrid();}catch(e){}try{upd();}catch(e){}var lm=$('looks');if(lm)lm.style.display='none';toast('Look carregado! Escolha a pessoa e gere 💛');}
+if($('savelook'))$('savelook').onclick=salvarLook;
+if($('meuslooks'))$('meuslooks').onclick=function(){renderLooks();var lm=$('looks');if(lm)lm.style.display='flex';};
+if($('looksclose'))$('looksclose').onclick=function(){$('looks').style.display='none';};
+if($('looks'))$('looks').onclick=function(e){if(e.target===this)this.style.display='none';};
 
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
 function _saud(){var h=new Date().getHours();return h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');}
