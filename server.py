@@ -875,7 +875,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-11_meu-1pct", "ok": True})
+            return self._json(200, {"version": "2026-07-11_carteira-import", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -899,7 +899,7 @@ class Handler(SimpleHTTPRequestHandler):
             out = []
             if SB_ON:
                 try:
-                    params = "select=vend,cliente,foto,manequim,sapato,telefone,aniversario,notas,ocasioes,estilo,cores,arquetipo,vip&order=cliente.asc"
+                    params = "select=vend,cliente,foto,manequim,sapato,telefone,aniversario,notas,ocasioes,estilo,cores,arquetipo,vip,ult_compra,status&order=cliente.asc"
                     if vend:
                         params = "vend=eq." + urllib.parse.quote(vend) + "&" + params
                     out = sb_req("GET", "fichas", params) or []
@@ -1063,7 +1063,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if not cliente:
                     return self._json(200, {"ok": False, "skip": "sem nome"})
                 row = {"vend": vend, "cliente": cliente, "ts": datetime.datetime.now().isoformat(timespec="seconds")}
-                for _k in ("foto", "manequim", "sapato", "telefone", "aniversario", "notas", "ocasioes", "estilo", "cores", "arquetipo", "vip"):
+                for _k in ("foto", "manequim", "sapato", "telefone", "aniversario", "notas", "ocasioes", "estilo", "cores", "arquetipo", "vip", "ult_compra", "status"):
                     if _k in d:
                         row[_k] = d.get(_k)
                 if not SB_ON:

@@ -121,6 +121,7 @@
       <div id="eocc" class="occ" style="margin-top:2px;"></div>
       <label class="elab">Notas</label><textarea id="enotas" class="efield" rows="2" style="resize:vertical;" placeholder="gosto, o que evita…"></textarea>
       <button class="cta" id="editsave">Salvar</button>
+      <button id="editdormir" type="button" style="width:100%;margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">🌙 Colocar pra dormir</button>
     </div>
   </div>
 </div>
@@ -182,7 +183,7 @@ function diasAteAniv(a){ // dias até o próximo aniversário (0=hoje), -1 se se
 function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
 
 let CLIENTES=[], usoMap={};
-let sel={tam:null,sapato:null,occ:null,aniv:false,anivSem:false,sumidas:false,q:'',ord:'nome'};
+let sel={tam:null,sapato:null,occ:null,aniv:false,anivSem:false,sumidas:false,dormindo:false,q:'',ord:'nome'};
 
 async function carregar(){
   // 1) locais (mira_clientes)
@@ -190,15 +191,17 @@ async function carregar(){
   function put(c){const k=(c.nome||'').trim().toLowerCase();if(!k)return;map[k]=Object.assign(map[k]||{},c);}
   try{JSON.parse(localStorage.getItem('mira_clientes')||'[]').forEach(c=>put({nome:c.nome,foto:c.foto||'',tam:c.tamanho||c.tam||'',ocasioes:normOcc(c.ocasioes)}));}catch(e){}
   // 2) servidor (/ficha) — só vem se o Supabase estiver ligado
-  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',sapato:f.sapato||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes),notas:f.notas||'',estilo:f.estilo||'',cores:f.cores||'',arquetipo:f.arquetipo||'',vip:f.vip||''}));}catch(e){}
+  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',sapato:f.sapato||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes),notas:f.notas||'',estilo:f.estilo||'',cores:f.cores||'',arquetipo:f.arquetipo||'',ult_compra:f.ult_compra||'',status:f.status||'ativa'}));}catch(e){}
   // 3) últimas interações (/uso) -> dias desde o último contato
   try{const r=await fetch('/uso');const j=await r.json();(j.log||[]).forEach(u=>{const k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;const t=Date.parse(u.ts);if(!t)return;if(!usoMap[k]||t>usoMap[k])usoMap[k]=t;});}catch(e){}
   CLIENTES=Object.values(map);
   if(!CLIENTES.length&&/[?&]demo=1/.test(location.search))CLIENTES=DEMO.slice(); // demo só com ?demo=1 (pra apresentar)
   EXEMPLOS.forEach(function(e){var k=(e.nome||'').toLowerCase();if(!CLIENTES.some(function(c){return (c.nome||'').toLowerCase()===k;}))CLIENTES.push(Object.assign({},e));}); // clientes-exemplo sempre presentes
   CLIENTES.forEach(c=>{const k=(c.nome||'').trim().toLowerCase();
-    if(c.last!=null&&usoMap[k]==null){c._dias=c.last;} // demo
-    else if(usoMap[k]){c._dias=Math.floor((Date.now()-usoMap[k])/86400000);}
+    var t=usoMap[k]||null;
+    if(c.ult_compra){var tc=Date.parse(c.ult_compra);if(tc&&(!t||tc>t))t=tc;}
+    if(c.last!=null&&t==null){c._dias=c.last;} // demo
+    else if(t){c._dias=Math.floor((Date.now()-t)/86400000);}
     else{c._dias=null;}});
   render();
 }
@@ -217,17 +220,20 @@ function render(){
   html+='<button class="chip'+(sel.anivSem?' on':'')+'" data-anivsem="1">🎂 Aniversário da semana</button>';
   html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">🎂 Aniversário do mês</button>';
   OCASIOES.forEach(o=>html+='<button class="chip'+(sel.occ===o?' on':'')+'" data-occ="'+o+'">'+o+'</button>');
+  if(CLIENTES.some(function(c){return c.status==='dormindo';}))html+='<button class="chip'+(sel.dormindo?' on':'')+'" data-dormindo="1">🌙 Dormindo</button>';
   filtros.innerHTML=html;
   filtros.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
     if(ch.dataset.occ!=null)sel.occ=(sel.occ===ch.dataset.occ?null:ch.dataset.occ);
     if(ch.dataset.aniv)sel.aniv=!sel.aniv;
     if(ch.dataset.anivsem)sel.anivSem=!sel.anivSem;
     if(ch.dataset.sumidas)sel.sumidas=!sel.sumidas;
+    if(ch.dataset.dormindo)sel.dormindo=!sel.dormindo;
     render();
   });
 
   const mesAtual=new Date().getMonth()+1;
   let arr=CLIENTES.filter(c=>{
+    if(sel.dormindo){if(c.status!=='dormindo')return false;}else{if(c.status==='dormindo')return false;}
     if(sel.q&&!((c.nome||'')+' '+(c.estilo||'')+' '+(c.arquetipo||'')+' '+(c.notas||'')).toLowerCase().includes(sel.q))return false;
     if(sel.tam&&!tamMatch(c.tam,sel.tam))return false;
     if(sel.sapato&&!sapMatch(c.sapato,sel.sapato))return false;
@@ -288,6 +294,7 @@ function abrirEdit(nome){var c=CLIENTES.find(function(x){return (x.nome||'')===n
  document.getElementById('eestilo').value=c.estilo||'';document.getElementById('ecores').value=c.cores||'';
  document.getElementById('earquetipo').value=c.arquetipo||'';
  document.getElementById('enotas').value=c.notas||'';_eocc=normOcc(c.ocasioes).slice();renderEocc();
+ var _dz=document.getElementById('editdormir');if(_dz){if(c._exemplo){_dz.style.display='none';}else{_dz.style.display='block';_dz.textContent=(c.status==='dormindo')?'☀️ Reativar cliente':'🌙 Colocar pra dormir';}}
  document.getElementById('edit').style.display='flex';}
 function salvarEdit(){var c=CLIENTES.find(function(x){return (x.nome||'')===_editNome;});if(!c)return;
  if(c._exemplo){document.getElementById('edit').style.display='none';toast('Esta é uma cliente-exemplo, só pra você aprender 💛');return;}
@@ -296,11 +303,17 @@ function salvarEdit(){var c=CLIENTES.find(function(x){return (x.nome||'')===_edi
  c.estilo=document.getElementById('eestilo').value;c.cores=document.getElementById('ecores').value;
  c.arquetipo=document.getElementById('earquetipo').value;
  c.notas=document.getElementById('enotas').value;c.ocasioes=_eocc.slice();
- try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,foto:c.foto||'',manequim:c.tam,sapato:c.sapato,telefone:c.telefone,aniversario:c.aniversario,notas:c.notas,estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,ocasioes:_eocc.join(', ')})}).catch(function(){});}catch(e){}
+ try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,foto:c.foto||'',manequim:c.tam,sapato:c.sapato,telefone:c.telefone,aniversario:c.aniversario,notas:c.notas,estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,ocasioes:_eocc.join(', '),ult_compra:c.ult_compra||'',status:c.status||'ativa'})}).catch(function(){});}catch(e){}
  document.getElementById('edit').style.display='none';render();toast('Ficha da '+(_editNome.split(' ')[0]||'cliente')+' salva ✓');}
 document.getElementById('editclose').onclick=function(){document.getElementById('edit').style.display='none';};
 document.getElementById('edit').onclick=function(e){if(e.target.id==='edit')this.style.display='none';};
 document.getElementById('editsave').onclick=salvarEdit;
+function dormirCliente(){var c=CLIENTES.find(function(x){return (x.nome||'')===_editNome;});if(!c||c._exemplo)return;
+ var novo=(c.status==='dormindo')?'ativa':'dormindo';c.status=novo;
+ try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,status:novo})}).catch(function(){});}catch(e){}
+ document.getElementById('edit').style.display='none';render();
+ toast(novo==='dormindo'?((_editNome.split(' ')[0]||'Cliente')+' foi dormir 🌙'):((_editNome.split(' ')[0]||'Cliente')+' reativada ☀️'));}
+document.getElementById('editdormir').onclick=dormirCliente;
 function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2400);}
 try{if(/[?&]sumidas=1/.test(location.search)){sel.sumidas=true;sel.ord='sumidas';var _os=document.getElementById('ord');if(_os)_os.value='sumidas';}}catch(e){}
 carregar();
