@@ -65,7 +65,7 @@ def load_pecas():
         try:
             rows = sb_req("GET", "pecas", "select=*&order=ts.desc") or []
             return [{"f": r.get("sku"), "cap": r.get("img"), "cat": r.get("cat"),
-                     "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "vend": r.get("vend")} for r in rows]
+                     "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "preco": r.get("preco"), "vend": r.get("vend")} for r in rows]
         except Exception:
             pass
     return []
@@ -829,7 +829,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-11_cockpit", "ok": True})
+            return self._json(200, {"version": "2026-07-11_peca-valor", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -986,7 +986,7 @@ class Handler(SimpleHTTPRequestHandler):
                     return self._json(200, {"ok": False, "skip": "sem img/sku"})
                 row = {"sku": d.get("sku"), "img": d.get("img"), "cat": d.get("cat"),
                        "nome": d.get("nome"), "tam": json.dumps(d.get("tam")) if d.get("tam") is not None else None,
-                       "vend": d.get("vend")}
+                       "preco": d.get("preco"), "vend": d.get("vend")}
                 if not SB_ON:
                     return self._json(200, {"ok": False, "sb": False})
                 try:
