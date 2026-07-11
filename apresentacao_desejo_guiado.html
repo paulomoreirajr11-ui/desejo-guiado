@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desejo Guiado — Irene Moreira</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0B0B0C; --char:#161514; --char2:#1E1B19;
+    --gold:#C7A34A; --gold2:#E0C57E; --bordo:#7A1E2B; --bordo2:#5A1620;
+    --off:#F3EFE7; --mut:#A7A199; --mut2:#7C766D;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#2b2b2d;font-family:'Inter',sans-serif;color:var(--off);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .hint{max-width:210mm;margin:18px auto;padding:12px 18px;background:#151517;border:1px solid #333;border-radius:10px;color:#c9c4ba;font-size:13px;line-height:1.6;}
+  .hint b{color:var(--gold);}
+  .page{position:relative;width:210mm;height:297mm;margin:0 auto 22px;background:var(--black);overflow:hidden;page-break-after:always;display:flex;flex-direction:column;padding:20mm;box-shadow:0 16px 50px rgba(0,0,0,.55);}
+  .page:last-child{page-break-after:auto;}
+  .full{padding:0;}
+  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .z{position:relative;z-index:2;}
+  /* type */
+  .kick{font-family:'Inter';font-size:11.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin:0 0 14px;font-weight:500;}
+  h1.t{font-family:'Fraunces';font-weight:500;font-size:40px;line-height:1.08;letter-spacing:-.01em;color:var(--off);margin:0 0 18px;}
+  h2.t{font-family:'Fraunces';font-weight:500;font-size:27px;line-height:1.15;color:var(--off);margin:0 0 10px;}
+  .lead{font-size:15.5px;line-height:1.75;color:var(--mut);max-width:62ch;margin:0 0 14px;}
+  .quote{font-family:'Fraunces';font-style:italic;font-weight:400;font-size:26px;line-height:1.35;color:var(--gold);margin:8px 0;}
+  .gold{color:var(--gold);} .bordo-t{color:var(--gold2);}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold),transparent);border:0;margin:14px 0;width:120px;}
+  .mono{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-size:22px;color:var(--gold);}
+  .top{display:flex;align-items:center;justify-content:space-between;}
+  .brandline{font-family:'Inter';font-size:11px;letter-spacing:.3em;color:var(--mut);text-transform:uppercase;}
+  .foot{position:absolute;left:20mm;right:20mm;bottom:14mm;display:flex;justify-content:space-between;align-items:center;font-size:10.5px;letter-spacing:.18em;color:var(--mut2);text-transform:uppercase;z-index:2;}
+  .grow{flex:1;}
+  /* problem rows */
+  .prob{display:flex;gap:16px;align-items:flex-start;padding:15px 0;border-top:1px solid rgba(199,163,74,.18);}
+  .pn{font-family:'Fraunces';font-size:30px;color:var(--gold);line-height:1;min-width:54px;}
+  .pt{font-family:'Fraunces';font-size:18px;color:var(--off);margin:0 0 3px;}
+  .pb{font-size:13.5px;color:var(--mut);line-height:1.55;margin:0;}
+  /* steps */
+  .steps{display:flex;flex-direction:column;gap:0;margin-top:6px;}
+  .step{display:flex;gap:18px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+  .sc{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-family:'Fraunces';font-size:19px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .sttl{font-family:'Fraunces';font-size:18px;color:var(--off);margin:0;}
+  .sbd{font-size:13px;color:var(--mut);margin:2px 0 0;}
+  /* cards grid */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+  .card{background:var(--char);border:1px solid rgba(199,163,74,.22);border-radius:14px;padding:20px;}
+  .card.b{border-color:rgba(122,30,43,.6);}
+  .ctt{font-family:'Fraunces';font-size:20px;margin:12px 0 6px;color:var(--off);}
+  .cbd{font-size:13px;color:var(--mut);line-height:1.6;margin:0;}
+  .ico{color:var(--gold);}
+  /* buttons */
+  .pills{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px;}
+  .pill{border:1px solid var(--gold);color:var(--gold);border-radius:30px;padding:11px 20px;font-size:14px;display:inline-flex;align-items:center;gap:8px;}
+  .pill.cta{background:var(--bordo);border-color:var(--bordo);color:#F6E9Ec;width:100%;justify-content:center;font-size:15px;font-weight:500;margin-top:4px;}
+  .baf{display:flex;gap:14px;align-items:stretch;margin-top:10px;}
+  .bx{flex:1;background:var(--char);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;text-align:center;}
+  .bx .n{font-family:'Fraunces';font-size:34px;color:var(--gold);}
+  .bx.win{border-color:rgba(199,163,74,.5);}
+  .arrow{display:flex;align-items:center;color:var(--gold);font-size:26px;}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .tag{font-size:12px;color:var(--gold);border:1px solid rgba(199,163,74,.35);border-radius:20px;padding:5px 12px;}
+  .splitimg{position:absolute;top:0;right:0;width:42%;height:100%;object-fit:cover;}
+  .splitgrad{position:absolute;top:0;right:38%;width:24%;height:100%;background:linear-gradient(90deg,var(--black),transparent);z-index:1;}
+  @media print{
+    body{background:none;}
+    .hint{display:none;}
+    .page{margin:0;box-shadow:none;}
+  }
+  @page{size:A4;margin:0;}
+</style>
+</head>
+<body>
+
+<div class="hint">📄 <b>Para imprimir / virar PDF:</b> abra este arquivo no Chrome → <b>Ctrl+P</b> → Tamanho <b>A4</b> → em "Mais configurações", ative <b>"Gráficos de plano de fundo"</b> → Salvar como PDF ou imprimir. (Esta faixa não aparece na impressão.)</div>
+
+<!-- 1 CAPA -->
+<section class="page full">
+  <img class="bg" src="conceitos/editorial_capa_1.png" alt="">
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,9,.97) 0%,rgba(8,8,9,.82) 34%,rgba(8,8,9,.2) 66%,rgba(8,8,9,.45) 100%);z-index:1;"></div>
+  <div class="z" style="position:absolute;left:20mm;top:18mm;display:flex;align-items:center;gap:12px;">
+    <div class="mono">M</div><div class="brandline">Irene Moreira</div>
+  </div>
+  <div class="z" style="position:absolute;left:20mm;top:120mm;right:90mm;">
+    <p class="kick">Curadoria privada com inteligência artificial</p>
+    <h1 style="font-family:'Fraunces';font-weight:500;font-size:62px;line-height:.98;letter-spacing:-.02em;color:var(--gold);margin:0;">Desejo<br>Guiado</h1>
+    <p style="font-size:13px;letter-spacing:.2em;color:var(--mut);text-transform:uppercase;margin:14px 0 0;">ou — Alvo do Desejo</p>
+    <p style="font-family:'Fraunces';font-style:italic;font-size:21px;color:var(--off);line-height:1.4;margin:26px 0 0;max-width:30ch;">A curadoria que mira no que ela ainda não sabia que queria.</p>
+  </div>
+  <div class="foot"><span>Sutil · Inteligente · Sua</span><span>2026</span></div>
+</section>
+
+<!-- 2 O PROBLEMA -->
+<section class="page">
+  <div class="top z"><span class="kick">O problema</span><span class="brandline">01</span></div>
+  <div class="z" style="margin-top:24mm;">
+    <h1 class="t">Hoje, a loja vende<br>no <span class="gold">chute</span>. E o chute<br>custa caro.</h1>
+    <div style="margin-top:18px;">
+      <div class="prob"><div class="pn">01</div><div><p class="pt">Ninguém para</p><p class="pb">A atenção da cliente dura 3 segundos. O que não encanta na hora, morre.</p></div></div>
+      <div class="prob"><div class="pn">02</div><div><p class="pt">O condicional trava o giro</p><p class="pb">A peça física vai pra casa da cliente — e enquanto está fora, ninguém mais compra. Capital parado.</p></div></div>
+      <div class="prob"><div class="pn">03</div><div><p class="pt">A sacola é um chute</p><p class="pb">A vendedora monta no palpite. Volta a maior parte: devolução, motoboy, tempo perdido.</p></div></div>
+      <div class="prob"><div class="pn">04</div><div><p class="pt">Vende-se o que não tem</p><p class="pb">Sem visão do estoque real, promete-se peça que não existe. A confiança quebra.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>O problema</span></div>
+</section>
+
+<!-- 3 A VIRADA -->
+<section class="page">
+  <div class="top z"><span class="kick">A virada</span><span class="brandline">02</span></div>
+  <div class="z grow" style="display:flex;flex-direction:column;justify-content:center;">
+    <h1 style="font-family:'Fraunces';font-weight:500;font-size:46px;line-height:1.06;color:var(--off);margin:0 0 24px;">A loja para de mostrar<br>coleção. E passa a<br><span class="gold">interpretar a cliente.</span></h1>
+    <p class="lead" style="font-size:17px;">Poucas peças, escolhidas a dedo. O desejo nasce no digital — e só vira peça física quando já é quase certeza.</p>
+    <hr class="rule">
+    <p class="quote" style="font-size:30px;max-width:24ch;">A peça certa não se anuncia.<br>Ela é reconhecida.</p>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>O conceito</span></div>
+</section>
+
+<!-- 4 O NOME -->
+<section class="page">
+  <img class="splitimg" src="conceitos/editorial_capa_2.png" alt="">
+  <div class="splitgrad"></div>
+  <div class="top z"><span class="kick">A marca</span><span class="brandline">03</span></div>
+  <div class="z" style="margin-top:22mm;width:58%;">
+    <h1 class="t" style="font-size:34px;">Dois nomes.<br>Uma só alma.</h1>
+    <div class="card" style="margin-bottom:14px;">
+      <p style="font-family:'Fraunces';font-size:22px;color:var(--gold);margin:0 0 4px;">Desejo Guiado</p>
+      <p class="cbd">Sutil · sofisticado · atemporal. A <b style="color:var(--off);font-weight:500;">venda inteligente</b>. Recomendado como a marca.</p>
+    </div>
+    <div class="card b">
+      <p style="font-family:'Fraunces';font-size:22px;color:var(--gold2);margin:0 0 4px;">Alvo do Desejo</p>
+      <p class="cbd">Magnético · provocante · jovem. A <b style="color:var(--off);font-weight:500;">campanha que chama</b>. Perfeito para ativações.</p>
+    </div>
+    <p style="font-family:'Fraunces';font-style:italic;font-size:16px;color:var(--mut);margin-top:16px;">assinatura — <span class="gold">desejo guiado por curadoria.</span></p>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>A marca</span></div>
+</section>
+
+<!-- 5 COMO FUNCIONA -->
+<section class="page">
+  <div class="top z"><span class="kick">Como funciona</span><span class="brandline">04</span></div>
+  <div class="z" style="margin-top:20mm;">
+    <h1 class="t" style="font-size:34px;">Cinco passos.<br>Um só toque para ela.</h1>
+    <div class="steps">
+      <div class="step"><div class="sc">1</div><div><p class="sttl">Cadastro da cliente</p><p class="sbd">Uma foto, o gosto e as ocasiões dela. Com consentimento.</p></div></div>
+      <div class="step"><div class="sc">2</div><div><p class="sttl">Estoque digital</p><p class="sbd">Toda novidade vira catálogo — com tamanho e disponibilidade ao vivo.</p></div></div>
+      <div class="step"><div class="sc">3</div><div><p class="sttl">A mira</p><p class="sbd">A consultora, com a IA, escolhe poucas peças certeiras para cada cliente.</p></div></div>
+      <div class="step"><div class="sc">4</div><div><p class="sttl">A reação</p><p class="sbd">A cliente responde no WhatsApp, em um toque. Sem digitar, sem app.</p></div></div>
+      <div class="step"><div class="sc">5</div><div><p class="sttl">O físico</p><p class="sbd">Só o que "acertou" vira peça — provador ou condicional. Direto pra venda.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>O fluxo</span></div>
+</section>
+
+<!-- 6 A TECNOLOGIA -->
+<section class="page">
+  <div class="top z"><span class="kick">A tecnologia, explicada simples</span><span class="brandline">05</span></div>
+  <div class="z" style="margin-top:16mm;">
+    <h1 class="t" style="font-size:34px;">Mágica? Não.<br>Tecnologia de 2026.</h1>
+    <div class="grid2">
+      <div class="card">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none" class="ico"><rect x="3" y="9" width="15" height="19" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="20" y="14" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M34 21h7m-3-3 3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40.5" cy="13" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M37 30c0-2 1.6-3.5 3.5-3.5S44 28 44 30" stroke="currentColor" stroke-width="1.5"/></svg>
+        <p class="ctt">Provador virtual</p>
+        <p class="cbd">A IA junta a <b style="color:var(--off);font-weight:500;">foto da cliente</b> com a <b style="color:var(--off);font-weight:500;">foto da peça</b> e cria ela vestindo. Um espelho mágico — só que real.</p>
+      </div>
+      <div class="card">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none" class="ico"><path d="M11 23a12 12 0 0 1 20-9m4 9a12 12 0 0 1-20 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M31 8v6h-6m-10 24v-6h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="ctt">O motor que aprende</p>
+        <p class="cbd">Cada <span class="gold">"acertou"</span> e <span class="gold">"passou"</span> ensina o gosto dela. Toda semana, o sistema erra menos.</p>
+      </div>
+      <div class="card">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none" class="ico"><path d="M24 6 8 9l-2 15 16 16 18-18L36 6 24 6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="15.5" cy="15.5" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        <p class="ctt">Estoque digital</p>
+        <p class="cbd">Cada peça vira uma ficha: <b style="color:var(--off);font-weight:500;">foto, tamanho e disponibilidade ao vivo</b>. Nunca mais vender o que não tem.</p>
+      </div>
+      <div class="card">
+        <svg width="46" height="46" viewBox="0 0 46 46" fill="none" class="ico"><path d="M8 11h30v20H22l-9 7v-7H8V11Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 19h14M16 24h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <p class="ctt">Tudo no WhatsApp</p>
+        <p class="cbd">Chega no zap. Sem baixar nada, sem complicação — onde ela já vive.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>A tecnologia</span></div>
+</section>
+
+<!-- 6.5 A PROVA / DEMO -->
+<section class="page">
+  <div class="top z"><span class="kick">A prova · o que a IA gera</span><span class="brandline">06</span></div>
+  <div class="z" style="margin-top:14mm;">
+    <h1 class="t" style="font-size:34px;">De uma foto comum<br>ao <span class="gold">resultado.</span></h1>
+    <img src="conceitos/demo_tryon_1.png" alt="" style="width:100%;border:1px solid rgba(199,163,74,.45);border-radius:12px;display:block;">
+    <p class="cbd" style="margin-top:12px;font-size:13px;"><span class="gold">À esquerda</span>, uma foto comum da cliente (de casa, no celular). <span class="gold">À direita</span>, a mesma cliente — mesmo rosto — vestida pela IA. Sem photoshop, sem sessão de fotos.</p>
+    <div style="display:flex;gap:10px;margin-top:16px;align-items:stretch;">
+      <div class="card" style="flex:1;text-align:center;padding:14px;"><p style="font-family:'Fraunces';font-size:22px;color:var(--gold);margin:0;">1</p><p class="cbd" style="margin:4px 0 0;">Foto da cliente</p></div>
+      <div class="arrow">+</div>
+      <div class="card" style="flex:1;text-align:center;padding:14px;"><p style="font-family:'Fraunces';font-size:22px;color:var(--gold);margin:0;">2</p><p class="cbd" style="margin:4px 0 0;">Foto da peça</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="card" style="flex:1;text-align:center;padding:14px;border-color:rgba(199,163,74,.5);"><p style="font-family:'Fraunces';font-size:22px;color:var(--gold);margin:0;">IA</p><p class="cbd" style="margin:4px 0 0;">Ela, vestida</p></div>
+    </div>
+    <p style="font-family:'Fraunces';font-style:italic;font-size:14px;color:var(--mut);margin-top:16px;">Na vida real é a foto da própria cliente, com consentimento. A IA é sempre rotulada — e nunca alteramos o corpo dela.</p>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>A prova</span></div>
+</section>
+
+<!-- 7 POR QUE É POSSÍVEL -->
+<section class="page">
+  <div class="top z"><span class="kick">Por que é possível agora</span><span class="brandline">07</span></div>
+  <div class="z grow" style="display:flex;flex-direction:column;justify-content:center;">
+    <h1 class="t" style="font-size:42px;">Não é ficção.<br>É <span class="gold">hoje.</span></h1>
+    <div class="step"><div class="sc" style="border-color:var(--bordo);color:var(--gold2);">✓</div><div><p class="sttl">Roda no que já temos</p><p class="sbd">Nosso próprio computador (placa de vídeo RTX 3070) faz as imagens; a nuvem entra só para o vídeo. Custo baixo.</p></div></div>
+    <div class="step"><div class="sc" style="border-color:var(--bordo);color:var(--gold2);">✓</div><div><p class="sttl">A tecnologia amadureceu</p><p class="sbd">Em 2025/26 o provador virtual virou realidade — o Google já gera vídeo de try-on. Ferramentas abertas fazem o resto.</p></div></div>
+    <div class="step"><div class="sc" style="border-color:var(--bordo);color:var(--gold2);">✓</div><div><p class="sttl">Começa pequeno</p><p class="sbd">Uma consultora, um piloto, as clientes VIP dela. Risco mínimo, aprendizado máximo.</p></div></div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>Viabilidade</span></div>
+</section>
+
+<!-- 8 GIRO & ACERTO -->
+<section class="page">
+  <div class="top z"><span class="kick">O resultado</span><span class="brandline">08</span></div>
+  <div class="z" style="margin-top:20mm;">
+    <h1 class="t" style="font-size:34px;">Menos chute, mais acerto.<br>O <span class="gold">giro</span> acelera.</h1>
+    <div class="baf">
+      <div class="bx"><div class="n">10</div><p class="cbd" style="margin-top:6px;">Antes<br>sacola de chutes</p></div>
+      <div class="arrow">→</div>
+      <div class="bx win"><div class="n gold">3</div><p class="cbd" style="margin-top:6px;">Depois<br>quase-certezas</p></div>
+    </div>
+    <div style="margin-top:22px;">
+      <div class="prob"><div class="pn gold">·</div><div><p class="pt">Giro protegido</p><p class="pb">O pré-filtro digital evita que peças saiam da loja no chute.</p></div></div>
+      <div class="prob"><div class="pn gold">·</div><div><p class="pt">Mais conversão, menos devolução</p><p class="pb">A sacola física só carrega vencedores.</p></div></div>
+      <div class="prob"><div class="pn gold">·</div><div><p class="pt">A métrica de ouro</p><p class="pb">Peças por condicional · % de devolução · dias de giro — medidos antes e depois.</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>Giro &amp; acerto</span></div>
+</section>
+
+<!-- 9 O APP: O ALVO E OS BOTOES -->
+<section class="page">
+  <div class="top z"><span class="kick">O app · o alvo e os botões</span><span class="brandline">09</span></div>
+  <div class="z" style="display:flex;gap:26px;margin-top:14mm;align-items:center;">
+    <div style="flex:0 0 286px;">
+      <div style="position:relative;width:286px;height:586px;border-radius:34px;border:2px solid #2a2622;background:#000;overflow:hidden;">
+        <img src="conceitos/editorial_capa_1.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 28%;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5),transparent 26%,transparent 52%,rgba(0,0,0,.88));"></div>
+        <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;z-index:3;">
+          <div style="width:30px;height:30px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-family:'Fraunces';font-size:15px;display:flex;align-items:center;justify-content:center;">M</div>
+          <span style="font-size:10px;color:var(--gold);border:1px solid rgba(199,163,74,.5);border-radius:5px;padding:2px 7px;">Prévia com IA</span>
+        </div>
+        <svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid meet" style="position:absolute;top:16%;left:50%;transform:translateX(-50%);width:188px;height:282px;z-index:2;" fill="none" stroke="#C7A34A">
+          <path d="M28 16 H12 V32 M172 16 H188 V32 M28 284 H12 V268 M172 284 H188 V268" stroke-width="1.6"/>
+          <circle cx="100" cy="150" r="6" stroke-width="1.2"/>
+          <path d="M100 128 V140 M100 160 V172 M78 150 H90 M110 150 H122" stroke-width="1.2"/>
+        </svg>
+        <div style="position:absolute;left:18px;right:18px;bottom:148px;z-index:3;">
+          <p style="font-family:'Fraunces';font-style:italic;font-size:21px;color:var(--gold);margin:0;">Vi você nessa.</p>
+          <p style="font-size:11px;color:#cfc8bd;margin:4px 0 0;">Vestido Mônaco · seda · novidade</p>
+        </div>
+        <div style="position:absolute;left:16px;right:16px;bottom:16px;z-index:3;display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;gap:7px;">
+            <span style="border:1px solid var(--gold);color:var(--gold);border-radius:20px;padding:7px 11px;font-size:11px;">&#9829; Acertou em mim</span>
+            <span style="border:1px solid rgba(199,163,74,.7);color:var(--gold);border-radius:20px;padding:7px 11px;font-size:11px;">Mira de novo</span>
+          </div>
+          <span style="border:1px solid rgba(199,163,74,.7);color:var(--gold);border-radius:20px;padding:7px 11px;font-size:11px;width:max-content;">Me surpreenda</span>
+          <span style="background:var(--bordo);color:#F6E9EC;border-radius:22px;padding:10px;font-size:13px;text-align:center;font-weight:500;">Provador reservado</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <h1 class="t" style="font-size:31px;">O alvo.<br>E um só toque.</h1>
+      <p class="lead" style="font-size:13.5px;">A peça aparece emoldurada pela <span class="gold">mira</span> — discreta, elegante. Ela reage no instinto, sem digitar:</p>
+      <p class="cbd" style="margin:9px 0;"><span class="gold">&#9829; Acertou em mim</span> — vira peça física (provador ou condicional).</p>
+      <p class="cbd" style="margin:9px 0;"><span class="gold">Mira de novo</span> — o sistema re-mira na hora, aprendendo o gosto.</p>
+      <p class="cbd" style="margin:9px 0;"><span class="gold">Me surpreenda</span> — abre espaço pra uma escolha ousada.</p>
+      <p class="cbd" style="margin:9px 0;"><span class="bordo-t">Provador reservado</span> — fecha: a peça é separada e <b style="color:var(--off);font-weight:500;">reservada</b> pra ela (o gatilho de escassez).</p>
+      <p style="font-family:'Fraunces';font-style:italic;font-size:14px;color:var(--mut);margin-top:14px;">Sem letreiro, sem pressão. A peça não se anuncia — é reconhecida.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>O app</span></div>
+</section>
+
+<!-- 10 O ENCANTO -->
+<section class="page">
+  <div class="top z"><span class="kick">O encanto · tendência 2026</span><span class="brandline">10</span></div>
+  <div class="z" style="margin-top:18mm;">
+    <h1 class="t" style="font-size:34px;">O que faz ela <span class="gold">sentir</span> —<br>não só ver.</h1>
+    <div class="grid2">
+      <div class="card"><p class="ctt" style="margin-top:0;">Vídeo dela</p><p class="cbd">A própria cliente se movendo na peça — não uma modelo de IA genérica.</p></div>
+      <div class="card"><p class="ctt" style="margin-top:0;">DNA de estilo</p><p class="cbd">Um retrato do gosto dela, que ela vê, corrige e pode compartilhar.</p></div>
+      <div class="card"><p class="ctt" style="margin-top:0;">Mira por ocasião</p><p class="cbd">"Soube do seu casamento em março." A agenda dela vira venda.</p></div>
+      <div class="card"><p class="ctt" style="margin-top:0;">Sempre atual</p><p class="cbd">O motor aprende toda semana. Nunca fica ultrapassado.</p></div>
+    </div>
+    <div class="tags"><span class="tag">A foto é dela</span><span class="tag">IA sempre rotulada</span><span class="tag">Nunca altera o corpo</span><span class="tag">Anti-cafona</span></div>
+  </div>
+  <div class="foot"><span>Desejo Guiado</span><span>O encanto</span></div>
+</section>
+
+<!-- 11 FECHAMENTO -->
+<section class="page" style="justify-content:center;align-items:center;text-align:center;">
+  <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(122,30,43,.35),transparent 60%);z-index:1;"></div>
+  <div class="z" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="mono" style="width:60px;height:60px;font-size:28px;margin-bottom:24px;">M</div>
+    <p class="kick">O começo</p>
+    <h1 style="font-family:'Fraunces';font-weight:500;font-size:58px;color:var(--gold);margin:0 0 18px;">Vamos mirar.</h1>
+    <p class="lead" style="text-align:center;font-size:16px;max-width:46ch;">Um piloto enxuto: uma consultora, suas clientes VIP, as novidades da semana. Medimos giro, acerto e venda — rodando no que já temos.</p>
+    <hr class="rule" style="margin:22px auto;">
+    <p style="font-family:'Fraunces';font-style:italic;font-size:20px;color:var(--off);margin:0;">Desejo Guiado</p>
+    <p class="brandline" style="margin-top:8px;">Irene Moreira · Curadoria privada com IA</p>
+  </div>
+</section>
+
+</body>
+</html>

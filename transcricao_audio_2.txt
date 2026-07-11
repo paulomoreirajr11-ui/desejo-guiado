@@ -1,0 +1,17 @@
+Eu entendi o que eles vão precisar, analisando aqui, o que a gente precisava de ter um estoque
+virtual com fotos, top, calça, jeans, blusinha, da loja, vestido, sai, enfim, nós vamos ter
+tipo um marara digital que isso vai ter que ser feito digitalizar as roupas.
+Do outro lado, e tipo, a hora que a vendedora ela for pesquisar, ela tente ter tipo um lugar
+igual a gente vai quando seleciona a foto do iPhone, onde só põe selecionado, você clica
+com um quadradinho, quero essa, quero essa, quero essa, quero essa, quero essa, manda
+por uma pasta só para ela saber os looks que ela vai estar montando no sistema.
+Quando a vendedora já tem essa seleção de roupas ela senta no sistema, esse sistema ele vai ter
+dois quadrados, um onde ele vai arrastar a cliente, a foto da cliente, o outro onde ele vai julgar a roupa,
+blusa e saia, por exemplo, embaixo alguns botões de estilo, que isso aqui na verdade é o
+importante, é igual por exemplo, você tem uma imagem dessa moça sem produção, eu joguei um
+vestido no quadrado da roupa do vestido e apertei o botão festa, automaticamente a IA entende que
+ela tem que produzir aquela pessoa como se estivesse indo para festa com aquele vestido, tem
+que ser algo bem funcional, bem prático, que o sistema faça tudo para elas, ela só tem
+que selecionar e arrastar para esse quadrado a cliente, a roupa que foi selecionada e o estilo
+para dar o resultado final. Essa imagem ela já tem que ter um botão que ela em
+caminha direto pode se zap dela pela alimentar esse outro sistema, mas primeiro nós temos que ter esse base.

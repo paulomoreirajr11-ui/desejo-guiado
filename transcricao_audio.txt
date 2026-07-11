@@ -1,0 +1,16 @@
+[   0.6s] A loja é uma loja de multimarcas que representa várias roupas e várias coleções.
+[   5.6s] Temos clientes muito antigos, então cada vendedora tem um número,
+[  10.6s] X de clientes específicas que tem uma certa fidelidade e tudo mais.
+[  14.6s] Já conhece gosto, já conhece tamanho, então fica um pouco mais fácil de estar fazendo esse atendimento.
+[  20.6s] O que eu imagino?
+[  22.6s] Cadar sobre se todas as roupas novas que chega na loja, que chega toda semana,
+[  27.6s] através de foto, e a vendedora tem a foto da cliente já cadastrada,
+[  34.6s] às vezes assim de corpo inteiro, enfim.
+[  37.6s] O que a vendedora faz?
+[  39.6s] Já veste a roupa nova nesse cliente, encaminha para o cliente para ver se gosta da roupa.
+[  44.6s] Existe alguma coisa assim?
+[  46.6s] Você tem alguma ideia?
+[  48.6s] Como podemos fazer isso?
+[  50.6s] Que tipo de sistema?
+[  51.6s] O que funciona, o que não funciona, o que tem no mundo?
+[  54.6s] Quase o que tem de mais novo com relação a isso?
