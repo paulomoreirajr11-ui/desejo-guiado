@@ -876,5 +876,23 @@ lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.
 /* gatilho do Meu 1% Diario — banner suave, blindado; so aparece se o check-in de hoje nao foi feito */
 (function(){try{var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';var d={};try{d=JSON.parse(localStorage.getItem('mira_espelho_'+v)||'{}');}catch(e){}var hj=new Date().toISOString().slice(0,10);if(d.lastDay===hj)return;var bar=document.getElementById('espbar'),tx=document.getElementById('esptxt');if(!bar||!tx)return;var y=new Date();y.setDate(y.getDate()-1);var ont=y.toISOString().slice(0,10);if(d.lastDay===ont&&d.streak>0)tx.textContent='Seu 🔥 de '+d.streak+' dias esta em risco — faca seu 1% de hoje!';else tx.textContent='Seu 1% de hoje te espera — 30 segundinhos.';bar.style.display='flex';}catch(e){}})();
 </script>
+<div style="position:fixed;bottom:18px;right:18px;z-index:45;">
+  <button id="helpbtn" style="width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);">?</button>
+</div>
+<div id="helpov" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.9);z-index:46;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:460px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:24px;max-height:88vh;overflow:auto;">
+    <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0 0 12px;font-size:20px;">Como usar · Estúdio</h3>
+    <ol style="color:var(--off);font-size:13.5px;line-height:1.85;padding-left:18px;margin:0;">
+      <li><b>Quem vai vestir:</b> escolha uma cliente sua. Sem foto dela? toque em 📷 <b>Tirar foto</b> ou 📲 <b>Galeria / rede social</b> pra colocar.</li>
+      <li><b>Toque nas peças</b> pra montar o look (2 a 4). Peça nova na loja? use <b>Foto da peça</b>.</li>
+      <li>Escolha a <b>ocasião</b> e toque em <b>Gerar</b> — a sua cliente aparece <b>vestida</b> com o look! ✨</li>
+      <li><b>Pra quem serve esse look?</b> mostra as clientes que combinam com ele.</li>
+      <li><b>Envie no WhatsApp</b> — a mensagem já vai pronta. Com <b>Enviar com resposta</b>, você vê a reação dela (💚 acertou / 🔄 mira de novo).</li>
+      <li><b>⭐ Achado da Semana:</b> suba a peça parada com o <b>valor</b> — aparece pra todas e a oferta vai pronta no zap.</li>
+    </ol>
+    <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi 💛</button>
+  </div>
+</div>
+<script>(function(){var b=document.getElementById('helpbtn'),o=document.getElementById('helpov'),c=document.getElementById('helpclose');if(!b||!o)return;b.onclick=function(){o.style.display='flex';};if(c)c.onclick=function(){o.style.display='none';};o.onclick=function(e){if(e.target===o)o.style.display='none';};})();</script>
 </body>
 </html>
