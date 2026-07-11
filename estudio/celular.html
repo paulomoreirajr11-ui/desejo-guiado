@@ -708,11 +708,13 @@ var FRASES=[
 ];
 function nomeCliente(){if(S.tipo!=='cli')return '';var n=S.pessoa?(S.pessoa.nome||''):'';return /^(foto|cliente)/i.test(n)?'':n;}
 function fraseLook(){var nome=nomeCliente();var ola=nome?('Oi '+nome+'! '):'Oi! ';return ola+FRASES[Math.floor(Math.random()*FRASES.length)];}
+function ofertaLook(pecas){try{var ach=(pecas||[]).map(function(f){return (typeof pecaByF==='function'?pecaByF(f):null);}).filter(function(p){return p&&p.shared&&p.preco;});if(!ach.length)return '';if(ach.length===1){var a=ach[0];return '\n\n✨ E olha que oportunidade: '+(a.nome||'peça única')+', por R$ '+a.preco+' — peça única, poucas assim! 💛';}return '\n\n✨ Oportunidades que separei pra você:\n'+ach.map(function(a){return '• '+(a.nome||'peça')+' — R$ '+a.preco;}).join('\n')+'\n(peças únicas, poucas assim! 💛)';}catch(e){return '';}}
 async function enviar(){
  const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
  if(!send.length){toast('Selecione ao menos 1 look');return;}
  try{send.forEach(function(it){fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})}).catch(function(){});});}catch(e){}
- const msg=fraseLook();
+ var _allp=[];send.forEach(function(it){(it.pecas||[]).forEach(function(f){if(_allp.indexOf(f)<0)_allp.push(f);});});
+ const msg=fraseLook()+ofertaLook(_allp);
  try{const files=[];for(const it of send){const r=await fetch(it.img);let bl=await r.blob();bl=await watermarkBlob(bl);files.push(new File([bl],'look.jpg',{type:'image/jpeg'}));}
   if(files.length&&navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text:msg});toast('Aberto pra enviar '+files.length+' ✓');return;}}catch(e){}
  try{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');return;}catch(e){}
@@ -765,7 +767,7 @@ async function enviarResposta(){
  if(!id){toast('Sem conexão — tente de novo');return;}
  it.lookid=id;it.enviado=true;saveTray();renderBig();renderBand();
  var link=location.origin+'/estudio/look.html?id='+id;
- var msg=fraseLook()+'\n👉 Toque pra ver e me dizer o que achou:\n'+link;
+ var msg=fraseLook()+ofertaLook(it.pecas)+'\n👉 Toque pra ver e me dizer o que achou:\n'+link;
  try{if(navigator.share){await navigator.share({title:'Um look pra você',text:msg});toast('Aberto pra enviar ✓');return;}}catch(e){if(e&&e.name==='AbortError')return;}
  try{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');toast('WhatsApp aberto ✓');}catch(e){toast('Link criado ✓');}
 }
