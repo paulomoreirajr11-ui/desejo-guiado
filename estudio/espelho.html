@@ -108,7 +108,7 @@
   <div class="card" id="checkin"></div>
   <div class="coach" id="coach"></div>
   <div class="card"><h2>🎯 Meta da semana</h2><p class="sub">Escolha 1 pilar pra focar esta semana — foco dá resultado.</p><div id="meta"></div></div>
-  <div class="card"><h2>Sua evolução</h2><p class="sub">As 7 forças, e como a sua média vem crescendo — só sua, ninguém mais vê. 💛</p><div class="bars" id="bars"></div><div id="tl"></div></div>
+  <div class="card"><h2>Sua evolução</h2><p class="sub">As suas forças, e como a sua média vem crescendo — só sua, ninguém mais vê. 💛</p><div class="bars" id="bars"></div><div id="tl"></div></div>
   <div class="card"><h2>🏅 Conquistas</h2><p class="sub">Selos que você desbloqueia praticando. Complete a coleção!</p><div class="selos" id="selos"></div></div>
   <div class="card"><h2>🤝 Leve pra Roda das Donas</h2><p class="sub">Um resumo da sua semana pra compartilhar no grupo (você escolhe o que mostrar).</p><button class="rodabtn" id="roda">📋 Copiar meu resumo da semana</button></div>
 </div>
@@ -117,21 +117,17 @@
 <div class="toast" id="toast"></div>
 <script>
 const PILARES=[
- ['carteira','Carteira em dia','📇','Você atualizou/cuidou das fichas das clientes hoje?'],
- ['porque','O porquê (pela pessoa)','💛','Você começou o atendimento pela pessoa, não pela peça?'],
- ['historia','História da peça','📖','Você contou a história de alguma peça hoje?'],
- ['picofim','Pico e fim','✨','Você criou um auge e caprichou na despedida de alguém?'],
- ['contato','Contato com as melhores','📞','Você deu atenção às suas melhores clientes hoje?'],
- ['whatsapp','WhatsApp / MIRA','💬','Você usou o WhatsApp/MIRA com estratégia hoje?'],
+ ['looks','Looks montados','👗','Você montou looks pras suas clientes hoje — mesmo com a loja vazia?'],
+ ['contato','Clientes contatadas','💬','Você mandou look ou mensagem pra alguma cliente hoje?'],
+ ['sumidas','Sumidas reativadas','🔔','Você chamou de volta alguma cliente que sumiu há tempos?'],
+ ['carteira','Carteira em dia','📇','Você cuidou/atualizou as fichas das suas clientes hoje?'],
  ['umpct','O 1% do dia','📈','Você fez o seu 1% de melhoria hoje?'],
 ];
 const COACH={
+ looks:['Monte 1 look agora na Mesa e toque em “pra quem serve” — loja vazia é hora de vender.','Look pronto é venda começada: quando a cliente chega, você já sabe o que funciona.'],
+ contato:['Mande 1 cliente já vestida com uma peça (Mesa de Looks + WhatsApp).','Vender pra quem já te conhece é bem mais fácil do que pra um estranho.'],
+ sumidas:['Abra a Carteira, filtre as sumidas e chame 1 de volta com carinho.','Cliente que sumiu não esqueceu de você — só precisa de um lembrete gentil.'],
  carteira:['Atualize 1 ficha agora — leva 1 minutinho.','Sua carteira é o seu maior patrimônio: cuide dela todo dia.'],
- porque:['No próximo atendimento, comece pela pessoa: pergunte “pra que ocasião?” antes de mostrar a peça.','A cliente decide pela emoção, não pela lista de produtos.'],
- historia:['Escolha 1 peça e conte a história dela hoje — de onde veio e o que diz sobre quem veste.','As pessoas não guardam preço; guardam história.'],
- picofim:['Capriche na despedida de 1 cliente hoje: um bilhete, um “volta pra me contar”.','Ela lembra do auge e do fim, não da média. Faça esses dois brilharem.'],
- contato:['Mande 1 mensagem carinhosa pra uma cliente da carteira (use a Central de Mensagens).','Vender pra quem já te conhece é bem mais fácil do que pra um estranho.'],
- whatsapp:['Use o MIRA hoje: mande 1 cliente já vestida com uma peça.','O WhatsApp é a sua loja dentro do bolso dela.'],
  umpct:['Escolha 1 hábito minúsculo de 15 minutos e faça hoje.','1% melhor por dia = 37 vezes melhor no fim do ano.'],
 };
 const FACES=[['😞','Difícil'],['😐','Mais ou menos'],['🙂','Ok'],['😊','Bom'],['🤩','Arrasei']];
@@ -213,7 +209,7 @@ function celebrar(d,novo){
  document.getElementById('msab').textContent='“'+SABEDORIA[Math.floor(Math.random()*SABEDORIA.length)]+'”';
  m.style.display='flex';
 }
-function fracoPilar(d,ignorarMeta){var keys=Object.keys(d.scores);if(!keys.length)return null;keys.sort((a,b)=>d.scores[a]-d.scores[b]);return keys[0];}
+function fracoPilar(d,ignorarMeta){var valid=PILARES.map(p=>p[0]);var keys=Object.keys(d.scores).filter(k=>valid.indexOf(k)>=0);if(!keys.length)return null;keys.sort((a,b)=>d.scores[a]-d.scores[b]);return keys[0];}
 function renderCoach(){
  var d=st();var el=document.getElementById('coach');var pk=fracoPilar(d);
  if(!pk){el.innerHTML='<div class="kk">Seu coach</div><div class="foco">Bora começar? 💛</div><div class="acao">Faça o seu primeiro check-in aí em cima. Em poucos dias você vê a sua evolução ganhando forma.</div>';return;}
@@ -222,7 +218,7 @@ function renderCoach(){
 }
 function renderMeta(){
  var d=st();var el=document.getElementById('meta');var wk=weekId();
- if(d.meta&&d.meta.week===wk){var P=PILARES.find(p=>p[0]===d.meta.pilar);var s=d.scores[d.meta.pilar]||0;
+ if(d.meta&&d.meta.week===wk&&PILARES.find(p=>p[0]===d.meta.pilar)){var P=PILARES.find(p=>p[0]===d.meta.pilar);var s=d.scores[d.meta.pilar]||0;
   el.innerHTML='<div class="metaset"><div class="mi">'+P[2]+'</div><div class="mt"><div class="t">'+P[1]+'</div><div class="s">seu foco desta semana · hoje em '+(s?s+'/5':'—')+'</div></div><button class="trocar" id="mtrocar">trocar</button></div>';
   document.getElementById('mtrocar').onclick=()=>{d.meta=null;save(d);renderMeta();};return;}
  el.innerHTML='<div class="metapilar">'+PILARES.map(p=>'<button class="mp" data-p="'+p[0]+'">'+p[2]+' '+p[1]+'</button>').join('')+'</div>';
