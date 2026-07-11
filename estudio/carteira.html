@@ -42,6 +42,20 @@
   .acts .wa.off{opacity:.35;pointer-events:none;}
   .vazio{color:var(--mut);font-size:13.5px;text-align:center;padding:40px 10px;}
   @media(max-width:560px){.acts{flex-direction:row;}.meta{display:none;}}
+  .clihead{display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer;}
+  .modal{display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:40;align-items:flex-end;justify-content:center;}
+  .sheet{max-width:560px;width:100%;background:var(--ink);border-radius:18px 18px 0 0;max-height:88vh;overflow:auto;box-shadow:0 -8px 30px rgba(0,0,0,.3);}
+  .sheet .top{position:sticky;top:0;background:var(--ink);display:flex;align-items:center;gap:8px;padding:16px 18px 10px;border-bottom:1px solid var(--line);z-index:2;}
+  .sheet .top h3{font-family:'Fraunces';color:var(--gold2);margin:0;font-size:20px;flex:1;}
+  .xbtn{background:var(--panel2);border:1px solid var(--line);color:var(--off);font-size:18px;width:40px;height:40px;border-radius:50%;cursor:pointer;flex-shrink:0;}
+  .elab{display:block;font-size:12px;color:var(--mut);margin:12px 0 4px;}
+  .efield{width:100%;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;}
+  .occ{display:flex;flex-wrap:wrap;gap:6px;}
+  .ob{font-size:12.5px;padding:8px 13px;border-radius:18px;border:1px solid var(--line);color:var(--off);background:transparent;cursor:pointer;font-family:inherit;}
+  .ob.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:500;}
+  .cta{width:100%;margin-top:16px;background:var(--gold);color:#1A1408;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:60;}
+  .toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -61,11 +75,35 @@
 </header>
 
 <div class="wrap">
-  <input class="search" id="q" placeholder="🔍  buscar cliente pelo nome…">
+  <input class="search" id="q" placeholder="🔍  buscar por nome, estilo, arquétipo…">
   <div class="filters" id="filters"></div>
   <div class="count" id="count"></div>
   <div class="lista" id="lista"></div>
 </div>
+
+<div class="modal" id="edit">
+  <div class="sheet">
+    <div class="top"><h3 id="editnome">Ficha</h3><button class="xbtn" id="editclose">✕</button></div>
+    <div style="padding:10px 18px 26px;">
+      <p style="font-size:11.5px;color:var(--mut);margin:4px 0 10px;">✏️ Editar aqui NÃO mexe nos “dias sem vir na loja”. 💛</p>
+      <label class="elab">Manequim / tamanho</label><input id="emanequim" class="efield" placeholder="ex: 42 ou 40-44">
+      <label class="elab">Número do sapato</label><input id="esapato" class="efield" inputmode="numeric" placeholder="ex: 37">
+      <label class="elab">Telefone (WhatsApp)</label><input id="etelefone" class="efield" inputmode="tel" placeholder="ex: (19) 99999-9999">
+      <label class="elab">Aniversário</label><input id="eaniversario" class="efield" placeholder="ex: 12/03">
+      <label class="elab">Estilo</label><input id="eestilo" class="efield" placeholder="ex: clássico, romântico">
+      <label class="elab">Cores que ela ama</label><input id="ecores" class="efield" placeholder="ex: nude, vinho">
+      <label class="elab">O que ela quer sentir</label>
+      <select id="earquetipo" class="efield"><option value="">—</option><option value="Amante">Bela e desejada</option><option value="Criador">Única e autoral</option><option value="Governante">Poderosa e elegante</option><option value="Explorador">Livre e aventureira</option><option value="Cara comum">Confortável e real</option><option value="Cuidador">Cuidadora</option></select>
+      <label class="elab">Cliente VIP</label>
+      <select id="evip" class="efield"><option value="">—</option><option value="Prata">★ Prata</option><option value="Ouro">★ Ouro</option></select>
+      <label class="elab">Ocasiões que ela curte</label>
+      <div id="eocc" class="occ" style="margin-top:2px;"></div>
+      <label class="elab">Notas</label><textarea id="enotas" class="efield" rows="2" style="resize:vertical;" placeholder="gosto, o que evita…"></textarea>
+      <button class="cta" id="editsave">Salvar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <div style="position:fixed;bottom:18px;right:18px;">
   <button id="helpbtn" style="width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);">?</button>
@@ -74,11 +112,11 @@
   <div style="max-width:460px;width:100%;background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:24px;">
     <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0 0 12px;font-size:20px;">Como usar · Carteira</h3>
     <ol style="color:var(--off);font-size:13.5px;line-height:1.9;padding-left:18px;margin:0;">
-      <li>Use a <b>busca</b> ou os <b>filtros</b> pra achar clientes.</li>
-      <li><b>Veste [tam]</b> mostra quem serve numa peça parada.</li>
-      <li><b>Sumidas +30d</b> mostra quem merece um contato carinhoso.</li>
-      <li><b>Aniversário do mês</b> lembra as datas.</li>
-      <li>Toque em <b>Montar look</b> ou <b>WhatsApp</b> pra agir.</li>
+      <li>Use a <b>busca</b> (nome, estilo, arquétipo) ou os <b>filtros</b>.</li>
+      <li><b>Veste [tam]</b> e <b>Calça [nº]</b> mostram quem serve numa peça parada.</li>
+      <li><b>Sumidas +30d</b>, <b>Aniversário do mês</b> e <b>★ VIP</b> pra achar quem merece atenção.</li>
+      <li><b>Toque na cliente</b> pra ver e <b>editar a ficha</b> (não mexe nos dias).</li>
+      <li>Toque em <b>Montar look</b> ou <b>Mensagem</b> pra agir na hora.</li>
     </ol>
     <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi</button>
   </div>
@@ -89,11 +127,11 @@
 const OCASIOES=['Festa','Trabalho','Dia a dia','Praia','Casual','Academia'];
 const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const DEMO=[
- {nome:'Marina Alves',foto:'',tam:'M',ocasioes:['Dia a dia','Casual'],telefone:'19999990001',aniversario:'12/07',arquetipo:'Amante',vip:'Ouro',last:3},
- {nome:'Patrícia Lopes',foto:'',tam:'G',ocasioes:['Trabalho','Festa'],telefone:'19999990002',aniversario:'28/07',arquetipo:'Governante',vip:'Prata',last:44},
- {nome:'Cláudia Menezes',foto:'',tam:'GG',ocasioes:['Dia a dia','Festa'],telefone:'',aniversario:'03/11',arquetipo:'Criador',vip:'',last:61},
- {nome:'Vera Nunes',foto:'',tam:'M',ocasioes:['Trabalho'],telefone:'19999990004',aniversario:'',arquetipo:'Cara comum',vip:'',last:9},
- {nome:'Taís Ribeiro',foto:'',tam:'P',ocasioes:['Academia','Casual'],telefone:'19999990005',aniversario:'19/07',arquetipo:'Explorador',vip:'',last:120},
+ {nome:'Marina Alves',foto:'',tam:'M',sapato:'37',estilo:'romântico',ocasioes:['Dia a dia','Casual'],telefone:'19999990001',aniversario:'12/07',arquetipo:'Amante',vip:'Ouro',last:3},
+ {nome:'Patrícia Lopes',foto:'',tam:'G',sapato:'38',estilo:'clássico',ocasioes:['Trabalho','Festa'],telefone:'19999990002',aniversario:'28/07',arquetipo:'Governante',vip:'Prata',last:44},
+ {nome:'Cláudia Menezes',foto:'',tam:'GG',sapato:'39',estilo:'moderno',ocasioes:['Dia a dia','Festa'],telefone:'',aniversario:'03/11',arquetipo:'Criador',vip:'',last:61},
+ {nome:'Vera Nunes',foto:'',tam:'M',sapato:'37',estilo:'minimalista',ocasioes:['Trabalho'],telefone:'19999990004',aniversario:'',arquetipo:'Cara comum',vip:'',last:9},
+ {nome:'Taís Ribeiro',foto:'',tam:'P',sapato:'38',estilo:'esportivo',ocasioes:['Academia','Casual'],telefone:'19999990005',aniversario:'19/07',arquetipo:'Explorador',vip:'',last:120},
 ];
 const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';
 function digits(s){s=(s||'').replace(/\D/g,'');if(!s)return'';if(s.length<=11)s='55'+s;return s;}
@@ -106,7 +144,7 @@ function mesDe(a){ // extrai o mês (1-12) de "12/08", "1990-08-12", "12 de agos
 function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
 
 let CLIENTES=[], usoMap={};
-let sel={tam:null,occ:null,aniv:false,sumidas:false,vip:false,q:''};
+let sel={tam:null,sapato:null,occ:null,aniv:false,sumidas:false,vip:false,q:''};
 
 async function carregar(){
   // 1) locais (mira_clientes)
@@ -138,6 +176,8 @@ function render(){
   const tams=[...new Set(CLIENTES.map(c=>c.tam).filter(Boolean))];
   let html='';
   tams.forEach(t=>html+='<button class="chip'+(sel.tam===t?' on':'')+'" data-tam="'+t+'">Veste '+t+'</button>');
+  const saps=[...new Set(CLIENTES.map(c=>c.sapato).filter(Boolean))].sort();
+  saps.forEach(sp=>html+='<button class="chip'+(sel.sapato===sp?' on':'')+'" data-sap="'+sp+'">Calça '+sp+'</button>');
   html+='<button class="chip'+(sel.sumidas?' on':'')+'" data-sumidas="1">Sumidas +30d</button>';
   html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">Aniversário do mês</button>';
   html+='<button class="chip'+(sel.vip?' on':'')+'" data-vip="1">★ VIP</button>';
@@ -145,6 +185,7 @@ function render(){
   filtros.innerHTML=html;
   filtros.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
     if(ch.dataset.tam!=null)sel.tam=(sel.tam===ch.dataset.tam?null:ch.dataset.tam);
+    if(ch.dataset.sap!=null)sel.sapato=(sel.sapato===ch.dataset.sap?null:ch.dataset.sap);
     if(ch.dataset.occ!=null)sel.occ=(sel.occ===ch.dataset.occ?null:ch.dataset.occ);
     if(ch.dataset.aniv)sel.aniv=!sel.aniv;
     if(ch.dataset.sumidas)sel.sumidas=!sel.sumidas;
@@ -154,8 +195,9 @@ function render(){
 
   const mesAtual=new Date().getMonth()+1;
   let arr=CLIENTES.filter(c=>{
-    if(sel.q&&!(c.nome||'').toLowerCase().includes(sel.q))return false;
+    if(sel.q&&!((c.nome||'')+' '+(c.estilo||'')+' '+(c.arquetipo||'')+' '+(c.notas||'')).toLowerCase().includes(sel.q))return false;
     if(sel.tam&&c.tam!==sel.tam)return false;
+    if(sel.sapato&&c.sapato!==sel.sapato)return false;
     if(sel.occ&&!normOcc(c.ocasioes).includes(sel.occ))return false;
     if(sel.aniv&&mesDe(c.aniversario)!==mesAtual)return false;
     if(sel.sumidas&&!(c._dias==null||c._dias>=30))return false;
@@ -178,15 +220,40 @@ function render(){
     const m=mesDe(c.aniversario);if(m===mesAtual)meta+='<br>🎁 '+c.aniversario;
     const wa=digits(c.telefone);
     const waBtn='<a class="wa" href="mensagens.html?cliente='+encodeURIComponent(c.nome||'')+'">Mensagem</a>';
-    return '<div class="row"><div class="av">'+av+'</div>'
-      +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div>'
+    const dn=(c.nome||'').replace(/"/g,'&quot;');
+    return '<div class="row"><div class="clihead" data-nome="'+dn+'" onclick="abrirEdit(this.getAttribute(\'data-nome\'))"><div class="av">'+av+'</div>'
+      +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div></div>'
       +'<div class="meta">'+meta+'</div>'
-      +'<div class="acts"><a class="look" href="#" data-nome="'+(c.nome||'').replace(/"/g,'&quot;')+'" onclick="montarLook(this.getAttribute(\'data-nome\'));return false;">Montar look</a>'+waBtn+'</div></div>';
+      +'<div class="acts"><a class="look" href="#" data-nome="'+dn+'" onclick="montarLook(this.getAttribute(\'data-nome\'));return false;">Montar look</a>'+waBtn+'</div></div>';
   }).join('');
 }
 
 document.getElementById('q').oninput=e=>{sel.q=e.target.value.trim().toLowerCase();render();};
 function montarLook(n){var mob=window.innerWidth<760;try{if(mob)localStorage.setItem('mira_carteira_pick',n||'');else localStorage.removeItem('mira_carteira_pick');}catch(e){}location.href=(mob?'celular.html':'estudio.html');}
+
+/* ---- Editar ficha na própria Carteira (não reseta os "dias sem vir") ---- */
+let _eocc=[], _editNome='';
+function renderEocc(){var el=document.getElementById('eocc');el.innerHTML='';OCASIOES.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='ob'+(_eocc.indexOf(o)>=0?' on':'');b.textContent=o;b.onclick=function(){var i=_eocc.indexOf(o);if(i>=0)_eocc.splice(i,1);else _eocc.push(o);b.classList.toggle('on');};el.appendChild(b);});}
+function abrirEdit(nome){var c=CLIENTES.find(function(x){return (x.nome||'')===nome;});if(!c)return;_editNome=nome;
+ document.getElementById('editnome').textContent='Ficha · '+nome;
+ document.getElementById('emanequim').value=c.tam||'';document.getElementById('esapato').value=c.sapato||'';
+ document.getElementById('etelefone').value=c.telefone||'';document.getElementById('eaniversario').value=c.aniversario||'';
+ document.getElementById('eestilo').value=c.estilo||'';document.getElementById('ecores').value=c.cores||'';
+ document.getElementById('earquetipo').value=c.arquetipo||'';document.getElementById('evip').value=c.vip||'';
+ document.getElementById('enotas').value=c.notas||'';_eocc=normOcc(c.ocasioes).slice();renderEocc();
+ document.getElementById('edit').style.display='flex';}
+function salvarEdit(){var c=CLIENTES.find(function(x){return (x.nome||'')===_editNome;});if(!c)return;
+ c.tam=document.getElementById('emanequim').value;c.sapato=document.getElementById('esapato').value;
+ c.telefone=document.getElementById('etelefone').value;c.aniversario=document.getElementById('eaniversario').value;
+ c.estilo=document.getElementById('eestilo').value;c.cores=document.getElementById('ecores').value;
+ c.arquetipo=document.getElementById('earquetipo').value;c.vip=document.getElementById('evip').value;
+ c.notas=document.getElementById('enotas').value;c.ocasioes=_eocc.slice();
+ try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,foto:c.foto||'',manequim:c.tam,sapato:c.sapato,telefone:c.telefone,aniversario:c.aniversario,notas:c.notas,estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,vip:c.vip,ocasioes:_eocc.join(', ')})}).catch(function(){});}catch(e){}
+ document.getElementById('edit').style.display='none';render();toast('Ficha da '+(_editNome.split(' ')[0]||'cliente')+' salva ✓');}
+document.getElementById('editclose').onclick=function(){document.getElementById('edit').style.display='none';};
+document.getElementById('edit').onclick=function(e){if(e.target.id==='edit')this.style.display='none';};
+document.getElementById('editsave').onclick=salvarEdit;
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2400);}
 carregar();
 </script>
 </body>
