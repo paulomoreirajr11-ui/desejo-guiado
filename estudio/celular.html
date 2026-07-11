@@ -171,7 +171,8 @@
     </div>
     <div class="chips" id="chips"></div>
     <div class="grid" id="grid"></div>
-    <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="novo" id="praquem" style="width:100%;margin:10px 0 0;border-color:var(--gold);background:rgba(156,122,60,.16);color:var(--gold2);font-weight:600;">👥 Pra quem serve esse look?</button>
+    <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="novo" id="savelook" style="flex:1;margin:0;border-color:var(--gold);color:var(--gold2);">💾 Salvar look</button>
       <button class="novo" id="meuslooks" style="flex:1;margin:0;border-color:var(--gold);color:var(--gold2);">📋 Meus looks</button>
     </div>
@@ -233,6 +234,17 @@
     </div>
     <p style="font-size:11.5px;color:var(--mut);margin:0 0 10px;">Toque num look → ele carrega as peças. Aí é só escolher a pessoa e gerar. 💛</p>
     <div id="lookslist"></div>
+  </div>
+</div>
+<div id="pquem" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
+  <div style="max-width:460px;width:100%;background:var(--ink);border-radius:18px 18px 0 0;padding:18px 18px 28px;max-height:82vh;overflow:auto;box-shadow:0 -8px 30px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0;font-size:19px;flex:1;">👥 Pra quem serve esse look?</h3>
+      <button id="pquemclose" style="background:transparent;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--mut);margin:0 0 6px;">O MIRA sugere — você decide. Toque numa cliente → ela entra no provador com esse look. 💛</p>
+    <div id="pquemlook" style="display:flex;gap:3px;margin:0 0 10px;flex-wrap:wrap;"></div>
+    <div id="pquemlist"></div>
   </div>
 </div>
 <div id="ficha" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.55);z-index:63;align-items:flex-end;justify-content:center;">
@@ -749,6 +761,55 @@ if($('savelook'))$('savelook').onclick=salvarLook;
 if($('meuslooks'))$('meuslooks').onclick=function(){renderLooks();var lm=$('looks');if(lm)lm.style.display='flex';};
 if($('looksclose'))$('looksclose').onclick=function(){$('looks').style.display='none';};
 if($('looks'))$('looks').onclick=function(e){if(e.target===this)this.style.display='none';};
+
+/* Bloco 2b — pra quem serve o look (o MIRA sugere, ela decide) */
+function _lookPecas(){return (S.pecas||[]).filter(function(f){return !isJoia(pecaByF(f)||{f:f});});}
+function _pManequim(m){var f=FICHAS[m.key]||{};var mq=m.manequim||null;if(!mq&&f.manequim){var t=(''+f.manequim).match(/\d+/);if(t)mq=+t[0];}return mq;}
+function _vesteLook(mq){if(!mq)return null;var ps=_lookPecas();for(var i=0;i<ps.length;i++){var e=pecaByF(ps[i]);if(e&&e.tam&&e.tam.length&&e.tam.indexOf(mq)<0)return false;}return true;}
+function sugestoesLook(){
+ var anivK={};try{aniversariantesDoMes().forEach(function(a){anivK[a.key]=a.dia;});}catch(e){}
+ var occ=(S.occ||'').toLowerCase();
+ var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());
+ var seen={},out=[];
+ pool.forEach(function(m){
+  if(!m||!m.key||seen[m.key])return;seen[m.key]=1;
+  var f=FICHAS[m.key]||{};
+  if(/^(foto|cliente)\b/i.test(m.nome||'')&&!f.telefone&&!f.manequim)return;
+  var mq=_pManequim(m),veste=_vesteLook(mq);
+  if(veste===false)return;
+  var badges=[],score=0;
+  if(veste===true){badges.push({t:'👗 veste',c:'var(--gold2)'});score+=100;}
+  if(anivK[m.key]!=null){badges.push({t:'🎂 aniversário',c:'#e6a4b4'});score+=30;}
+  if(f.vip){badges.push({t:'⭐ VIP',c:'#d9b96a'});score+=15;}
+  if(occ&&(f.ocasioes||'').toLowerCase().indexOf(occ)>=0){badges.push({t:'🎯 '+S.occ,c:'#9ac0a0'});score+=20;}
+  out.push({m:m,badges:badges,score:score,mq:mq,estilo:(f.estilo||m.estilo||''),incerto:veste===null});
+ });
+ out.sort(function(a,b){return b.score-a.score;});
+ return out;
+}
+function renderPquem(){
+ var lk=$('pquemlook');if(lk){lk.innerHTML=_lookPecas().slice(0,5).map(function(f){return '<img src="'+lookPieceImg(f)+'" style="width:38px;height:48px;object-fit:cover;border-radius:6px;background:var(--panel2);">';}).join('')+(S.occ?'<span style="align-self:center;font-size:11px;color:var(--mut);margin-left:6px;">🎯 '+S.occ+'</span>':'');}
+ var el=$('pquemlist');if(!el)return;var arr=sugestoesLook();
+ if(!arr.length){el.innerHTML='<div style="color:var(--mut);font-size:13px;padding:18px 0;text-align:center;">Nenhuma cliente com o tamanho desse look ainda.<br>Cadastre o manequim na ficha das clientes pra elas aparecerem aqui. 💛</div>';return;}
+ el.innerHTML=arr.map(function(s){
+  var m=s.m,badges=s.badges.map(function(b){return '<span style="font-size:10.5px;color:'+b.c+';background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:20px;padding:2px 7px;">'+b.t+'</span>';}).join(' ');
+  var foto=m.foto?('<img src="'+m.foto+'" style="width:46px;height:58px;object-fit:cover;border-radius:9px;background:var(--panel2);flex:0 0 auto;">'):'<div style="width:46px;height:58px;border-radius:9px;background:var(--panel2);flex:0 0 auto;"></div>';
+  var sub=[s.mq?('Mnq '+s.mq):(s.incerto?'tam. não cadastrado':''),s.estilo].filter(Boolean).join(' · ');
+  return '<div class="pqcard" data-key="'+m.key+'" style="display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px;margin-bottom:9px;cursor:pointer;">'+foto+'<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;">'+(m.nome||'Cliente')+'</div><div style="font-size:11px;color:var(--mut);margin:1px 0 5px;">'+(sub||'&nbsp;')+'</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+badges+'</div></div><span style="color:var(--gold2);font-size:20px;flex:0 0 auto;">›</span></div>';
+ }).join('');
+ el.querySelectorAll('.pqcard').forEach(function(c){c.onclick=function(){sugerirPessoa(c.getAttribute('data-key'));};});
+}
+function sugerirPessoa(key){
+ var pool=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());
+ var m=pool.find(function(x){return x.key===key;});if(!m)return;
+ S.tipo='cli';var tgc=$('tgc'),tgi=$('tgi');if(tgc)tgc.classList.add('on');if(tgi)tgi.classList.remove('on');
+ S.pessoa=m;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();
+ var pm=$('pquem');if(pm)pm.style.display='none';
+ toast((S.pessoa&&S.pecas.length&&S.occ)?('Pronto! Toque em gerar pra vestir '+(m.nome||'a cliente')+' 💛'):('Agora escolha a ocasião e gere 💛'));
+}
+if($('praquem'))$('praquem').onclick=function(){if(!_lookPecas().length){toast('Monte um look primeiro 💛');return;}renderPquem();var pm=$('pquem');if(pm)pm.style.display='flex';};
+if($('pquemclose'))$('pquemclose').onclick=function(){$('pquem').style.display='none';};
+if($('pquem'))$('pquem').onclick=function(e){if(e.target===this)this.style.display='none';};
 
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
 function _saud(){var h=new Date().getHours();return h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');}
