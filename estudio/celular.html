@@ -20,9 +20,10 @@
 <style>
   :root{--gold:#B0872E;--gold2:#8C6B22;--bordo:#6B6358;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  body{margin:0;background:#E7E0D2;color:var(--off);font-family:'Inter',sans-serif;}
+  body{margin:0;background:#E7E0D2;color:var(--off);font-family:'Inter',sans-serif;overflow-x:hidden;}
   .app{max-width:460px;margin:0 auto;background:var(--ink);min-height:100vh;padding-bottom:30px;}
-  header{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(250,246,238,.9);backdrop-filter:blur(8px);z-index:5;}
+  header{display:flex;align-items:center;gap:9px 7px;flex-wrap:wrap;padding:13px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(250,246,238,.9);backdrop-filter:blur(8px);z-index:5;}
+  .app > header a{white-space:nowrap;}
   .mono{font-family:'Fraunces';font-weight:500;font-size:31px;line-height:1;letter-spacing:.5px;}
   .brand{flex:1;display:flex;flex-direction:column;justify-content:center;line-height:1;}
   .bwm{font-family:'Fraunces';font-weight:500;font-size:14px;letter-spacing:3.5px;}
@@ -240,6 +241,16 @@
     <input id="faniversario" class="finput" placeholder="ex: 12/03" autocomplete="off">
     <label class="flab">📝 Notas (gosto, cores, o que evita…)</label>
     <textarea id="fnotas" class="finput" rows="3" placeholder="ex: ama tons terrosos, evita decote, fã de alfaiataria" style="resize:vertical;"></textarea>
+    <label class="flab">✨ Estilo</label>
+    <input id="festilo" class="finput" placeholder="ex: clássico, romântico, moderno" autocomplete="off">
+    <label class="flab">🎨 Cores que ela ama</label>
+    <input id="fcores" class="finput" placeholder="ex: nude, vinho, off-white" autocomplete="off">
+    <label class="flab">💛 O que ela quer sentir</label>
+    <select id="farquetipo" class="finput"><option value="">—</option><option value="Amante">Bela e desejada</option><option value="Criador">Única e autoral</option><option value="Governante">Poderosa e elegante</option><option value="Explorador">Livre e aventureira</option><option value="Cara comum">Confortável e real</option><option value="Cuidador">Cuidadora</option></select>
+    <label class="flab">⭐ Cliente VIP</label>
+    <select id="fvip" class="finput"><option value="">—</option><option value="Prata">★ Prata</option><option value="Ouro">★ Ouro</option></select>
+    <label class="flab">🎉 Ocasiões que ela curte</label>
+    <div id="focc" class="occ" style="margin-bottom:10px;"></div>
     <a id="fichawpp" href="#" style="display:none;margin-top:12px;text-align:center;background:#2E7D5B;color:#eafff0;border-radius:11px;padding:12px;font-size:14px;font-weight:600;text-decoration:none;">🟢 Chamar no WhatsApp</a>
     <button id="fichadel" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--bordo);border-radius:11px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer;">🗑 Apagar ficha</button>
     </div>
@@ -457,10 +468,13 @@ function unlockScroll(){document.body.style.position='';document.body.style.top=
 function fecharFicha(){var f=$('ficha');if(f)f.style.display='none';unlockScroll();renderPessoas();}
 function saveFichas(){try{localStorage.setItem('mira_fichas',JSON.stringify(FICHAS));}catch(e){}}
 function updFichaWpp(){var a=$('fichawpp');if(!a)return;var tel=($('ftelefone').value||'').replace(/\D/g,'');if(tel.length>=10){a.style.display='block';a.href='https://wa.me/55'+tel;}else{a.style.display='none';}}
-function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';updFichaWpp();lockScroll();$('ficha').style.display='flex';}
+var _focc=[];
+var FOCC=['Festa','Trabalho','Dia a dia','Praia','Casual','Academia'];
+function renderFocc(){var el=$('focc');if(!el)return;el.innerHTML='';FOCC.forEach(function(o){var b=document.createElement('button');b.type='button';b.className='ob'+(_focc.indexOf(o)>=0?' on':'');b.textContent=o;b.onclick=function(){var i=_focc.indexOf(o);if(i>=0)_focc.splice(i,1);else _focc.push(o);b.classList.toggle('on');salvarFicha();};el.appendChild(b);});}
+function abrirFicha(){if(!S.pessoa)return;_fk=S.pessoa.key;var f=FICHAS[_fk]||{};$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');$('fnome').value=/^(foto|cliente)/i.test(S.pessoa.nome||'')?'':(S.pessoa.nome||'');$('fmanequim').value=f.manequim||'';$('fsapato').value=f.sapato||'';$('ftelefone').value=f.telefone||'';$('faniversario').value=f.aniversario||'';$('fnotas').value=f.notas||'';$('festilo').value=f.estilo||'';$('fcores').value=f.cores||'';$('farquetipo').value=f.arquetipo||'';$('fvip').value=f.vip||'';_focc=(''+(f.ocasioes||'')).split(',').map(function(s){return s.trim();}).filter(Boolean);renderFocc();updFichaWpp();lockScroll();$('ficha').style.display='flex';}
 var _fsyncT=null;
-function syncFichaBanco(){try{var nome=($('fnome').value||'').trim();if(!nome||!S.vend)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:nome,foto:(S.pessoa&&S.pessoa.foto)||'',manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value})}).catch(function(){});}catch(e){}}
-function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value};saveFichas();updFichaWpp();renderAnivBar();clearTimeout(_fsyncT);_fsyncT=setTimeout(syncFichaBanco,900);}
+function syncFichaBanco(){try{var nome=($('fnome').value||'').trim();if(!nome||!S.vend)return;fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:S.vend,cliente:nome,foto:(S.pessoa&&S.pessoa.foto)||'',manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,vip:$('fvip').value,ocasioes:_focc.join(', ')})}).catch(function(){});}catch(e){}}
+function salvarFicha(){if(!_fk)return;FICHAS[_fk]={manequim:$('fmanequim').value,sapato:$('fsapato').value,telefone:$('ftelefone').value,aniversario:$('faniversario').value,notas:$('fnotas').value,estilo:$('festilo').value,cores:$('fcores').value,arquetipo:$('farquetipo').value,vip:$('fvip').value,ocasioes:_focc.join(', ')};saveFichas();updFichaWpp();renderAnivBar();clearTimeout(_fsyncT);_fsyncT=setTimeout(syncFichaBanco,900);}
 function aniversariantesDoMes(){var mes=(new Date().getMonth()+1);var people=FOTOS.concat(getClientes());var out=[];people.forEach(function(p){var f=FICHAS[p.key];if(f&&f.aniversario){var parts=(''+f.aniversario).split('/');if(parts.length>=2){var m=parseInt(parts[1],10);if(m===mes)out.push({key:p.key,nome:p.nome,dia:parseInt(parts[0],10)||0,telefone:f.telefone||''});}}});out.sort(function(a,b){return a.dia-b.dia;});return out;}
 function renderAnivBar(){var bar=$('anivbar');if(!bar)return;var arr=aniversariantesDoMes();if(arr.length){bar.style.display='flex';$('anivtxt').textContent=arr.length+(arr.length===1?' aniversariante este mês':' aniversariantes este mês');}else{bar.style.display='none';}}
 function abrirAniv(){var arr=aniversariantesDoMes();var el=$('anivlist');el.innerHTML=arr.length?arr.map(function(a){var tel=(a.telefone||'').replace(/\D/g,'');return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);"><div style="flex:1;"><div style="font-weight:500;">'+(a.nome||'cliente')+'</div><div style="font-size:12px;color:var(--mut);">🎂 dia '+a.dia+'</div></div>'+(tel.length>=10?'<a href="https://wa.me/55'+tel+'" style="font-size:20px;text-decoration:none;">🟢</a>':'')+'<button class="anivsel" data-k="'+a.key+'" style="background:var(--gold);color:#1A1408;border:none;border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">👗 Fazer look</button></div>';}).join(''):'<div style="color:var(--mut);font-size:13px;padding:10px 0;">Ninguém faz aniversário este mês.</div>';el.querySelectorAll('.anivsel').forEach(function(b){b.onclick=function(){var k=b.getAttribute('data-k');var p=FOTOS.concat(getClientes()).find(function(x){return x.key===k;});if(p){S.tipo='cli';$('tgc').classList.add('on');$('tgi').classList.remove('on');S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();}$('aniv').style.display='none';toast('Cliente selecionada — monte o look 💝');};});$('aniv').style.display='flex';}
@@ -468,12 +482,13 @@ if($('anivbar'))$('anivbar').onclick=abrirAniv;
 if($('anivclose'))$('anivclose').onclick=function(){$('aniv').style.display='none';};
 if($('aniv'))$('aniv').onclick=function(e){if(e.target===this)this.style.display='none';};
 ['fnome','fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){var el=$(id);if(el)el.oninput=salvarFicha;});
+['festilo','fcores','farquetipo','fvip'].forEach(function(id){var el=$(id);if(el){el.oninput=salvarFicha;el.onchange=salvarFicha;}});
 function salvarNome(){if(!S.pessoa)return;var nm=$('fnome').value.trim();var key=S.pessoa.key;if(nm){if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.nome=nm;saveFotos();}else if(key.indexOf('cli_')===0){var i=parseInt(key.split('_')[1],10);var cl=JSON.parse(localStorage.getItem('mira_clientes')||'[]');if(cl[i]){cl[i].nome=nm;localStorage.setItem('mira_clientes',JSON.stringify(cl));}}S.pessoa.nome=nm;}$('fichanome').textContent='Ficha · '+(S.pessoa.nome||'cliente');}
 if($('fnome'))$('fnome').oninput=salvarNome;
 if($('ficha-btn'))$('ficha-btn').onclick=abrirFicha;
 if($('fichaclose'))$('fichaclose').onclick=fecharFicha;
 if($('ficha'))$('ficha').onclick=function(e){if(e.target===this)fecharFicha();};
-if($('fichadel'))$('fichadel').onclick=function(){if(!_fk)return;delete FICHAS[_fk];saveFichas();['fmanequim','fsapato','ftelefone','faniversario','fnotas'].forEach(function(id){$(id).value='';});updFichaWpp();toast('Ficha apagada ✓');fecharFicha();};
+if($('fichadel'))$('fichadel').onclick=function(){if(!_fk)return;delete FICHAS[_fk];saveFichas();['fmanequim','fsapato','ftelefone','faniversario','fnotas','festilo','fcores','farquetipo','fvip'].forEach(function(id){$(id).value='';});_focc=[];renderFocc();updFichaWpp();toast('Ficha apagada ✓');fecharFicha();};
 $('trocar').onclick=function(){$('trocafoto').click();};
 $('trocafoto').onchange=function(e){var f=e.target.files[0];if(!f||!S.pessoa)return;var key=S.pessoa.key;var rd=new FileReader();rd.onload=function(ev){var img=new Image();img.onload=function(){var mx=820,c=document.createElement('canvas');var w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);var du=c.toDataURL('image/jpeg',.85);
  if(key.indexOf('foto_')===0){var p=FOTOS.find(function(x){return x.key===key;});if(p)p.foto=du;saveFotos();}
