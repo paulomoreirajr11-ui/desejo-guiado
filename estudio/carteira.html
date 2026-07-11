@@ -191,8 +191,8 @@ async function carregar(){
   let map={};
   function put(c){const k=(c.nome||'').trim().toLowerCase();if(!k)return;map[k]=Object.assign(map[k]||{},c);}
   try{JSON.parse(localStorage.getItem('mira_clientes')||'[]').forEach(c=>put({nome:c.nome,foto:c.foto||'',tam:c.tamanho||c.tam||'',ocasioes:normOcc(c.ocasioes)}));}catch(e){}
-  // 2) servidor (/ficha) — só vem se o Supabase estiver ligado
-  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',sapato:f.sapato||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes),notas:f.notas||'',estilo:f.estilo||'',cores:f.cores||'',arquetipo:f.arquetipo||'',ult_compra:f.ult_compra||'',status:f.status||'ativa'}));}catch(e){}
+  // 2) servidor (/ficha) — só vem se o Supabase estiver ligado; SÓ as clientes DESTA vendedora
+  try{var _v=vend();if(_v){const r=await fetch('/ficha?vend='+encodeURIComponent(_v));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',sapato:f.sapato||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes),notas:f.notas||'',estilo:f.estilo||'',cores:f.cores||'',arquetipo:f.arquetipo||'',ult_compra:f.ult_compra||'',status:f.status||'ativa'}));}}catch(e){}
   // 3) últimas interações (/uso) -> dias desde o último contato
   try{const r=await fetch('/uso');const j=await r.json();(j.log||[]).forEach(u=>{const k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;const t=Date.parse(u.ts);if(!t)return;if(!usoMap[k]||t>usoMap[k])usoMap[k]=t;});}catch(e){}
   CLIENTES=Object.values(map);

@@ -237,7 +237,7 @@ async function carregar(){
   let map={};
   function put(c){const k=(c.nome||'').trim().toLowerCase();if(!k)return;map[k]=Object.assign(map[k]||{},c);}
   try{JSON.parse(localStorage.getItem('mira_clientes')||'[]').forEach(c=>put({nome:c.nome,foto:c.foto||'',tam:c.tamanho||'',telefone:c.telefone||''}));}catch(e){}
-  try{const r=await fetch('/ficha?vend='+encodeURIComponent(vend()));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes)}));}catch(e){}
+  try{var _v=vend();if(_v){const r=await fetch('/ficha?vend='+encodeURIComponent(_v));const j=await r.json();(j.fichas||[]).forEach(f=>put({nome:f.cliente,foto:f.foto||'',tam:f.manequim||'',telefone:f.telefone||'',aniversario:f.aniversario||'',ocasioes:normOcc(f.ocasioes)}));}}catch(e){}
   CLIENTES=Object.values(map).sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
   renderLista('');
   const pre=new URLSearchParams(location.search).get('cliente');
