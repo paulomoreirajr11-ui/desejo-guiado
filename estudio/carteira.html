@@ -181,6 +181,7 @@ function diasAteAniv(a){ // dias até o próximo aniversário (0=hoje), -1 se se
   return Math.round((prox-hj)/86400000);
 }
 function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
+function _cnorm(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
 
 let CLIENTES=[], usoMap={};
 let sel={tam:null,sapato:null,occ:null,aniv:false,anivSem:false,sumidas:false,dormindo:false,q:'',ord:'nome'};
@@ -234,7 +235,7 @@ function render(){
   const mesAtual=new Date().getMonth()+1;
   let arr=CLIENTES.filter(c=>{
     if(sel.dormindo){if(c.status!=='dormindo')return false;}else{if(c.status==='dormindo')return false;}
-    if(sel.q&&!((c.nome||'')+' '+(c.estilo||'')+' '+(c.arquetipo||'')+' '+(c.notas||'')).toLowerCase().includes(sel.q))return false;
+    if(sel.q){var _nq=_cnorm(sel.q);var _ns=_cnorm(c.nome).indexOf(_nq)===0;var _ot=sel.q.length>=3&&_cnorm((c.estilo||'')+' '+(c.arquetipo||'')+' '+(c.notas||'')).indexOf(_nq)>=0;if(!_ns&&!_ot)return false;}
     if(sel.tam&&!tamMatch(c.tam,sel.tam))return false;
     if(sel.sapato&&!sapMatch(c.sapato,sel.sapato))return false;
     if(sel.occ&&!normOcc(c.ocasioes).includes(sel.occ))return false;
