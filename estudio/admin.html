@@ -89,7 +89,7 @@
 <div class="wrap">
   <div class="cards" id="stats"></div>
   <h2 class="sec">🏆 Placar de Esforço — o que cada uma gera</h2>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5;">Tudo que o sistema registra e que puxa venda, do topo do funil (fichas) até quase-venda (reservas). <b>👑 = líder da categoria.</b> Números crus, pra você analisar o que gera mais resultado antes de decidir o prêmio.</div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5;">As <b>4 primeiras colunas são o que mais importa</b> (fichas · looks montados · enviados · sumidas reativadas); as outras 3 são sinais extras. <b>👑 = líder da categoria.</b> Números crus, pra você analisar o que gera mais resultado antes de decidir o prêmio.</div>
   <div id="placarper" style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
     <button class="perbtn" data-p="hoje">Hoje</button>
     <button class="perbtn" data-p="semana">7 dias</button>
@@ -213,9 +213,8 @@ async function carregarPlacar(periodo){
   try{ rows=(await (await fetch('/placar?periodo='+encodeURIComponent(periodo))).json()).placar||[]; }catch(e){}
   if(!rows.length){ host.innerHTML='<div class="empty">Ainda sem atividade nesse período.</div>'; return; }
   var cols=[
-    {k:'fichas',t:'📇 Fichas'},{k:'gerados',t:'👗 Looks gerados'},{k:'atendidas',t:'👥 Clientes atendidas'},
-    {k:'enviados',t:'💬 Enviados (WhatsApp)'},{k:'respostas',t:'💚 Respostas'},
-    {k:'reservas',t:'📌 Reservas'},{k:'reativadas',t:'🔔 Sumidas reativadas'}
+    {k:'fichas',t:'📇 Fichas'},{k:'gerados',t:'👗 Looks montados'},{k:'enviados',t:'💬 Enviados (WhatsApp)'},{k:'reativadas',t:'🔔 Sumidas reativadas'},
+    {k:'atendidas',t:'👥 Clientes atendidas'},{k:'respostas',t:'💚 Respostas'},{k:'reservas',t:'📌 Reservas'}
   ];
   var max={}; cols.forEach(function(c){ max[c.k]=Math.max.apply(null, rows.map(function(r){return r[c.k]||0;})); });
   var html='<table class="ptbl"><thead><tr><th>Vendedora</th>'+cols.map(function(c){return '<th>'+c.t+'</th>';}).join('')+'</tr></thead><tbody>';
