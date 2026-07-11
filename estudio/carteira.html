@@ -56,6 +56,16 @@
   .cta{width:100%;margin-top:16px;background:var(--gold);color:#1A1408;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:60;}
   .toast.show{opacity:1;}
+  .szrow{display:flex;gap:8px;margin:0 0 10px;}
+  .szf{flex:1;display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:0 10px;}
+  .szf span{font-size:12.5px;color:var(--mut);white-space:nowrap;}
+  .szf input{flex:1;min-width:0;background:transparent;border:none;color:var(--off);font-family:inherit;font-size:14px;padding:11px 0;outline:none;}
+  .fsep{font-size:11px;color:var(--mut);align-self:center;margin:0 2px 0 6px;}
+  .wmeta{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.45;}
+  .wmeta .warn{color:var(--gold2);font-weight:600;}
+  .ordrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:2px 0 10px;}
+  .ordlab{font-size:12px;color:var(--mut);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .ordlab select{background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:13px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -76,8 +86,21 @@
 
 <div class="wrap">
   <input class="search" id="q" placeholder="🔍  buscar por nome, estilo, arquétipo…">
+  <div class="szrow">
+    <div class="szf"><span>Veste</span><input id="ftam" placeholder="ex: 42 ou M" autocomplete="off"></div>
+    <div class="szf"><span>Calça</span><input id="fsapato" inputmode="numeric" placeholder="ex: 37" autocomplete="off"></div>
+  </div>
   <div class="filters" id="filters"></div>
-  <div class="count" id="count"></div>
+  <div class="ordrow">
+    <div class="count" id="count"></div>
+    <label class="ordlab">Ordenar por
+      <select id="ord">
+        <option value="nome">Nome (A–Z)</option>
+        <option value="sumidas">Mais sumidas primeiro</option>
+        <option value="recentes">Mais atuais primeiro</option>
+      </select>
+    </label>
+  </div>
   <div class="lista" id="lista"></div>
 </div>
 
@@ -94,8 +117,6 @@
       <label class="elab">Cores que ela ama</label><input id="ecores" class="efield" placeholder="ex: nude, vinho">
       <label class="elab">O que ela quer sentir</label>
       <select id="earquetipo" class="efield"><option value="">—</option><option value="Amante">Bela e desejada</option><option value="Criador">Única e autoral</option><option value="Governante">Poderosa e elegante</option><option value="Explorador">Livre e aventureira</option><option value="Cara comum">Confortável e real</option><option value="Cuidador">Cuidadora</option></select>
-      <label class="elab">Cliente VIP</label>
-      <select id="evip" class="efield"><option value="">—</option><option value="Prata">★ Prata</option><option value="Ouro">★ Ouro</option></select>
       <label class="elab">Ocasiões que ela curte</label>
       <div id="eocc" class="occ" style="margin-top:2px;"></div>
       <label class="elab">Notas</label><textarea id="enotas" class="efield" rows="2" style="resize:vertical;" placeholder="gosto, o que evita…"></textarea>
@@ -113,10 +134,12 @@
     <h3 style="font-family:'Fraunces';color:var(--gold2);margin:0 0 12px;font-size:20px;">Como usar · Carteira</h3>
     <ol style="color:var(--off);font-size:13.5px;line-height:1.9;padding-left:18px;margin:0;">
       <li>Use a <b>busca</b> (nome, estilo, arquétipo) ou os <b>filtros</b>.</li>
-      <li><b>Veste [tam]</b> e <b>Calça [nº]</b> mostram quem serve numa peça parada.</li>
-      <li><b>Sumidas +30d</b>, <b>Aniversário do mês</b> e <b>★ VIP</b> pra achar quem merece atenção.</li>
+      <li>Digite em <b>Veste</b> ou <b>Calça</b> o tamanho que você busca — mostra quem serve numa peça.</li>
+      <li><b>Sumidas +30d</b> e <b>Aniversário do mês</b> pra achar quem merece atenção.</li>
+      <li><b>Ordenar</b> por <b>mais sumidas</b> ou <b>mais atuais</b> pra priorizar quem contatar.</li>
       <li><b>Toque na cliente</b> pra ver e <b>editar a ficha</b> (não mexe nos dias).</li>
       <li>Toque em <b>Montar look</b> ou <b>Mensagem</b> pra agir na hora.</li>
+      <li>As 3 clientes com o selo <b>EXEMPLO</b> já vêm prontas — treine com elas à vontade.</li>
     </ol>
     <button id="helpclose" style="margin-top:16px;width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;">Entendi</button>
   </div>
@@ -133,6 +156,12 @@ const DEMO=[
  {nome:'Vera Nunes',foto:'',tam:'M',sapato:'37',estilo:'minimalista',ocasioes:['Trabalho'],telefone:'19999990004',aniversario:'',arquetipo:'Cara comum',vip:'',last:9},
  {nome:'Taís Ribeiro',foto:'',tam:'P',sapato:'38',estilo:'esportivo',ocasioes:['Academia','Casual'],telefone:'19999990005',aniversario:'19/07',arquetipo:'Explorador',vip:'',last:120},
 ];
+/* 3 clientes-EXEMPLO (aparecem pra todas, ficha 100% preenchida — ensinam o poder do cadastro completo) */
+const EXEMPLOS=[
+ {_exemplo:true,nome:'Sofia (exemplo)',foto:'clientes/cliente_1.jpg',tam:'42',sapato:'37',estilo:'Clássico sofisticado',cores:'Preto, off-white, dourado',ocasioes:['Festa','Trabalho','Jantar'],telefone:'19999990010',aniversario:'05/07',arquetipo:'Governante',notas:'Ama alfaiataria e scarpin nude. Comprou o blazer de linho em maio. Filha casa em outubro — vai querer look de mãe da noiva. Evita estampa grande.',last:6},
+ {_exemplo:true,nome:'Bruna (exemplo)',foto:'clientes/cliente_2.jpg',tam:'38',sapato:'36',estilo:'Romântico',cores:'Rosé, tons pastel, floral',ocasioes:['Dia a dia','Casual','Viagem'],telefone:'19999990011',aniversario:'20/12',arquetipo:'Amante',notas:'Adora vestido midi fluido e floral. Evita decote profundo. Vai viajar pra praia em janeiro. Calça 36 é raro no estoque — avisar quando chegar.',last:12},
+ {_exemplo:true,nome:'Célia (exemplo)',foto:'clientes/cliente_3.jpg',tam:'48',sapato:'39',estilo:'Elegante, dramático',cores:'Marsala, azul-marinho, joia',ocasioes:['Festa','Casual','Casamento'],telefone:'19999990012',aniversario:'15/03',arquetipo:'Governante',vip:'',notas:'Convidada pra 2 casamentos no 2º semestre. Prefere manga 3/4 e comprimento longo. Sumida desde março — vale um alô carinhoso.',last:130},
+];
 const vend=()=>localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';
 function digits(s){s=(s||'').replace(/\D/g,'');if(!s)return'';if(s.length<=11)s='55'+s;return s;}
 function mesDe(a){ // extrai o mês (1-12) de "12/08", "1990-08-12", "12 de agosto" etc.
@@ -144,7 +173,7 @@ function mesDe(a){ // extrai o mês (1-12) de "12/08", "1990-08-12", "12 de agos
 function normOcc(o){if(Array.isArray(o))return o.filter(Boolean);if(typeof o==='string')return o.split(/[,;·]/).map(x=>x.trim()).filter(Boolean);return[];}
 
 let CLIENTES=[], usoMap={};
-let sel={tam:null,sapato:null,occ:null,aniv:false,sumidas:false,vip:false,q:''};
+let sel={tam:null,sapato:null,occ:null,aniv:false,sumidas:false,q:'',ord:'nome'};
 
 async function carregar(){
   // 1) locais (mira_clientes)
@@ -157,6 +186,7 @@ async function carregar(){
   try{const r=await fetch('/uso');const j=await r.json();(j.log||[]).forEach(u=>{const k=(u.cliente||'').trim().toLowerCase();if(!k||!u.ts)return;const t=Date.parse(u.ts);if(!t)return;if(!usoMap[k]||t>usoMap[k])usoMap[k]=t;});}catch(e){}
   CLIENTES=Object.values(map);
   if(!CLIENTES.length&&/[?&]demo=1/.test(location.search))CLIENTES=DEMO.slice(); // demo só com ?demo=1 (pra apresentar)
+  EXEMPLOS.forEach(function(e){var k=(e.nome||'').toLowerCase();if(!CLIENTES.some(function(c){return (c.nome||'').toLowerCase()===k;}))CLIENTES.push(Object.assign({},e));}); // clientes-exemplo sempre presentes
   CLIENTES.forEach(c=>{const k=(c.nome||'').trim().toLowerCase();
     if(c.last!=null&&usoMap[k]==null){c._dias=c.last;} // demo
     else if(usoMap[k]){c._dias=Math.floor((Date.now()-usoMap[k])/86400000);}
@@ -173,62 +203,64 @@ function render(){
     return;
   }
   const filtros=document.getElementById('filters');
-  const tams=[...new Set(CLIENTES.map(c=>c.tam).filter(Boolean))];
   let html='';
-  tams.forEach(t=>html+='<button class="chip'+(sel.tam===t?' on':'')+'" data-tam="'+t+'">Veste '+t+'</button>');
-  const saps=[...new Set(CLIENTES.map(c=>c.sapato).filter(Boolean))].sort();
-  saps.forEach(sp=>html+='<button class="chip'+(sel.sapato===sp?' on':'')+'" data-sap="'+sp+'">Calça '+sp+'</button>');
-  html+='<button class="chip'+(sel.sumidas?' on':'')+'" data-sumidas="1">Sumidas +30d</button>';
-  html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">Aniversário do mês</button>';
-  html+='<button class="chip'+(sel.vip?' on':'')+'" data-vip="1">★ VIP</button>';
+  html+='<button class="chip'+(sel.sumidas?' on':'')+'" data-sumidas="1">😴 Sumidas +30d</button>';
+  html+='<button class="chip'+(sel.aniv?' on':'')+'" data-aniv="1">🎂 Aniversário do mês</button>';
   OCASIOES.forEach(o=>html+='<button class="chip'+(sel.occ===o?' on':'')+'" data-occ="'+o+'">'+o+'</button>');
   filtros.innerHTML=html;
   filtros.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
-    if(ch.dataset.tam!=null)sel.tam=(sel.tam===ch.dataset.tam?null:ch.dataset.tam);
-    if(ch.dataset.sap!=null)sel.sapato=(sel.sapato===ch.dataset.sap?null:ch.dataset.sap);
     if(ch.dataset.occ!=null)sel.occ=(sel.occ===ch.dataset.occ?null:ch.dataset.occ);
     if(ch.dataset.aniv)sel.aniv=!sel.aniv;
     if(ch.dataset.sumidas)sel.sumidas=!sel.sumidas;
-    if(ch.dataset.vip)sel.vip=!sel.vip;
     render();
   });
 
   const mesAtual=new Date().getMonth()+1;
   let arr=CLIENTES.filter(c=>{
     if(sel.q&&!((c.nome||'')+' '+(c.estilo||'')+' '+(c.arquetipo||'')+' '+(c.notas||'')).toLowerCase().includes(sel.q))return false;
-    if(sel.tam&&c.tam!==sel.tam)return false;
-    if(sel.sapato&&c.sapato!==sel.sapato)return false;
+    if(sel.tam&&!tamMatch(c.tam,sel.tam))return false;
+    if(sel.sapato&&!sapMatch(c.sapato,sel.sapato))return false;
     if(sel.occ&&!normOcc(c.ocasioes).includes(sel.occ))return false;
     if(sel.aniv&&mesDe(c.aniversario)!==mesAtual)return false;
     if(sel.sumidas&&!(c._dias==null||c._dias>=30))return false;
-    if(sel.vip&&!c.vip)return false;
     return true;
   });
-  arr.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  var _d=function(c){return c._dias==null?1e9:c._dias;};
+  if(sel.ord==='sumidas')arr.sort((a,b)=>_d(b)-_d(a)||(a.nome||'').localeCompare(b.nome||''));
+  else if(sel.ord==='recentes')arr.sort((a,b)=>_d(a)-_d(b)||(a.nome||'').localeCompare(b.nome||''));
+  else arr.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
 
   document.getElementById('count').textContent=arr.length+' de '+CLIENTES.length+' cliente'+(CLIENTES.length===1?'':'s');
   const lista=document.getElementById('lista');
   if(!arr.length){lista.innerHTML='<div class="vazio">Nenhuma cliente com esse filtro. 💛</div>';return;}
-  lista.innerHTML=arr.map(c=>{
+  var _rows=arr.map(c=>{
     const ini=(c.nome||'?').trim().charAt(0).toUpperCase();
     const av=c.foto?'<img src="'+c.foto+'">':ini;
     const tags=[c.tam?'Tam '+c.tam:'',c.arquetipo||'',normOcc(c.ocasioes).join(' · ')].filter(Boolean).join(' · ');
     let meta='';
-    if(c._dias==null)meta='<span class="warn">sem contato</span>';
-    else if(c._dias>=30)meta='<span class="warn">há '+c._dias+'d ⚠</span>';
-    else meta='há '+c._dias+'d';
-    const m=mesDe(c.aniversario);if(m===mesAtual)meta+='<br>🎁 '+c.aniversario;
+    if(c._dias==null)meta='<span class="warn">sem interação ainda</span>';
+    else if(c._dias>=30)meta='<span class="warn">😴 sumida há '+c._dias+'d</span>';
+    else meta='🕐 última há '+c._dias+'d';
+    if(c.aniversario){const m=mesDe(c.aniversario);meta+='<br>'+(m===mesAtual?'🎁 <b>'+c.aniversario+'</b> · faz aniversário este mês!':'🎂 '+c.aniversario);}
     const wa=digits(c.telefone);
     const waBtn='<a class="wa" href="mensagens.html?cliente='+encodeURIComponent(c.nome||'')+'">Mensagem</a>';
     const dn=(c.nome||'').replace(/"/g,'&quot;');
     return '<div class="row"><div class="clihead" data-nome="'+dn+'" onclick="abrirEdit(this.getAttribute(\'data-nome\'))"><div class="av">'+av+'</div>'
-      +'<div class="who"><div class="n">'+(c.nome||'')+(c.vip?' <span style="font-size:12px;color:var(--gold2);font-weight:700">★ '+c.vip+'</span>':'')+'</div><div class="m">'+(tags||'—')+'</div></div></div>'
-      +'<div class="meta">'+meta+'</div>'
+      +'<div class="who"><div class="n">'+(c.nome||'')+(c._exemplo?' <span style="font-size:9px;letter-spacing:1px;background:var(--gold2);color:#fff;border-radius:6px;padding:2px 6px;vertical-align:middle;">EXEMPLO</span>':'')+'</div><div class="m">'+(tags||'—')+'</div><div class="wmeta">'+meta+'</div></div></div>'
       +'<div class="acts"><a class="look" href="#" data-nome="'+dn+'" onclick="montarLook(this.getAttribute(\'data-nome\'));return false;">Montar look</a>'+waBtn+'</div></div>';
   }).join('');
+  var _tip=arr.some(function(c){return c._exemplo;})?'<div style="background:var(--panel2);border:1px dashed var(--gold);border-radius:12px;padding:11px 13px;margin-bottom:10px;font-size:12.5px;color:var(--off);line-height:1.5;">✨ As clientes com o selo <b>EXEMPLO</b> já vêm com a <b>ficha toda preenchida</b>. Toque numa pra ver tudo que uma ficha completa guarda — e brinque: digite <b>Veste</b>/<b>Calça</b>, use <b>ocasião</b>, <b>sumidas</b>, <b>aniversário</b> e a <b>ordenação por dias</b>. 💛</div>':'';
+  lista.innerHTML=_tip+_rows;
 }
 
 document.getElementById('q').oninput=e=>{sel.q=e.target.value.trim().toLowerCase();render();};
+function tamMatch(ct,q){ct=(ct||'').trim();q=(q||'').trim();if(!q)return true;if(!ct)return false;
+  if(/^\d+$/.test(q)){var qn=+q;var m=ct.match(/(\d+)\s*[-–]\s*(\d+)/);if(m){var a=+m[1],b=+m[2];if(a>b){var z=a;a=b;b=z;}return qn>=a&&qn<=b;}var nums=(ct.match(/\d+/g)||[]).map(Number);return nums.indexOf(qn)>=0;}
+  return ct.toLowerCase().indexOf(q.toLowerCase())>=0;}
+function sapMatch(cs,q){cs=(cs||'').replace(/\D/g,'');q=(q||'').replace(/\D/g,'');if(!q)return true;return cs===q;}
+document.getElementById('ftam').oninput=function(){sel.tam=this.value.trim()||null;render();};
+document.getElementById('fsapato').oninput=function(){sel.sapato=this.value.trim()||null;render();};
+document.getElementById('ord').onchange=function(){sel.ord=this.value;render();};
 function montarLook(n){var mob=window.innerWidth<760;try{if(mob)localStorage.setItem('mira_carteira_pick',n||'');else localStorage.removeItem('mira_carteira_pick');}catch(e){}location.href=(mob?'celular.html':'estudio.html');}
 
 /* ---- Editar ficha na própria Carteira (não reseta os "dias sem vir") ---- */
@@ -239,16 +271,17 @@ function abrirEdit(nome){var c=CLIENTES.find(function(x){return (x.nome||'')===n
  document.getElementById('emanequim').value=c.tam||'';document.getElementById('esapato').value=c.sapato||'';
  document.getElementById('etelefone').value=c.telefone||'';document.getElementById('eaniversario').value=c.aniversario||'';
  document.getElementById('eestilo').value=c.estilo||'';document.getElementById('ecores').value=c.cores||'';
- document.getElementById('earquetipo').value=c.arquetipo||'';document.getElementById('evip').value=c.vip||'';
+ document.getElementById('earquetipo').value=c.arquetipo||'';
  document.getElementById('enotas').value=c.notas||'';_eocc=normOcc(c.ocasioes).slice();renderEocc();
  document.getElementById('edit').style.display='flex';}
 function salvarEdit(){var c=CLIENTES.find(function(x){return (x.nome||'')===_editNome;});if(!c)return;
+ if(c._exemplo){document.getElementById('edit').style.display='none';toast('Esta é uma cliente-exemplo, só pra você aprender 💛');return;}
  c.tam=document.getElementById('emanequim').value;c.sapato=document.getElementById('esapato').value;
  c.telefone=document.getElementById('etelefone').value;c.aniversario=document.getElementById('eaniversario').value;
  c.estilo=document.getElementById('eestilo').value;c.cores=document.getElementById('ecores').value;
- c.arquetipo=document.getElementById('earquetipo').value;c.vip=document.getElementById('evip').value;
+ c.arquetipo=document.getElementById('earquetipo').value;
  c.notas=document.getElementById('enotas').value;c.ocasioes=_eocc.slice();
- try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,foto:c.foto||'',manequim:c.tam,sapato:c.sapato,telefone:c.telefone,aniversario:c.aniversario,notas:c.notas,estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,vip:c.vip,ocasioes:_eocc.join(', ')})}).catch(function(){});}catch(e){}
+ try{fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:vend(),cliente:_editNome,foto:c.foto||'',manequim:c.tam,sapato:c.sapato,telefone:c.telefone,aniversario:c.aniversario,notas:c.notas,estilo:c.estilo,cores:c.cores,arquetipo:c.arquetipo,ocasioes:_eocc.join(', ')})}).catch(function(){});}catch(e){}
  document.getElementById('edit').style.display='none';render();toast('Ficha da '+(_editNome.split(' ')[0]||'cliente')+' salva ✓');}
 document.getElementById('editclose').onclick=function(){document.getElementById('edit').style.display='none';};
 document.getElementById('edit').onclick=function(e){if(e.target.id==='edit')this.style.display='none';};

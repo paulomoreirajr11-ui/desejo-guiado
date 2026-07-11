@@ -85,9 +85,6 @@
     <p class="step"><b>7 ·</b> Cores que ela ama <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
     <input type="text" id="cores" placeholder="ex.: nude, vinho, off-white">
 
-    <p class="step"><b>8 ·</b> Cliente VIP <span style="color:var(--mut);font-size:12px;">(opcional)</span></p>
-    <div class="grp" id="vips"></div>
-
     <button class="cad" id="cad" disabled>Cadastrar cliente</button>
   </div>
 
@@ -126,7 +123,7 @@ const CLIENTES_DEMO=[
  {nome:'Taís',tamanho:'P',estilo:'Esportivo',ocasioes:['Academia','Casual'],foto:'clientes/cliente_5.jpg'},
  {nome:'Neusa',tamanho:'GG',estilo:'Clássico',ocasioes:['Festa','Dia a dia'],foto:'clientes/cliente_6.jpg'},
 ];
-let state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null,vip:''};
+let state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null};
 
 const up=document.getElementById('up'), file=document.getElementById('file');
 up.onclick=()=>file.click();
@@ -146,22 +143,19 @@ const coresEl=document.getElementById('cores');coresEl.oninput=()=>{state.cores=
 const ARQUETIPOS=[['Bela e desejada','Amante'],['Única e autoral','Criador'],['Poderosa e elegante','Governante'],['Livre e aventureira','Explorador'],['Confortável e real','Cara comum'],['Cuidadora','Cuidador']];
 const arqEl=document.getElementById('arquetipos');
 ARQUETIPOS.forEach(function(pair){const b=document.createElement('button');b.className='b';b.textContent=pair[0];b.onclick=()=>{state.arquetipo=(state.arquetipo===pair[1]?null:pair[1]);[...arqEl.children].forEach(x=>x.classList.toggle('on',x===b&&state.arquetipo===pair[1]));};arqEl.appendChild(b);});
-const VIPS=['Prata','Ouro'];
-const vipEl=document.getElementById('vips');
-VIPS.forEach(v=>{const b=document.createElement('button');b.className='b';b.textContent='★ '+v;b.onclick=()=>{state.vip=(state.vip===v?'':v);[...vipEl.children].forEach(x=>x.classList.toggle('on',x===b&&state.vip===v));};vipEl.appendChild(b);});
 
 const cad=document.getElementById('cad');
 function upd(){cad.disabled=!(state.foto&&state.nome&&state.tamanho);}
 
 cad.onclick=()=>{
   const arr=JSON.parse(localStorage.getItem('mira_clientes')||'[]');
-  arr.unshift({foto:state.foto,nome:state.nome,tamanho:state.tamanho,ocasioes:state.ocasioes.slice(),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo,vip:state.vip});
+  arr.unshift({foto:state.foto,nome:state.nome,tamanho:state.tamanho,ocasioes:state.ocasioes.slice(),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo});
   localStorage.setItem('mira_clientes',JSON.stringify(arr));
-  try{var _v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:_v,cliente:state.nome,foto:state.foto,manequim:state.tamanho,ocasioes:(state.ocasioes||[]).join(', '),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo,vip:state.vip})}).catch(function(){});}catch(e){}
+  try{var _v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'';fetch('/ficha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vend:_v,cliente:state.nome,foto:state.foto,manequim:state.tamanho,ocasioes:(state.ocasioes||[]).join(', '),estilo:state.estilo,cores:state.cores,arquetipo:state.arquetipo})}).catch(function(){});}catch(e){}
   toast('Cliente cadastrada! ✓ Já aparece no Estúdio.');
-  state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null,vip:''};
+  state={foto:null,nome:'',tamanho:null,ocasioes:[],estilo:'',cores:'',arquetipo:null};
   up.innerHTML='<div class="ic">＋</div><div>toque para enviar a foto</div>';
-  nome.value='';estiloEl.value='';coresEl.value='';[...tamEl.children].forEach(x=>x.classList.remove('on'));[...ocEl.children].forEach(x=>x.classList.remove('on'));[...arqEl.children].forEach(x=>x.classList.remove('on'));[...vipEl.children].forEach(x=>x.classList.remove('on'));
+  nome.value='';estiloEl.value='';coresEl.value='';[...tamEl.children].forEach(x=>x.classList.remove('on'));[...ocEl.children].forEach(x=>x.classList.remove('on'));[...arqEl.children].forEach(x=>x.classList.remove('on'));
   upd();renderLista();
 };
 
