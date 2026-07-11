@@ -63,6 +63,13 @@
   #lightbox{display:none;position:fixed;inset:0;background:rgba(20,16,10,.93);z-index:200;align-items:center;justify-content:center;}
   #lightbox img{max-width:94vw;max-height:90vh;object-fit:contain;transform:scale(1);transition:transform .15s ease;cursor:zoom-in;}
   #lbx{position:absolute;top:14px;right:18px;font-size:26px;line-height:1;color:#fff;cursor:pointer;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);border-radius:50%;z-index:201;}
+  .perbtn{padding:7px 14px;border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--mut);font-family:inherit;font-size:13px;cursor:pointer;}
+  .perbtn.on{background:var(--gold);color:#1A1408;border-color:var(--gold);font-weight:600;}
+  table.ptbl{min-width:680px;}
+  .ptbl th,.ptbl td{text-align:center;white-space:nowrap;}
+  .ptbl th:first-child,.ptbl td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);}
+  .ptbl td.lead{background:rgba(176,135,46,.18);font-weight:700;color:var(--gold2);}
+  .ptbl td .rk{color:var(--mut);font-size:11px;margin-right:6px;}
 </style>
 </head>
 <body>
@@ -81,6 +88,15 @@
 </header>
 <div class="wrap">
   <div class="cards" id="stats"></div>
+  <h2 class="sec">🏆 Placar de Esforço — o que cada uma gera</h2>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5;">Tudo que o sistema registra e que puxa venda, do topo do funil (fichas) até quase-venda (reservas). <b>👑 = líder da categoria.</b> Números crus, pra você analisar o que gera mais resultado antes de decidir o prêmio.</div>
+  <div id="placarper" style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="perbtn" data-p="hoje">Hoje</button>
+    <button class="perbtn" data-p="semana">7 dias</button>
+    <button class="perbtn on" data-p="mes">30 dias</button>
+    <button class="perbtn" data-p="sempre">Tudo</button>
+  </div>
+  <div style="overflow-x:auto;"><div id="placar"></div></div>
   <h2 class="sec">Por vendedora</h2>
   <div id="porvend"></div>
   <h2 class="sec">Clientes (fichas) por vendedora</h2>
@@ -190,6 +206,34 @@ function _closeLB(){var lb=document.getElementById('lightbox');if(lb)lb.style.di
 var _lg=document.getElementById('looksger');if(_lg)_lg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src);});
 var _mg=document.getElementById('mesageral');if(_mg)_mg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src,tile.dataset.sku);});
 var _fc=document.getElementById('fichas');if(_fc)_fc.addEventListener('click',function(e){if(e.target.tagName==='IMG'&&e.target.closest('.ficard'))openLB(e.target.src);});
+async function carregarPlacar(periodo){
+  var host=document.getElementById('placar'); if(!host)return;
+  host.innerHTML='<div class="empty">carregando…</div>';
+  var rows=[];
+  try{ rows=(await (await fetch('/placar?periodo='+encodeURIComponent(periodo))).json()).placar||[]; }catch(e){}
+  if(!rows.length){ host.innerHTML='<div class="empty">Ainda sem atividade nesse período.</div>'; return; }
+  var cols=[
+    {k:'fichas',t:'📇 Fichas'},{k:'gerados',t:'👗 Looks gerados'},{k:'atendidas',t:'👥 Clientes atendidas'},
+    {k:'enviados',t:'💬 Enviados (WhatsApp)'},{k:'respostas',t:'💚 Respostas'},
+    {k:'reservas',t:'📌 Reservas'},{k:'reativadas',t:'🔔 Sumidas reativadas'}
+  ];
+  var max={}; cols.forEach(function(c){ max[c.k]=Math.max.apply(null, rows.map(function(r){return r[c.k]||0;})); });
+  var html='<table class="ptbl"><thead><tr><th>Vendedora</th>'+cols.map(function(c){return '<th>'+c.t+'</th>';}).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    html+='<tr><td><span class="rk">'+(i+1)+'º</span>'+(r.vend||'—')+'</td>'+cols.map(function(c){
+      var v=r[c.k]||0; var lead=(v>0 && v===max[c.k]);
+      return '<td class="'+(lead?'lead':'')+'">'+v+(lead?' 👑':'')+'</td>';
+    }).join('')+'</tr>';
+  });
+  html+='</tbody></table>';
+  host.innerHTML=html;
+}
+(function(){
+  var bar=document.getElementById('placarper');
+  if(bar){ bar.querySelectorAll('.perbtn').forEach(function(b){ b.onclick=function(){ bar.querySelectorAll('.perbtn').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); carregarPlacar(b.dataset.p); }; }); }
+  carregarPlacar('mes');
+})();
+document.getElementById('reload').addEventListener('click',function(){var on=document.querySelector('#placarper .perbtn.on');carregarPlacar(on?on.dataset.p:'mes');});
 document.getElementById('reload').onclick=carregar;
 carregar();
 </script>

@@ -105,6 +105,7 @@
 <div class="wrap">
   <div class="risco" id="risco"></div>
   <div class="topcard" id="topcard"></div>
+  <div class="card"><h2>📊 Seu esforço de verdade</h2><p class="sub">O que o sistema registrou no seu nome, sem você preencher nada — a sua evolução real. 💛</p><div id="esfper"></div><div id="esforco"></div></div>
   <div class="card" id="checkin"></div>
   <div class="coach" id="coach"></div>
   <div class="card"><h2>🎯 Meta da semana</h2><p class="sub">Escolha 1 pilar pra focar esta semana — foco dá resultado.</p><div id="meta"></div></div>
@@ -250,6 +251,25 @@ function toast(t){var el=document.getElementById('toast');el.textContent=t;el.cl
 document.getElementById('mok').onclick=()=>document.getElementById('modal').style.display='none';
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')document.getElementById('modal').style.display='none';};
 renderAll();
+var _esfPer='mes';
+async function carregarEsforco(){
+  var host=document.getElementById('esforco'); if(!host)return;
+  var perEl=document.getElementById('esfper');
+  if(perEl && !perEl._done){
+    perEl.style.cssText='display:flex;gap:6px;margin:2px 0 12px;flex-wrap:wrap;';
+    perEl.innerHTML=[['hoje','Hoje'],['semana','7 dias'],['mes','30 dias']].map(function(p){return '<button data-p="'+p[0]+'" style="padding:7px 14px;border:1px solid var(--line,rgba(40,32,18,.14));border-radius:20px;background:transparent;color:inherit;font-family:inherit;font-size:13px;cursor:pointer;">'+p[1]+'</button>';}).join('');
+    perEl._done=1;
+    perEl.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ _esfPer=b.dataset.p; carregarEsforco(); }; });
+  }
+  if(perEl){ perEl.querySelectorAll('button').forEach(function(b){ var on=b.dataset.p===_esfPer; b.style.background=on?'var(--gold,#B0872E)':'transparent'; b.style.color=on?'#1A1408':'inherit'; b.style.fontWeight=on?'600':'400'; }); }
+  host.innerHTML='<p class="sub">carregando…</p>';
+  var eu={}; try{ var j=await (await fetch('/placar?periodo='+_esfPer+'&vend='+encodeURIComponent(vend()))).json(); eu=j.eu||{}; }catch(e){}
+  var tiles=[['📇',eu.fichas||0,'fichas cuidadas'],['👗',eu.gerados||0,'looks gerados'],['👥',eu.atendidas||0,'clientes atendidas'],['💬',eu.enviados||0,'enviados no zap'],['💚',eu.respostas||0,'“acertou em mim”'],['📌',eu.reservas||0,'reservas'],['🔔',eu.reativadas||0,'sumidas reativadas']];
+  host.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;">'+tiles.map(function(t){
+    return '<div style="background:var(--panel2,#F1EADB);border-radius:12px;padding:12px 10px;text-align:center;"><div style="font-size:20px;">'+t[0]+'</div><div style="font-family:\'Fraunces\',serif;font-size:26px;color:var(--gold2,#8C6B22);line-height:1.1;">'+t[1]+'</div><div style="font-size:11px;color:var(--mut,#897F6F);margin-top:3px;line-height:1.25;">'+t[2]+'</div></div>';
+  }).join('')+'</div>';
+}
+carregarEsforco();
 </script>
 </body>
 </html>

@@ -199,6 +199,87 @@ def sb_req(method, table, params="", body=None, prefer="return=representation"):
         txt = r.read().decode()
         return json.loads(txt) if txt.strip() else []
 
+# ---- Placar de esforço (agrega uso + looks + fichas por vendedora) ----
+def load_fichas_all():
+    if SB_ON:
+        try:
+            return sb_req("GET", "fichas", "select=vend,cliente,ts") or []
+        except Exception:
+            pass
+    return []
+
+def _placar_cutoff(periodo):
+    now = datetime.datetime.now()
+    if periodo == "hoje":
+        d = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    elif periodo == "semana":
+        d = now - datetime.timedelta(days=7)
+    elif periodo == "sempre":
+        return ""
+    else:
+        d = now - datetime.timedelta(days=30)
+    return d.isoformat(timespec="seconds")
+
+def _gen_cliente(nome):
+    n = (nome or "").strip().lower()
+    return (not n) or n in ("oi", "oi!", "cliente") or n.startswith("foto") or n.startswith("cliente")
+
+def build_placar(periodo="mes"):
+    cutoff = _placar_cutoff(periodo)
+    uso = load_uso() or []
+    looks = load_looks() or {}
+    fichas = load_fichas_all() or []
+    reservas = load_reservas() or []
+    gerados, atendidas, enviados, respostas, fichas_ct, reservas_ct = {}, {}, {}, {}, {}, {}
+    # sumidas reativadas: historico completo por (vend, cliente), gap >= 30 dias
+    hist = {}
+    for e in uso:
+        c = (e.get("cliente") or "").strip()
+        if not _gen_cliente(c):
+            hist.setdefault((e.get("vend") or "", c), []).append(e.get("ts") or "")
+    reativadas = {}
+    for (v, c), tss in hist.items():
+        tss = sorted(t for t in tss if t)
+        for i in range(1, len(tss)):
+            try:
+                gap = (datetime.datetime.fromisoformat(tss[i]) - datetime.datetime.fromisoformat(tss[i - 1])).days
+            except Exception:
+                continue
+            if gap >= 30 and tss[i] >= cutoff:
+                reativadas[v] = reativadas.get(v, 0) + 1
+    for e in uso:
+        if (e.get("ts") or "") < cutoff:
+            continue
+        v = e.get("vend") or ""
+        gerados[v] = gerados.get(v, 0) + 1
+        c = (e.get("cliente") or "").strip()
+        if not _gen_cliente(c):
+            atendidas.setdefault(v, set()).add(c)
+    for l in looks.values():
+        if (l.get("ts") or "") >= cutoff:
+            v = l.get("vend") or ""
+            enviados[v] = enviados.get(v, 0) + 1
+        if (l.get("reacao") or "") == "Acertou em mim" and (l.get("reacao_ts") or l.get("ts") or "") >= cutoff:
+            v = l.get("vend") or ""
+            respostas[v] = respostas.get(v, 0) + 1
+    for f in fichas:
+        if (f.get("ts") or "") >= cutoff:
+            v = f.get("vend") or ""
+            fichas_ct[v] = fichas_ct.get(v, 0) + 1
+    for r in reservas:
+        if (r.get("ts") or "") >= cutoff:
+            v = r.get("vend") or ""
+            reservas_ct[v] = reservas_ct.get(v, 0) + 1
+    vends = set(list(gerados) + list(enviados) + list(fichas_ct) + list(respostas)
+                + list(reservas_ct) + list(reativadas) + list(atendidas))
+    vends.discard("")
+    rows = [{"vend": v, "fichas": fichas_ct.get(v, 0), "gerados": gerados.get(v, 0),
+             "atendidas": len(atendidas.get(v, set())), "enviados": enviados.get(v, 0),
+             "respostas": respostas.get(v, 0), "reservas": reservas_ct.get(v, 0),
+             "reativadas": reativadas.get(v, 0)} for v in vends]
+    rows.sort(key=lambda r: (-r["enviados"], -r["gerados"], -r["fichas"]))
+    return rows
+
 # ---- POOL de cenas por ocasiao (25 cada, 9 estilos; rotaciona automatico -> anti-carimbo) ----
 POOLS = {
  "Festa Dia": [
@@ -748,7 +829,20 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-11_espelho-acoes", "ok": True})
+            return self._json(200, {"version": "2026-07-11_placar", "ok": True})
+        if p == "/placar":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            periodo = (q.get("periodo") or ["mes"])[0]
+            vend = (q.get("vend") or [""])[0]
+            try:
+                rows = build_placar(periodo)
+            except Exception as e:
+                return self._json(200, {"periodo": periodo, "placar": [], "error": str(e)})
+            if vend:
+                mine = next((r for r in rows if r["vend"] == vend), {"vend": vend, "fichas": 0, "gerados": 0, "atendidas": 0, "enviados": 0, "respostas": 0, "reservas": 0, "reativadas": 0})
+                pos = next((i + 1 for i, r in enumerate(rows) if r["vend"] == vend), None)
+                return self._json(200, {"periodo": periodo, "eu": mine, "posicao": pos, "total": len(rows)})
+            return self._json(200, {"periodo": periodo, "placar": rows})
         if p == "/ficha":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             vend = (q.get("vend") or [""])[0]
