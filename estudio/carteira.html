@@ -261,7 +261,7 @@ function sapMatch(cs,q){cs=(cs||'').replace(/\D/g,'');q=(q||'').replace(/\D/g,''
 document.getElementById('ftam').oninput=function(){sel.tam=this.value.trim()||null;render();};
 document.getElementById('fsapato').oninput=function(){sel.sapato=this.value.trim()||null;render();};
 document.getElementById('ord').onchange=function(){sel.ord=this.value;render();};
-function montarLook(n){var mob=window.innerWidth<760;try{if(mob)localStorage.setItem('mira_carteira_pick',n||'');else localStorage.removeItem('mira_carteira_pick');}catch(e){}location.href=(mob?'celular.html':'estudio.html');}
+function montarLook(n){var mob=window.innerWidth<760;var c=CLIENTES.find(function(x){return (x.nome||'')===n;});try{if(mob){var pick={nome:n};if(c){pick.foto=c.foto||'';pick.manequim=c.tam||'';pick.estilo=c.estilo||'';}localStorage.setItem('mira_carteira_pick',JSON.stringify(pick));}else localStorage.removeItem('mira_carteira_pick');}catch(e){}location.href=(mob?'celular.html':'estudio.html');}
 
 /* ---- Editar ficha na própria Carteira (não reseta os "dias sem vir") ---- */
 let _eocc=[], _editNome='';
