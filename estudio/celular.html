@@ -138,7 +138,7 @@
     <span style="flex:1;font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;align-self:center;margin-left:8px;">Desejo Guiado</span>
     <a href="carteira.html">Carteira</a>
     <a href="mensagens.html">Mensagens</a>
-    <a href="espelho.html" style="position:relative;">Espelho<span id="navespbadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:#C0392B;color:#fff;border-radius:9px;font-size:10px;font-weight:700;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;">0</span></a>
+    <a href="espelho.html" style="position:relative;">Meu 1%<span id="navespbadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:#C0392B;color:#fff;border-radius:9px;font-size:10px;font-weight:700;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;">0</span></a>
     <a href="index.html">Início</a>
   </header>
   <div class="sess">
@@ -873,7 +873,7 @@ lg.addEventListener('contextmenu',function(e){e.preventDefault();});
 lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.addEventListener('mouseleave',cancel);})();
 /* pre-selecionar a cliente vinda da Carteira ("Montar look") — best-effort, blindado, nao altera nada existente */
 (function(){try{var _raw=localStorage.getItem('mira_carteira_pick');if(!_raw)return;localStorage.removeItem('mira_carteira_pick');var _pick;try{_pick=JSON.parse(_raw);}catch(e){_pick=null;}if(!_pick||typeof _pick!=='object')_pick={nome:_raw};var _nm=(''+(_pick.nome||'')).trim();if(!_nm)return;setTimeout(function(){try{if(typeof S==='undefined')return;if(S.tipo!=='cli'){var g=document.getElementById('tgc');if(g&&g.onclick)g.onclick();}var arr=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes());var hit=arr.find(function(x){return ((x&&x.nome)||'').trim().toLowerCase()===_nm.toLowerCase();});if(!hit&&_pick.foto){var mq=parseInt(_pick.manequim,10)||null;hit={key:'pick_'+Math.random().toString(36).slice(2,8),nome:_nm,foto:_pick.foto,manequim:mq,estilo:_pick.estilo||'',fonte:'galeria'};if(typeof FOTOS!=='undefined')FOTOS.unshift(hit);}if(hit){S.pessoa=hit;if(typeof loadTray==='function')loadTray();renderPessoas();renderGrid();renderBig();renderBand();upd();if(typeof toast==='function')toast('Cliente '+(hit.nome||'')+' pronta ✓');}}catch(e){}},400);}catch(e){}})();
-/* gatilho do Espelho da Dona — banner suave, blindado; so aparece se o check-in de hoje nao foi feito */
+/* gatilho do Meu 1% Diario — banner suave, blindado; so aparece se o check-in de hoje nao foi feito */
 (function(){try{var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';var d={};try{d=JSON.parse(localStorage.getItem('mira_espelho_'+v)||'{}');}catch(e){}var hj=new Date().toISOString().slice(0,10);if(d.lastDay===hj)return;var bar=document.getElementById('espbar'),tx=document.getElementById('esptxt');if(!bar||!tx)return;var y=new Date();y.setDate(y.getDate()-1);var ont=y.toISOString().slice(0,10);if(d.lastDay===ont&&d.streak>0)tx.textContent='Seu 🔥 de '+d.streak+' dias esta em risco — faca seu 1% de hoje!';else tx.textContent='Seu 1% de hoje te espera — 30 segundinhos.';bar.style.display='flex';}catch(e){}})();
 </script>
 </body>
