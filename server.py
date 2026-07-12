@@ -932,7 +932,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-12_fila-servidor", "ok": True})
+            return self._json(200, {"version": "2026-07-12_escolha-nome", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
