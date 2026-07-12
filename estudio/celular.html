@@ -301,7 +301,8 @@
 </div>
 <script src="frases.js" charset="utf-8"></script>
 <script>
-const VENDEDORAS=['Mazinha','Monica','Helena','Juliana','Marcia','Luciana','Emily','Val','Irene','Thaise','Liliane','Aletheia','Magali','Michele','Sophie'];
+const VENDEDORAS=['Mazinha','Monica','Helena','Juliana','Marcia','Luciana','Emily','Val','Irene','Thaise','Liliane','Aletheia','Magali','Michele','Sophie','Juninho'];
+const ADMIN_ONLY=['Juninho']; /* aparecem no seletor do admin, mas NÃO na telinha "toque no seu nome" das vendedoras */
 const MODELOS=[
  {key:'modelo_1_jovem',nome:'Júlia',tag:'Jovem 22'},{key:'modelo_2_meia_idade',nome:'Carla',tag:'38'},
  {key:'modelo_3_madura',nome:'Sônia',tag:'55'},{key:'modelo_4_esportiva',nome:'Bia',tag:'Esportiva'},
@@ -421,7 +422,7 @@ if(!_lock){
    else{document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;font-family:Inter,sans-serif;background:#FAF6EE;color:#1E1A15;"><div style="font-size:48px;margin-bottom:14px;">🔒</div><div style="font-family:Fraunces,serif;font-size:23px;margin-bottom:12px;">Acesso restrito</div><div style="color:#897F6F;font-size:14px;max-width:320px;line-height:1.6;">Ver todas as vendedoras é só da administração.</div></div>';document.body.style.cssText='margin:0';throw new Error('admin gate');}
   }
  } else {
-  var _bt=VENDEDORAS.map(function(v){return '<button data-v="'+v+'" style="display:block;width:100%;margin:7px 0;padding:15px;border:1px solid #E3D9C6;border-radius:13px;background:#fff;color:#1E1A15;font-size:16px;font-family:inherit;cursor:pointer;">'+v+'</button>';}).join('');
+  var _bt=VENDEDORAS.filter(function(v){return ADMIN_ONLY.indexOf(v)<0;}).map(function(v){return '<button data-v="'+v+'" style="display:block;width:100%;margin:7px 0;padding:15px;border:1px solid #E3D9C6;border-radius:13px;background:#fff;color:#1E1A15;font-size:16px;font-family:inherit;cursor:pointer;">'+v+'</button>';}).join('');
   document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:44px 24px;font-family:Inter,sans-serif;background:#FAF6EE;color:#1E1A15;box-sizing:border-box;"><div style="font-family:Fraunces,serif;font-size:26px;margin-bottom:6px;">Bem-vinda 💛</div><div style="color:#897F6F;font-size:15px;margin-bottom:22px;text-align:center;">Toque no seu nome pra entrar:</div><div id="vpick" style="width:100%;max-width:360px;">'+_bt+'</div><a href="?admin=1" style="margin-top:24px;color:#B79A5E;font-size:13px;text-decoration:none;">Sou da administração →</a></div>';
   document.body.style.cssText='margin:0';
   Array.prototype.forEach.call(document.querySelectorAll('#vpick button'),function(b){b.onclick=function(){try{localStorage.setItem('mira_vend_lock',b.getAttribute('data-v'));location.reload();}catch(e){}};});
