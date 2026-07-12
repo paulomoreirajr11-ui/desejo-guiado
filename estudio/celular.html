@@ -637,27 +637,29 @@ function showLook(img,pecas){
   S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();
   upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
+/* --- FILA DE GERAÇÃO (roda no fundo; ela dispara vários e não fica presa na tela) --- */
+var GENQ=[],GENACTIVE=0;const GEN_MAX=5; /* 3 a 5 em paralelo */
+function _primeiro(nome){return (''+(nome||'')).trim().split(' ')[0]||'cliente';}
+function renderFila(){var el=$('fila');if(!el)return;var g=0,f=0;GENQ.forEach(function(j){if(j.status==='gerando')g++;else if(j.status==='fila')f++;});var n=g+f;if(!n){el.style.display='none';return;}el.style.display='inline-flex';var nomes=GENQ.map(function(j){return _primeiro(j.personNome);});el.textContent='⏳ '+n+(n<=2?(' · '+nomes.join(', ')):' looks gerando');}
+function _salvarNoTray(job,img){var item={img:img,nome:job.personNome,occ:job.occ,pecas:job.nomes,sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===job.trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(job.trayKey)||'[]');arr.push(item);localStorage.setItem(job.trayKey,JSON.stringify(arr));}catch(e){}}}
+function _processarJob(job){var fin=function(img){GENACTIVE--;GENQ=GENQ.filter(function(j){return j!==job;});if(img){_salvarNoTray(job,img);toast('✓ Look de '+_primeiro(job.personNome)+' pronto 💛');}else{toast('Não consegui gerar o look de '+_primeiro(job.personNome)+' — tenta de novo');}renderFila();_bombearFila();};if(job.pre){setTimeout(function(){fin(job.pre);},1200);return;}fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:job.person,garments:job.garments,pecas:job.nomes,ocasiao:job.occ,estilo:job.estilo,fundo:job.fundo,vend:job.vend,cliente:job.personNome,faceswap:(job.tipo==='cli'),reforco:(job.tipo==='cli'&&job.fonte==='galeria')})}).then(function(r){return r.json();}).then(function(d){fin(d.image||null);}).catch(function(){fin(null);});}
+function _bombearFila(){while(GENACTIVE<GEN_MAX){var job=null;for(var i=0;i<GENQ.length;i++){if(GENQ[i].status==='fila'){job=GENQ[i];break;}}if(!job)break;job.status='gerando';GENACTIVE++;renderFila();_processarJob(job);}}
 ger.onclick=()=>{
  if(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto){var tr=$('trocar');toast('Falta a foto de '+(S.pessoa.nome||'sua cliente')+' pra vestir — toque em “Trocar a foto desta cliente” 💛');if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(function(){tr.style.boxShadow='';},2400);}return;}
+ if(!(S.pessoa&&S.pecas.length&&S.occ)){toast('Escolha a cliente, as peças e a ocasião 💛');return;}
  const _look=S.pecas.filter(f=>!isJoia(pecaByF(f)||{f:f}));const nomes=_look.map(f=>{var e=pecaByF(f);return e&&e.nome?e.nome:f;});
  const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
  const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
- ger.disabled=true;
- if(pre){
-   $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ produzindo o look…</span>vestindo '+S.pessoa.nome+' · '+S.occ+'</div>';
-   setTimeout(function(){showLook(pre,nomes);},1300);
-   return;
- }
- // geração AO VIVO (nuvem via server.py) — look com TODAS as peças
- $('res').innerHTML='<div class="ph loadshine"><span class="big">✨ gerando na nuvem…</span>'+S.pessoa.nome+' · '+S.occ+' · '+S.pecas.length+' peça(s) (uns segundos)</div>';
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
  const garments=_look.map(f=>{var e=pecaByF(f);return e&&e.cap?e.cap:srv('estoque/'+f+'.jpg');});
- fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,cliente:(S.pessoa.nome||''),faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')})})
-  .then(r=>r.json()).then(function(d){upd();
-    if(d.image){showLook(d.image,nomes);}
-    else{$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>'+(d.error||'configure a nuvem (FAL_KEY)')+'</div>';toast('nuvem não configurada');}})
-  .catch(function(){upd();$('res').innerHTML='<div class="ph"><span class="big">Em produção…</span>abra o app pelo server.py (servidor offline)</div>';toast('servidor offline');});
+ var job={personKey:S.pessoa.key,personNome:(S.pessoa.nome||''),trayKey:'mira_celtray_'+S.vend+'_'+S.pessoa.key,person:person,garments:garments,nomes:nomes,occ:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,tipo:S.tipo,fonte:(S.pessoa.fonte||''),pre:pre,status:'fila'};
+ GENQ.push(job);
+ var _nm=_primeiro(job.personNome);
+ /* libera a tela na hora — ela já monta a próxima */
+ S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();upd();renderBig();renderFila();
+ toast('Na fila ✓ — '+_nm+' gerando no fundo. Pode montar a próxima 💛');
+ _bombearFila();
 };
 function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
@@ -913,6 +915,7 @@ lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.
 /* gatilho do Meu 1% Diario — banner suave, blindado; so aparece se o check-in de hoje nao foi feito */
 (function(){try{var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';var d={};try{d=JSON.parse(localStorage.getItem('mira_espelho_'+v)||'{}');}catch(e){}var hj=new Date().toISOString().slice(0,10);if(d.lastDay===hj)return;var bar=document.getElementById('espbar'),tx=document.getElementById('esptxt');if(!bar||!tx)return;var y=new Date();y.setDate(y.getDate()-1);var ont=y.toISOString().slice(0,10);if(d.lastDay===ont&&d.streak>0)tx.textContent='Seu 🔥 de '+d.streak+' dias esta em risco — faca seu 1% de hoje!';else tx.textContent='Seu 1% de hoje te espera — 30 segundinhos.';bar.style.display='flex';}catch(e){}})();
 </script>
+<div id="fila" onclick="try{var ns=(GENQ||[]).map(function(j){return j.personNome||'cliente';});toast(ns.length?('Gerando no fundo: '+ns.join(', ')):'Tudo pronto ✓');}catch(e){}" style="display:none;position:fixed;bottom:20px;left:18px;z-index:45;align-items:center;background:var(--gold);color:#1A1408;border-radius:22px;padding:9px 15px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;max-width:62vw;"></div>
 <div style="position:fixed;bottom:18px;right:18px;z-index:45;">
   <button id="helpbtn" style="width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);">?</button>
 </div>
