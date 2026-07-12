@@ -637,30 +637,32 @@ function showLook(img,pecas){
   S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();
   upd();toast('Look pronto ✓ — escolha as próximas peças');
 }
-/* --- FILA DE GERAÇÃO (roda no fundo; ela dispara vários e não fica presa na tela) --- */
-var GENQ=[],GENACTIVE=0;const GEN_MAX=5; /* 3 a 5 em paralelo */
+/* --- FILA DE GERAÇÃO NO SERVIDOR (renderiza no fundo; sobrevive a fechar/trocar de app) --- */
 function _primeiro(nome){return (''+(nome||'')).trim().split(' ')[0]||'cliente';}
-function renderFila(){var el=$('fila');if(!el)return;var g=0,f=0;GENQ.forEach(function(j){if(j.status==='gerando')g++;else if(j.status==='fila')f++;});var n=g+f;if(!n){el.style.display='none';return;}el.style.display='inline-flex';var nomes=GENQ.map(function(j){return _primeiro(j.personNome);});el.textContent='⏳ '+n+(n<=2?(' · '+nomes.join(', ')):' looks gerando');}
-function _salvarNoTray(job,img){var item={img:img,nome:job.personNome,occ:job.occ,pecas:job.nomes,sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===job.trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(job.trayKey)||'[]');arr.push(item);localStorage.setItem(job.trayKey,JSON.stringify(arr));}catch(e){}}}
-function _processarJob(job){var fin=function(img){GENACTIVE--;GENQ=GENQ.filter(function(j){return j!==job;});if(img){_salvarNoTray(job,img);toast('✓ Look de '+_primeiro(job.personNome)+' pronto 💛');}else{toast('Não consegui gerar o look de '+_primeiro(job.personNome)+' — tenta de novo');}renderFila();_bombearFila();};if(job.pre){setTimeout(function(){fin(job.pre);},1200);return;}fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person:job.person,garments:job.garments,pecas:job.nomes,ocasiao:job.occ,estilo:job.estilo,fundo:job.fundo,vend:job.vend,cliente:job.personNome,faceswap:(job.tipo==='cli'),reforco:(job.tipo==='cli'&&job.fonte==='galeria')})}).then(function(r){return r.json();}).then(function(d){fin(d.image||null);}).catch(function(){fin(null);});}
-function _bombearFila(){while(GENACTIVE<GEN_MAX){var job=null;for(var i=0;i<GENQ.length;i++){if(GENQ[i].status==='fila'){job=GENQ[i];break;}}if(!job)break;job.status='gerando';GENACTIVE++;renderFila();_processarJob(job);}}
+var _filaN=0,_temPendente=false,_filaNomes=[];
+function _fila_setChip(){var el=$('fila');if(!el)return;if(!_temPendente&&_filaN<=0){el.style.display='none';return;}el.style.display='inline-flex';var n=_filaN;el.textContent=n>0?('⏳ '+n+' look'+(n>1?'s':'')+' gerando'):'⏳ gerando…';}
+function _entregarLook(trayKey,row){var item={img:row.image,nome:row.cliente,occ:row.occ||'',pecas:(row.pecas?(''+row.pecas).split(', ').filter(Boolean):[]),sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(trayKey)||'[]');arr.push(item);localStorage.setItem(trayKey,JSON.stringify(arr));}catch(e){}}}
+function sincronizarFila(force){if(!S.vend)return;if(!force&&!_temPendente)return;fetch('/fila?vend='+encodeURIComponent(S.vend)).then(function(r){return r.json();}).then(function(d){var rows=(d&&d.fila)||[];var gerando=0,delIds=[];_filaNomes=[];rows.forEach(function(row){if(row.status==='pronto'&&row.image){var tk='mira_celtray_'+(row.vend||S.vend)+'_'+(row.person_key||'');_entregarLook(tk,row);toast('✓ Look de '+_primeiro(row.cliente)+' pronto 💛');delIds.push(row.id);}else if(row.status==='erro'){toast('Não consegui gerar o look de '+_primeiro(row.cliente)+' — tenta de novo');delIds.push(row.id);}else{gerando++;_filaNomes.push(_primeiro(row.cliente));}});if(delIds.length){fetch('/fila/limpar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:delIds})}).catch(function(){});}_filaN=gerando;_temPendente=gerando>0;_fila_setChip();}).catch(function(){});}
 ger.onclick=()=>{
  if(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto){var tr=$('trocar');toast('Falta a foto de '+(S.pessoa.nome||'sua cliente')+' pra vestir — toque em “Trocar a foto desta cliente” 💛');if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(function(){tr.style.boxShadow='';},2400);}return;}
  if(!(S.pessoa&&S.pecas.length&&S.occ)){toast('Escolha a cliente, as peças e a ocasião 💛');return;}
  const _look=S.pecas.filter(f=>!isJoia(pecaByF(f)||{f:f}));const nomes=_look.map(f=>{var e=pecaByF(f);return e&&e.nome?e.nome:f;});
- const temNova=S.pecas.some(f=>f.indexOf('capt_')===0);
- const pre=(!temNova&&S.pecas.length===1&&RESULTS[S.pessoa.key+'|'+S.occ])||null;
  const srv=p=>(p&&p.indexOf('data:')===0)?p:('estudio/'+p);
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
  const garments=_look.map(f=>{var e=pecaByF(f);return e&&e.cap?e.cap:srv('estoque/'+f+'.jpg');});
- var job={personKey:S.pessoa.key,personNome:(S.pessoa.nome||''),trayKey:'mira_celtray_'+S.vend+'_'+S.pessoa.key,person:person,garments:garments,nomes:nomes,occ:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,vend:S.vend,tipo:S.tipo,fonte:(S.pessoa.fonte||''),pre:pre,status:'fila'};
- GENQ.push(job);
- var _nm=_primeiro(job.personNome);
+ var _pk=S.pessoa.key,_pn=(S.pessoa.nome||''),_tray='mira_celtray_'+S.vend+'_'+_pk,_nm=_primeiro(_pn);
+ var body={vend:S.vend,cliente:_pn,person_key:_pk,person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')};
  /* libera a tela na hora — ela já monta a próxima */
- S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();upd();renderBig();renderFila();
+ S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();upd();renderBig();
+ _temPendente=true;_filaN=(_filaN||0)+1;_fila_setChip();
  toast('Na fila ✓ — '+_nm+' gerando no fundo. Pode montar a próxima 💛');
- _bombearFila();
+ fetch('/gerar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){
+   if(d&&d.image){_entregarLook(_tray,{image:d.image,cliente:_pn,occ:body.ocasiao,pecas:nomes.join(', '),person_key:_pk,vend:S.vend});toast('✓ Look de '+_nm+' pronto 💛');_filaN=Math.max(0,_filaN-1);_temPendente=_filaN>0;_fila_setChip();}
+   else if(d&&d.full){toast('Muitos looks na fila — espera uns terminarem 💛');_filaN=Math.max(0,_filaN-1);_fila_setChip();}
+   else{setTimeout(function(){sincronizarFila(true);},2000);}
+ }).catch(function(){toast('Servidor offline — tenta de novo');_filaN=Math.max(0,_filaN-1);_fila_setChip();});
 };
+setInterval(function(){sincronizarFila(false);},8000);
 function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
   if(!arr.length){b.innerHTML='';renderResumo();return;}
@@ -724,7 +726,7 @@ function carregarReacoes(){
     S.reacoes=d.reacoes||{};renderBand();renderBig();
   }).catch(function(){});
 }
-document.addEventListener('visibilitychange',function(){if(!document.hidden&&S.pessoa&&S.bandeja&&S.bandeja.length)carregarReacoes();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden){try{sincronizarFila(true);}catch(e){}if(S.pessoa&&S.bandeja&&S.bandeja.length)carregarReacoes();}});
 
 var FRASES=[
  'Separei esses looks pensando em você 💛',
@@ -896,7 +898,7 @@ function _saud(){var h=new Date().getHours();return h<12?'Bom dia':(h<18?'Boa ta
 function mostrarSabedoria(){try{var fr=window.FRASES_SABEDORIA;if(!fr||!fr.length)return;var vend=S.vend||'';var k='mira_sabedoria_'+vend;var hoje=new Date().toISOString().slice(0,10);if(localStorage.getItem(k)===hoje)return;var pos=VENDEDORAS.indexOf(vend);if(pos<0)pos=0;var off=pos*Math.max(1,Math.floor(fr.length/VENDEDORAS.length));var d=new Date();var ini=new Date(d.getFullYear(),0,0);var dia=Math.floor((d-ini)/86400000);var idx=((dia+off)%fr.length+fr.length)%fr.length;var nome=(vend||'').split(' ')[0];$('sabola').textContent=_saud()+(nome?', '+nome:'')+' 💛';$('sabfrase').textContent='“'+fr[idx]+'”';$('sabedoria').style.display='flex';localStorage.setItem(k,hoje);}catch(e){}}
 if($('sabok'))$('sabok').onclick=function(){$('sabedoria').style.display='none';};
 if($('sabedoria'))$('sabedoria').onclick=function(e){if(e.target===this)this.style.display='none';};
-renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();mostrarSabedoria();carregarMesaGeral();carregarCarteira();
+renderPessoas();renderGrid();renderBig();renderBand();upd();renderAnivBar();mostrarSabedoria();carregarMesaGeral();carregarCarteira();try{sincronizarFila(true);}catch(e){}
 (function(){try{var ua=navigator.userAgent||'';if(/Android/i.test(ua)&&(/; wv\)/.test(ua)||/(FBAN|FBAV|Instagram|Line|WhatsApp)/i.test(ua))){var bar=document.getElementById('chromebar'),go=document.getElementById('chromego');if(bar&&go){go.href='intent://'+location.href.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';bar.style.display='flex';document.body.style.paddingTop='46px';}}}catch(e){}})();
 window.openZoom=function(src){var z=$('zoom'),i=$('zoomimg');i.src=src;i.style.transform='scale(1)';z.style.display='flex';};
 $('zoom').onclick=function(){this.style.display='none';};
@@ -915,7 +917,7 @@ lg.addEventListener('mousedown',start);lg.addEventListener('mouseup',cancel);lg.
 /* gatilho do Meu 1% Diario — banner suave, blindado; so aparece se o check-in de hoje nao foi feito */
 (function(){try{var v=localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';var d={};try{d=JSON.parse(localStorage.getItem('mira_espelho_'+v)||'{}');}catch(e){}var hj=new Date().toISOString().slice(0,10);if(d.lastDay===hj)return;var bar=document.getElementById('espbar'),tx=document.getElementById('esptxt');if(!bar||!tx)return;var y=new Date();y.setDate(y.getDate()-1);var ont=y.toISOString().slice(0,10);if(d.lastDay===ont&&d.streak>0)tx.textContent='Seu 🔥 de '+d.streak+' dias esta em risco — faca seu 1% de hoje!';else tx.textContent='Seu 1% de hoje te espera — 30 segundinhos.';bar.style.display='flex';}catch(e){}})();
 </script>
-<div id="fila" onclick="try{var ns=(GENQ||[]).map(function(j){return j.personNome||'cliente';});toast(ns.length?('Gerando no fundo: '+ns.join(', ')):'Tudo pronto ✓');}catch(e){}" style="display:none;position:fixed;bottom:20px;left:18px;z-index:45;align-items:center;background:var(--gold);color:#1A1408;border-radius:22px;padding:9px 15px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;max-width:62vw;"></div>
+<div id="fila" onclick="try{var ns=(_filaNomes||[]);toast(ns.length?('Gerando no fundo: '+ns.join(', ')):'Tudo pronto ✓');sincronizarFila(true);}catch(e){}" style="display:none;position:fixed;bottom:20px;left:18px;z-index:45;align-items:center;background:var(--gold);color:#1A1408;border-radius:22px;padding:9px 15px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;max-width:62vw;"></div>
 <div style="position:fixed;bottom:18px;right:18px;z-index:45;">
   <button id="helpbtn" style="width:50px;height:50px;border-radius:50%;background:var(--gold);color:#1A1408;border:none;font-size:26px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.35);">?</button>
 </div>

@@ -11,7 +11,7 @@ Rodar:
 Depois, no CELULAR (mesma Wi-Fi):  http://192.168.15.57:8770/estudio/celular.html
 (Sem FAL_KEY o app funciona em modo demo/concierge; a geracao ao vivo pede a chave.)
 """
-import os, sys, json, base64, random, socket, datetime, uuid, urllib.request, urllib.parse, urllib.error
+import os, sys, json, base64, random, socket, datetime, uuid, threading, urllib.request, urllib.parse, urllib.error
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -804,6 +804,63 @@ def fal_faceswap(look_url, face_uri):
     if isinstance(imgs, list) and imgs and isinstance(imgs[0], dict): return imgs[0].get("url")
     return d.get("url")
 
+# ---- Geração do look (usada pelo /generate síncrono E pela fila /gerar) ----
+def gerar_look_img(body):
+    """Gera o look na nuvem (fal) + faceswap. Retorna (url, erro)."""
+    if not FAL_KEY:
+        return None, "Sem FAL_KEY no servidor."
+    garments = body.get("garments")
+    if not garments:
+        g = body.get("garment", "")
+        garments = [g] if g else []
+    prompt = build_prompt(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
+    if body.get("prompt_override"):
+        prompt = body.get("prompt_override")
+    uris = [to_uri(body.get("person", ""))] + [to_uri(g) for g in garments if g]
+    url = fal_generate(prompt, uris)
+    if not url:
+        return None, "a nuvem nao devolveu imagem"
+    if body.get("faceswap"):
+        face = to_uri(body.get("person", ""))
+        if body.get("reforco"):
+            for _try in range(3):
+                try:
+                    _sw = fal_faceswap(url, face)
+                    if _sw:
+                        url = _sw; break
+                except Exception:
+                    pass
+        else:
+            try:
+                _sw = fal_faceswap(url, face)
+                if _sw: url = _sw
+            except Exception:
+                pass
+    try:
+        log_uso({"vend": body.get("vend", ""), "cliente": body.get("cliente", ""),
+                 "pecas": body.get("pecas", ""), "ocasiao": body.get("ocasiao", ""),
+                 "fundo": body.get("fundo", "cena"),
+                 "ts": datetime.datetime.now().isoformat(timespec="seconds")})
+    except Exception:
+        pass
+    return url, None
+
+# ---- Fila de geração (roda no fundo, sobrevive a fechar/trocar de app) ----
+_GEN_SEM = threading.Semaphore(8)   # no máximo 8 gerações simultâneas no servidor (protege a nuvem)
+def _fila_worker(job_id, body):
+    with _GEN_SEM:
+        try:
+            url, err = gerar_look_img(body)
+        except Exception as e:
+            url, err = None, str(e)
+    try:
+        if url:
+            sb_req("PATCH", "fila_looks", "id=eq." + urllib.parse.quote(job_id), body={"status": "pronto", "image": url})
+        else:
+            sb_req("PATCH", "fila_looks", "id=eq." + urllib.parse.quote(job_id), body={"status": "erro", "erro": (err or "falhou")[:280]})
+    except Exception:
+        pass
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=ROOT, **k)
@@ -875,7 +932,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-12_fila-geracao", "ok": True})
+            return self._json(200, {"version": "2026-07-12_fila-servidor", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -906,6 +963,22 @@ class Handler(SimpleHTTPRequestHandler):
                 except Exception as e:
                     return self._json(200, {"fichas": [], "error": str(e)})
             return self._json(200, {"fichas": out})
+        if p == "/fila":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            vend = (q.get("vend") or [""])[0]
+            out = []
+            if SB_ON and vend:
+                # varre 'gerando' velho (>4min) e marca erro (caso o servidor tenha reiniciado no meio)
+                try:
+                    cutoff = (datetime.datetime.now() - datetime.timedelta(minutes=4)).isoformat(timespec="seconds")
+                    sb_req("PATCH", "fila_looks", "vend=eq." + urllib.parse.quote(vend) + "&status=eq.gerando&criado=lt." + urllib.parse.quote(cutoff), body={"status": "erro", "erro": "timeout"})
+                except Exception:
+                    pass
+                try:
+                    out = sb_req("GET", "fila_looks", "vend=eq." + urllib.parse.quote(vend) + "&select=id,vend,cliente,person_key,pecas,occ,status,image,erro&order=criado.asc") or []
+                except Exception as e:
+                    return self._json(200, {"fila": [], "error": str(e)})
+            return self._json(200, {"fila": out})
         return super().do_GET()
     def do_POST(self):
         p = self.path.split("?")[0]
@@ -1079,49 +1152,63 @@ class Handler(SimpleHTTPRequestHandler):
                     return self._json(200, {"ok": False, "error": str(e)})
             except Exception as e:
                 return self._json(500, {"error": str(e)})
+        if p == "/gerar":
+            # geração ASSÍNCRONA: aceita na hora, renderiza no fundo, guarda o resultado no banco.
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                body = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                vend = (body.get("vend") or "").strip()
+                pecas = body.get("pecas")
+                pecas_txt = ", ".join(pecas) if isinstance(pecas, list) else str(pecas or "")
+                if not SB_ON:
+                    # sem banco -> gera na hora (fallback, comportamento antigo)
+                    url, err = gerar_look_img(body)
+                    if url:
+                        return self._json(200, {"ok": True, "image": url, "async": False})
+                    return self._json(502, {"ok": False, "error": err or "falhou"})
+                # trava anti-abuso: no máximo 12 pendentes por vendedora
+                try:
+                    pend = sb_req("GET", "fila_looks", "vend=eq." + urllib.parse.quote(vend) + "&status=eq.gerando&select=id") or []
+                    if len(pend) >= 12:
+                        return self._json(200, {"ok": False, "full": True})
+                except Exception:
+                    pass
+                job_id = "L" + uuid.uuid4().hex[:16]
+                row = {"id": job_id, "vend": vend, "cliente": body.get("cliente", ""),
+                       "person_key": body.get("person_key", ""), "pecas": pecas_txt,
+                       "occ": body.get("ocasiao", ""), "status": "gerando",
+                       "criado": datetime.datetime.now().isoformat(timespec="seconds")}
+                try:
+                    sb_req("POST", "fila_looks", body=row)
+                except Exception as e:
+                    return self._json(200, {"ok": False, "error": str(e)})
+                threading.Thread(target=_fila_worker, args=(job_id, body), daemon=True).start()
+                return self._json(200, {"ok": True, "id": job_id, "async": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
+        if p == "/fila/limpar":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                body = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
+                ids = body.get("ids") or ([body.get("id")] if body.get("id") else [])
+                ids = [str(i) for i in ids if i and str(i).replace("_", "").isalnum()]
+                if SB_ON and ids:
+                    try:
+                        sb_req("DELETE", "fila_looks", "id=in.(" + ",".join(ids) + ")")
+                    except Exception:
+                        pass
+                return self._json(200, {"ok": True})
+            except Exception as e:
+                return self._json(500, {"error": str(e)})
         if p != "/generate":
             return self.send_error(404)
         try:
             n = int(self.headers.get("Content-Length", 0))
             body = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
-            if not FAL_KEY:
-                return self._json(400, {"error": "Sem FAL_KEY no servidor. Configure a chave (SETUP) ou use o modo concierge."})
-            garments = body.get("garments")
-            if not garments:
-                g = body.get("garment", "")
-                garments = [g] if g else []
-            prompt = build_prompt(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
-            if body.get("prompt_override"):
-                prompt = body.get("prompt_override")
-            uris = [to_uri(body.get("person", ""))] + [to_uri(g) for g in garments if g]
-            url = fal_generate(prompt, uris)
-            if not url: return self._json(502, {"error": "a nuvem nao devolveu imagem"})
-            if body.get("faceswap"):
-                face = to_uri(body.get("person", ""))
-                if body.get("reforco"):
-                    # rede social/galeria: foto boa -> trava o rosto fiel (insiste no swap)
-                    for _try in range(3):
-                        try:
-                            _sw = fal_faceswap(url, face)
-                            if _sw:
-                                url = _sw; break
-                        except Exception:
-                            pass
-                else:
-                    # camera/loja: swap unico; se falhar, deixa a IA corrigir a foto ruim
-                    try:
-                        _sw = fal_faceswap(url, face)
-                        if _sw: url = _sw
-                    except Exception:
-                        pass
-            try:
-                log_uso({"vend": body.get("vend", ""), "cliente": body.get("cliente", ""),
-                         "pecas": body.get("pecas", ""), "ocasiao": body.get("ocasiao", ""),
-                         "fundo": body.get("fundo", "cena"),
-                         "ts": datetime.datetime.now().isoformat(timespec="seconds")})
-            except Exception:
-                pass
-            self._json(200, {"image": url, "prompt": prompt})
+            url, err = gerar_look_img(body)
+            if url:
+                return self._json(200, {"image": url})
+            return self._json(502, {"error": err or "falhou"})
         except urllib.error.HTTPError as e:
             self._json(502, {"error": "nuvem HTTP %s: %s" % (e.code, e.read().decode()[:300])})
         except Exception as e:
