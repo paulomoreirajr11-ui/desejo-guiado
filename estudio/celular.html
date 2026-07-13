@@ -100,7 +100,7 @@
   .bthumb .bx{position:absolute;top:1px;right:1px;width:16px;height:16px;border-radius:50%;background:rgba(122,30,43,.92);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .bthumb .bsel{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:rgba(14,14,14,.5);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .bthumb .bsel.on{background:var(--gold);color:#1A1408;}
-  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 18px;border-radius:30px;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;width:max-content;max-width:90%;text-align:center;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:11px 18px;border-radius:30px;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;width:max-content;max-width:90%;text-align:center;}
   .toast.show{opacity:1;}
   .flab{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;}
   .finput{width:100%;background:var(--panel2);color:var(--off);border:1px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px;}
@@ -192,9 +192,14 @@
     <div class="occ" id="occ"></div>
     <div class="tg" id="fundotg" style="margin-top:10px;"><button id="fcena" class="on">🌆 Cenário</button><button id="festudio">⬜ Estúdio infinito</button></div>
     <button class="ger" id="ger" disabled>✨ Gerar look</button>
-    <div id="mesa">
+    <div id="mesa" style="display:none;position:fixed;inset:0;background:rgba(8,8,9,.5);z-index:63;align-items:flex-end;justify-content:center;">
+      <div id="mesasheet" style="width:100%;max-width:520px;background:var(--ink);border-radius:20px 20px 0 0;max-height:90vh;overflow:auto;padding:0 16px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box;">
+        <div style="position:sticky;top:0;background:var(--ink);display:flex;align-items:center;gap:8px;padding:15px 2px 11px;border-bottom:1px solid var(--line);margin-bottom:12px;z-index:1;">
+          <span style="flex:1;font-family:'Fraunces';color:var(--gold2);font-size:17px;">🛍️ Mesa de venda</span>
+          <button id="mesax" style="background:var(--panel2);border:1px solid var(--line);color:var(--off);border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;font-family:inherit;">✕</button>
+        </div>
+      <div id="recentes"></div>
       <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
-      <div id="recentes" style="margin-top:10px;"></div>
       <div class="band" id="band"></div>
       <button class="wpp" id="wpp" disabled style="margin-top:8px;"><span>🟢</span> Enviar no WhatsApp</button>
       <div style="display:flex;gap:8px;margin-top:8px;">
@@ -207,6 +212,7 @@
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
         <button class="novo" id="limpar" style="flex:1;margin:0;">🗑 limpar galeria</button>
+      </div>
       </div>
     </div>
   </div>
@@ -683,15 +689,15 @@ ger.onclick=()=>{
 };
 setInterval(function(){sincronizarFila(false);},8000);
 /* ---- Mesa de venda: abrir/fechar MANUAL + barra "Clientes de hoje" (últimas geradas) ---- */
-function mesaAberta(){try{return localStorage.getItem('mira_mesa_aberta')!=='0';}catch(e){return true;}}
+function mesaAberta(){try{return localStorage.getItem('mira_mesa_aberta')==='1';}catch(e){return false;}}
 function _nClientes(){try{return clientesComLook().length;}catch(e){return 0;}}
-function aplicarMesa(){var m=$('mesa'),c=$('mesacaret'),bar=$('mesabar');var ab=mesaAberta();if(m)m.style.display=ab?'block':'none';if(c)c.textContent=ab?'⌄':'›';if(bar){if(ab){bar.textContent='🛍️ Fechar mesa de venda';bar.style.background='var(--panel2)';bar.style.color='var(--gold2)';}else{var n=_nClientes();bar.textContent='🛍️ Abrir mesa de venda'+(n?(' · '+n+' cliente'+(n>1?'s':'')):'');bar.style.background='var(--gold)';bar.style.color='#1A1408';}}}
+function aplicarMesa(){var m=$('mesa'),bar=$('mesabar');var ab=mesaAberta();if(m)m.style.display=ab?'flex':'none';if(bar){var n=_nClientes();bar.textContent='🛍️ Abrir mesa de venda'+(n?(' · '+n+' cliente'+(n>1?'s':'')):'');}}
 function abrirMesa(v){try{localStorage.setItem('mira_mesa_aberta',v?'1':'0');}catch(e){}aplicarMesa();}
 function _mesaTop(){try{var h=document.querySelector('header'),b=$('mesabar');if(h&&b)b.style.top=h.offsetHeight+'px';}catch(e){}}
 function _toggleMesa(){abrirMesa(!mesaAberta());}
-if($('mesahdr'))$('mesahdr').onclick=_toggleMesa;
 if($('mesabar'))$('mesabar').onclick=_toggleMesa;
-_mesaTop();window.addEventListener('resize',_mesaTop);
+if($('mesax'))$('mesax').onclick=function(){abrirMesa(false);};
+if($('mesa'))$('mesa').onclick=function(e){if(e.target===this)abrirMesa(false);};
 function _recKey(){return 'mira_recentes_'+(S.vend||'x');}
 function loadRecentes(){try{return JSON.parse(localStorage.getItem(_recKey())||'[]');}catch(e){return [];}}
 function saveRecentes(a){try{localStorage.setItem(_recKey(),JSON.stringify(a.slice(0,10)));}catch(e){}}
@@ -714,7 +720,7 @@ function renderRecentes(){
   el.innerHTML='<div style="font-size:10.5px;color:var(--gold2);margin:0 0 7px;font-weight:700;letter-spacing:.04em;">CLIENTES DE HOJE — toque pra abrir e enviar</div><div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:5px;">'+a.map(function(c){
     var nm=_primeiro(c.nome)||'cliente',pd=c.tray.some(function(b){return !b.lookid&&!b.enviado;}),sel=(S.pessoa&&c.key===S.pessoa.key),foto=_fotoDe(c.key);
     var av=foto?('<img src="'+foto+'" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid '+(sel?'var(--gold)':'transparent')+';">'):('<div style="width:52px;height:52px;border-radius:50%;background:var(--panel2);border:2px solid '+(sel?'var(--gold)':'var(--line)')+';display:flex;align-items:center;justify-content:center;color:var(--gold2);font-family:\'Fraunces\',serif;font-size:22px;box-sizing:border-box;">'+(nm.charAt(0).toUpperCase()||'?')+'</div>');
-    return '<div class="rchip" data-key="'+c.key+'" style="flex:0 0 auto;width:58px;text-align:center;cursor:pointer;position:relative;">'+av+(pd?'<span style="position:absolute;top:0;right:4px;width:13px;height:13px;background:#C0392B;border-radius:50%;border:2px solid var(--bg);"></span>':'')+'<div style="font-size:10.5px;margin-top:3px;line-height:1.1;">'+nm+'</div><div style="font-size:9px;color:var(--mut);">'+c.tray.length+' look'+(c.tray.length>1?'s':'')+'</div></div>';
+    return '<div class="rchip" data-key="'+c.key+'" style="flex:0 0 auto;width:58px;text-align:center;cursor:pointer;position:relative;">'+av+(pd?'<span style="position:absolute;top:0;right:4px;width:13px;height:13px;background:#C0392B;border-radius:50%;border:2px solid var(--ink);"></span>':'')+'<div style="font-size:10.5px;margin-top:3px;line-height:1.1;">'+nm+'</div><div style="font-size:9px;color:var(--mut);">'+c.tray.length+' look'+(c.tray.length>1?'s':'')+'</div></div>';
   }).join('')+'</div>';
   el.querySelectorAll('.rchip').forEach(function(x){x.onclick=function(){abrirCliente(x.getAttribute('data-key'));};});
 }
