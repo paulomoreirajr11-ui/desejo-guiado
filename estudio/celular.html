@@ -144,6 +144,7 @@
     <a href="espelho.html" style="position:relative;">Meu 1%<span id="navespbadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:#C0392B;color:#fff;border-radius:9px;font-size:10px;font-weight:700;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box;">0</span></a>
     <a href="index.html">Início</a>
   </header>
+  <div id="mesabar" style="position:sticky;top:0;z-index:4;padding:12px 16px;background:var(--gold);color:#1A1408;font-weight:700;font-size:14px;text-align:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.15);user-select:none;">🛍️ Abrir mesa de venda</div>
   <div class="sess">
     <select id="vend"></select>
   </div>
@@ -688,9 +689,14 @@ ger.onclick=()=>{
 setInterval(function(){sincronizarFila(false);},8000);
 /* ---- Mesa de venda: abrir/fechar MANUAL + barra "Clientes de hoje" (últimas geradas) ---- */
 function mesaAberta(){try{return localStorage.getItem('mira_mesa_aberta')!=='0';}catch(e){return true;}}
-function aplicarMesa(){var m=$('mesa'),c=$('mesacaret');var ab=mesaAberta();if(m)m.style.display=ab?'block':'none';if(c)c.textContent=ab?'⌄':'›';}
+function _nClientes(){try{return clientesComLook().length;}catch(e){return 0;}}
+function aplicarMesa(){var m=$('mesa'),c=$('mesacaret'),bar=$('mesabar');var ab=mesaAberta();if(m)m.style.display=ab?'block':'none';if(c)c.textContent=ab?'⌄':'›';if(bar){if(ab){bar.textContent='🛍️ Fechar mesa de venda';bar.style.background='var(--panel2)';bar.style.color='var(--gold2)';}else{var n=_nClientes();bar.textContent='🛍️ Abrir mesa de venda'+(n?(' · '+n+' cliente'+(n>1?'s':'')):'');bar.style.background='var(--gold)';bar.style.color='#1A1408';}}}
 function abrirMesa(v){try{localStorage.setItem('mira_mesa_aberta',v?'1':'0');}catch(e){}aplicarMesa();}
-if($('mesahdr'))$('mesahdr').onclick=function(){abrirMesa(!mesaAberta());};
+function _mesaTop(){try{var h=document.querySelector('header'),b=$('mesabar');if(h&&b)b.style.top=h.offsetHeight+'px';}catch(e){}}
+function _toggleMesa(){var abrir=!mesaAberta();abrirMesa(abrir);if(abrir){var mh=$('mesahdr')||$('mesa');if(mh)setTimeout(function(){mh.scrollIntoView({behavior:'smooth',block:'start'});},70);}}
+if($('mesahdr'))$('mesahdr').onclick=_toggleMesa;
+if($('mesabar'))$('mesabar').onclick=_toggleMesa;
+_mesaTop();window.addEventListener('resize',_mesaTop);
 function _recKey(){return 'mira_recentes_'+(S.vend||'x');}
 function loadRecentes(){try{return JSON.parse(localStorage.getItem(_recKey())||'[]');}catch(e){return [];}}
 function saveRecentes(a){try{localStorage.setItem(_recKey(),JSON.stringify(a.slice(0,10)));}catch(e){}}
@@ -708,6 +714,7 @@ function renderRecentes(){
   var a=clientesComLook();
   var pend=a.filter(function(c){return c.tray.some(function(b){return !b.lookid&&!b.enviado;});}).length;
   var mc=$('mesacount');if(mc)mc.textContent=a.length?(' · '+a.length+' cliente'+(a.length>1?'s':'')+(pend?(' · '+pend+' a enviar'):'')):'';
+  try{aplicarMesa();}catch(e){}
   if(!a.length){el.innerHTML='<div style="color:var(--mut);font-size:12px;padding:4px 2px 8px;">Os looks que você gerar aparecem aqui, por cliente, pra enviar num toque 💛</div>';return;}
   el.innerHTML='<div style="font-size:10.5px;color:var(--gold2);margin:0 0 7px;font-weight:700;letter-spacing:.04em;">CLIENTES DE HOJE — toque pra abrir e enviar</div><div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:5px;">'+a.map(function(c){
     var nm=_primeiro(c.nome)||'cliente',pd=c.tray.some(function(b){return !b.lookid&&!b.enviado;}),sel=(S.pessoa&&c.key===S.pessoa.key),foto=_fotoDe(c.key);
