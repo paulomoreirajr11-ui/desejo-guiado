@@ -75,6 +75,12 @@
     <div id="ritmo" style="font-size:13px;color:var(--mut);margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;"></div>
   </div>
 
+  <div class="card" id="c_diario" style="display:none;">
+    <h2>📅 Meu diário do mês</h2>
+    <div class="sub">Toque num dia pra corrigir. Só você vê. 💛</div>
+    <div id="diario"></div>
+  </div>
+
   <div class="card">
     <h2>🎯 Minhas 3 metas do mês</h2>
     <p class="sub">Preencha o valor de cada meta em R$. A comissão sobe conforme você bate. É opcional — e só você vê. 💛</p>
@@ -102,6 +108,8 @@ function load(){var o={};try{o=JSON.parse(localStorage.getItem(K())||'{}');}catc
   o.m1=+o.m1||0;o.m2=+o.m2||0;o.m3=+o.m3||0;o.base=+o.base||0;o.dias=o.dias||{};return o;}
 function save(o){try{localStorage.setItem(K(),JSON.stringify(o));}catch(e){}}
 function diasUteis(ateHoje){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),lim=ateHoje?d.getDate():new Date(y,m+1,0).getDate(),c=0;for(var i=1;i<=lim;i++){if(new Date(y,m,i).getDay()!==0)c++;}return c;}
+function diasRestantes(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),hoje=d.getDate(),last=new Date(y,m+1,0).getDate(),c=0;for(var i=hoje;i<=last;i++){if(new Date(y,m,i).getDay()!==0)c++;}return c;}
+function streakDias(o,base){if(!base)return 0;var d=new Date(),cnt=0;for(var b=0;b<40;b++){var dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()-b);if(dt.getMonth()!==d.getMonth())break;if(dt.getDay()===0)continue;var key=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());var v=+(o.dias[key]||0);if(v>=base){cnt++;}else{if(b===0)continue;break;}}return cnt;}
 function vendidoMes(o){var s=o.base||0;for(var k in o.dias)s+=(+o.dias[k]||0);return s;}
 function render(){
   var o=load();
@@ -115,15 +123,17 @@ function render(){
   }else{
     var alvo=0,alvoN=1;
     for(var i=0;i<3;i++){if(mm[i]>0){alvo=mm[i];alvoN=i+1;if(vm<mm[i])break;}}
-    var bateuTudo=vm>=alvo && vm>=Math.max(o.m1,o.m2,o.m3);
-    var diaria=du?alvo/du:0, faltaHoje=Math.max(0,diaria-vh), okHoje=faltaHoje<=0.5;
+    var bateuTudo=vm>=Math.max(o.m1,o.m2,o.m3);
+    var dr=diasRestantes(), vendAntes=vm-vh, restante=Math.max(0,alvo-vendAntes), alvoHoje=dr>0?restante/dr:restante, faltaHoje=Math.max(0,alvoHoje-vh), okHoje=faltaHoje<=0.5;
     var cor=okHoje?'#2E7D32':'#C0392B';
+    var base=(du&&o.m1)?o.m1/du:0, ch=streakDias(o,base);
     var titulo=bateuTudo?('🎉 Você bateu TODAS as metas! Comissão máxima ('+PCT[2]+'%).')
-      :('Pra ficar no ritmo da <b>Meta '+alvoN+'</b> ('+PCT[alvoN-1]+'%), o alvo de hoje é <b>'+brl(diaria)+'</b>.');
+      :('Faltam <b>'+dr+' dia'+(dr===1?' útil':'s úteis')+'</b> no mês. Pra bater a <b>Meta '+alvoN+'</b> ('+PCT[alvoN-1]+'%), hoje você precisa de <b>'+brl(alvoHoje)+'</b>.');
     $('hoje').innerHTML='<div style="font-size:13.5px;color:var(--mut);line-height:1.5;">'+titulo+'</div>'
       +'<div style="font-family:\'Fraunces\';font-size:30px;color:'+cor+';margin-top:9px;line-height:1.1;">'
       +(bateuTudo?('Hoje: '+brl(vh)):(okHoje?('✓ Dia batido! 🔥'):('Faltam '+brl(faltaHoje)+' hoje')))+'</div>'
-      +(vh>0?'<div style="font-size:12.5px;color:var(--mut);margin-top:5px;">Você já lançou <b>'+brl(vh)+'</b> hoje.</div>':'');
+      +(vh>0?'<div style="font-size:12.5px;color:var(--mut);margin-top:5px;">Você já lançou <b>'+brl(vh)+'</b> hoje.</div>':'')
+      +(ch>0?'<div style="font-size:13px;color:var(--gold2);margin-top:9px;background:#FBF6EA;border:1px solid var(--gold);border-radius:11px;padding:9px 12px;">🔥 <b>'+ch+' dia'+(ch>1?'s':'')+'</b> batendo a meta seguidos — não deixa a chama apagar!</div>':'');
   }
 
   /* --- no mês: as 3 metas --- */
@@ -149,9 +159,16 @@ function render(){
   if(temMeta&&dp>0){var proj=vm/dp*du;var chega=0;for(var r=0;r<3;r++){if(mm[r]>0&&proj>=mm[r])chega=r+1;}
     $('ritmo').innerHTML='📈 No seu ritmo, você fecha '+mn[new Date().getMonth()+1]+' em <b>'+brl(proj)+'</b>'+(chega?(' — dá pra bater a <b>Meta '+chega+'</b>! 💪'):'. Bora subir o ritmo? 💛');}
   else{$('ritmo').innerHTML='';}
+  /* --- diário do mês --- */
+  var dl=Object.keys(o.dias).filter(function(k){return (+o.dias[k])>0;}).sort().reverse();
+  if(dl.length){$('c_diario').style.display='block';var wd=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    $('diario').innerHTML=dl.map(function(k){var p=k.split('-');var dt=new Date(+p[0],+p[1]-1,+p[2]);var hj=(k===hojeStr());return '<div class="diarow" data-d="'+k+'" style="display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-top:1px solid var(--line);cursor:pointer;"><span style="font-size:13.5px;">'+wd[dt.getDay()]+' '+p[2]+'/'+p[1]+(hj?' · <b style="color:var(--gold2);">hoje</b>':'')+'</span><span style="font-family:\'Fraunces\';font-size:15px;color:var(--gold2);">'+brl(+o.dias[k])+' ✎</span></div>';}).join('');
+    Array.prototype.forEach.call($('diario').querySelectorAll('.diarow'),function(row){row.onclick=function(){editarDia(row.getAttribute('data-d'));};});}
+  else{$('c_diario').style.display='none';}
 }
+function editarDia(key){var o=load();var atual=+(o.dias[key]||0);var v=null;try{v=prompt('Total vendido nesse dia (R$):',atual?Math.round(atual):'');}catch(e){}if(v===null)return;var nv=Math.max(0,num(v));if(nv<=0){delete o.dias[key];}else{o.dias[key]=nv;}save(o);render();toast('Dia atualizado ✓');}
 /* --- ações --- */
-$('btvendi').onclick=function(){var v=null;try{v=prompt('Quanto você vendeu agora? (R$)');}catch(e){}if(v===null)return;var val=num(v);if(val<=0){toast('Valor inválido');return;}var o=load();o.dias[hojeStr()]=(+o.dias[hojeStr()]||0)+val;save(o);render();toast('Venda de '+brl(val)+' lançada ✓');};
+$('btvendi').onclick=function(){var v=null;try{v=prompt('Quanto você vendeu agora? (R$)');}catch(e){}if(v===null)return;var val=num(v);if(val<=0){toast('Valor inválido');return;}var o=load();var antes=vendidoMes(o);o.dias[hojeStr()]=(+o.dias[hojeStr()]||0)+val;save(o);var depois=vendidoMes(o);var mm=[o.m1,o.m2,o.m3],festa='';for(var i=2;i>=0;i--){if(mm[i]>0&&antes<mm[i]&&depois>=mm[i]){festa='🎉 Você bateu a Meta '+(i+1)+'! Comissão de '+PCT[i]+'% 🥳';break;}}render();toast(festa||('Venda de '+brl(val)+' lançada ✓'));};
 $('btajuste').onclick=function(){var o=load();var atual=+(o.dias[hojeStr()]||0);var v=null;try{v=prompt('Total que você vendeu HOJE (corrige o valor de hoje):',atual?Math.round(atual):'');}catch(e){}if(v===null)return;o.dias[hojeStr()]=Math.max(0,num(v));save(o);render();toast('Total de hoje ajustado ✓');};
 $('btsave').onclick=function(){var o=load();o.m1=num($('m1').value);o.m2=num($('m2').value);o.m3=num($('m3').value);o.base=num($('base').value);save(o);render();toast('Metas salvas ✓ 💛');};
 render();
