@@ -78,9 +78,9 @@
   <div class="card">
     <h2>🎯 Minhas 3 metas do mês</h2>
     <p class="sub">Preencha o valor de cada meta em R$. A comissão sobe conforme você bate. É opcional — e só você vê. 💛</p>
-    <label class="fld">Meta 1 · paga 4%<input id="m1" type="number" inputmode="numeric" placeholder="ex: 30000"></label>
-    <label class="fld">Meta 2 · paga 5%<input id="m2" type="number" inputmode="numeric" placeholder="ex: 40000"></label>
-    <label class="fld">Meta 3 · paga 6%<input id="m3" type="number" inputmode="numeric" placeholder="ex: 50000"></label>
+    <label class="fld">Meta 1 · paga 3%<input id="m1" type="number" inputmode="numeric" placeholder="ex: 30000"></label>
+    <label class="fld">Meta 2 · paga 4%<input id="m2" type="number" inputmode="numeric" placeholder="ex: 40000"></label>
+    <label class="fld">Meta 3 · paga 5%<input id="m3" type="number" inputmode="numeric" placeholder="ex: 50000"></label>
     <label class="fld" style="color:var(--mut);">Já vendi no mês antes de começar aqui? (opcional)<input id="base" type="number" inputmode="numeric" placeholder="ex: 0"></label>
     <button class="cta" id="btsave">Salvar</button>
   </div>
@@ -89,7 +89,7 @@
 <script>
 const $=function(id){return document.getElementById(id);};
 const vend=function(){return localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';};
-const PCT=[4,5,6];
+const PCT=[3,4,5];
 function toast(t){var el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2400);}
 function K(){return 'mira_minhameta_'+vend();}
 function pad(n){return (n<10?'0':'')+n;}
