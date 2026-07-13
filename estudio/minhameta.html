@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minha Meta — Desejo Guiado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{--gold:#B0872E;--gold2:#8C6B22;--ink:#FAF6EE;--panel:#FFFFFF;--panel2:#F1EADB;--off:#1E1A15;--mut:#897F6F;--line:rgba(40,32,18,.14);--wine:#6E1A2E;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--off);font-family:'Inter',sans-serif;}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;background:rgba(250,246,238,.94);backdrop-filter:blur(8px);z-index:5;}
+  .mono{font-family:'Fraunces';font-weight:500;font-size:34px;line-height:1;}
+  .brand{display:flex;flex-direction:column;justify-content:center;line-height:1;}
+  .bwm{font-family:'Fraunces';font-weight:500;font-size:16px;letter-spacing:4px;}
+  .btag{font-size:9px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-top:3px;}
+  @keyframes goldshine{to{background-position:200% center;}}
+  .gold-metal{background:linear-gradient(100deg,#7A5E1E 0%,#B0872E 18%,#EBD18A 36%,#FBF1CE 44%,#C7A34A 54%,#8C6B22 72%,#E8CE86 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldshine 6s linear infinite;}
+  nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+  nav a{font-size:13px;color:var(--mut);text-decoration:none;border:1px solid var(--line);border-radius:20px;padding:8px 15px;}
+  nav a.on{color:#1A1408;background:var(--gold);border-color:var(--gold);font-weight:500;}
+  .wrap{max-width:640px;margin:0 auto;padding:18px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px;}
+  .card h2{font-family:'Fraunces';font-weight:500;font-size:18px;margin:0 0 4px;}
+  .sub{font-size:13px;color:var(--mut);margin:0 0 12px;}
+  .cta{width:100%;background:var(--gold);color:#1A1408;border:none;border-radius:13px;padding:15px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .ghost{width:100%;margin-top:9px;background:transparent;border:1px solid var(--line);color:var(--gold2);border-radius:12px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .fld{display:block;margin-bottom:10px;font-size:13px;color:var(--gold2);font-weight:600;}
+  .fld input{display:block;width:100%;margin-top:5px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:12px;font-size:16px;font-family:inherit;color:var(--off);}
+  .track{height:11px;background:#E7DCC6;border-radius:6px;overflow:hidden;margin:5px 0 3px;}
+  .fill{height:100%;background:linear-gradient(90deg,var(--gold),#E8CE86);transition:width .4s;}
+  .metarow{margin:0 0 15px;}
+  .metatop{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;}
+  .metatop b{font-family:'Fraunces';font-size:15px;}
+  .metasub{font-size:11.5px;color:var(--mut);margin-top:2px;}
+  .cenoura{background:linear-gradient(120deg,#FBF6EA,#F1EADB);border:1px solid var(--gold);border-radius:14px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.5;}
+  .cenoura b{color:var(--gold2);}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1A1408;padding:12px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<header>
+  <div class="mono gold-metal">M</div>
+  <div class="brand"><div class="bwm gold-metal">IRENE MOREIRA</div><div class="btag">Desejo Guiado</div></div>
+  <nav>
+    <a href="celular.html">Estúdio</a>
+    <a href="carteira.html">Carteira</a>
+    <a href="mensagens.html">Mensagens</a>
+    <a href="espelho.html">Meu 1%</a>
+    <a href="minhameta.html" class="on">Minha Meta</a>
+  </nav>
+</header>
+<div class="wrap">
+  <div style="text-align:center;margin:8px 0 16px;">
+    <div class="gold-metal" style="font-family:'Fraunces';font-size:27px;">💰 Minha Meta</div>
+    <div style="color:var(--mut);font-size:13px;margin-top:4px;">Suas vendas e a sua comissão — só suas. 🤫</div>
+  </div>
+
+  <div class="card">
+    <h2>☀️ Sua meta de hoje</h2>
+    <div id="hoje"></div>
+    <button class="cta" id="btvendi" style="margin-top:14px;">＋ Lancei uma venda</button>
+    <button class="ghost" id="btajuste">Corrigir o total de hoje</button>
+  </div>
+
+  <div class="card">
+    <h2>📊 No mês</h2>
+    <div class="sub" id="messub"></div>
+    <div id="mesbars"></div>
+    <div id="cenoura"></div>
+    <div id="ritmo" style="font-size:13px;color:var(--mut);margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 Minhas 3 metas do mês</h2>
+    <p class="sub">Preencha o valor de cada meta em R$. A comissão sobe conforme você bate. É opcional — e só você vê. 💛</p>
+    <label class="fld">Meta 1 · paga 4%<input id="m1" type="number" inputmode="numeric" placeholder="ex: 30000"></label>
+    <label class="fld">Meta 2 · paga 5%<input id="m2" type="number" inputmode="numeric" placeholder="ex: 40000"></label>
+    <label class="fld">Meta 3 · paga 6%<input id="m3" type="number" inputmode="numeric" placeholder="ex: 50000"></label>
+    <label class="fld" style="color:var(--mut);">Já vendi no mês antes de começar aqui? (opcional)<input id="base" type="number" inputmode="numeric" placeholder="ex: 0"></label>
+    <button class="cta" id="btsave">Salvar</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=function(id){return document.getElementById(id);};
+const vend=function(){return localStorage.getItem('mira_vend_lock')||localStorage.getItem('mira_vendedora')||'default';};
+const PCT=[4,5,6];
+function toast(t){var el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2400);}
+function K(){return 'mira_minhameta_'+vend();}
+function pad(n){return (n<10?'0':'')+n;}
+function hojeStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function mesStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1);}
+function num(s){s=(''+s).replace(/[^\d,.-]/g,'');if(s.indexOf(',')>=0){s=s.replace(/\./g,'').replace(',','.');}return parseFloat(s)||0;}
+function brl(v){try{return 'R$ '+Math.round(v).toLocaleString('pt-BR');}catch(e){return 'R$ '+Math.round(v);}}
+function load(){var o={};try{o=JSON.parse(localStorage.getItem(K())||'{}');}catch(e){}
+  if(o.mes!==mesStr()){o.mes=mesStr();o.dias={};o.base=0;} /* virou o mês: zera as vendas, mantém as metas */
+  o.m1=+o.m1||0;o.m2=+o.m2||0;o.m3=+o.m3||0;o.base=+o.base||0;o.dias=o.dias||{};return o;}
+function save(o){try{localStorage.setItem(K(),JSON.stringify(o));}catch(e){}}
+function diasUteis(ateHoje){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),lim=ateHoje?d.getDate():new Date(y,m+1,0).getDate(),c=0;for(var i=1;i<=lim;i++){if(new Date(y,m,i).getDay()!==0)c++;}return c;}
+function vendidoMes(o){var s=o.base||0;for(var k in o.dias)s+=(+o.dias[k]||0);return s;}
+function render(){
+  var o=load();
+  $('m1').value=o.m1||'';$('m2').value=o.m2||'';$('m3').value=o.m3||'';$('base').value=o.base||'';
+  var mm=[o.m1,o.m2,o.m3], temMeta=mm.some(function(x){return x>0;});
+  var vm=vendidoMes(o), vh=+(o.dias[hojeStr()]||0), du=diasUteis(false), dp=diasUteis(true);
+
+  /* --- meta de hoje: mira na próxima meta ainda não batida --- */
+  if(!temMeta){
+    $('hoje').innerHTML='<div style="color:var(--mut);font-size:14px;">Preencha suas 3 metas ali embaixo 👇 e eu te mostro quanto falta vender <b>hoje</b> pra ficar no ritmo.</div>';
+  }else{
+    var alvo=0,alvoN=1;
+    for(var i=0;i<3;i++){if(mm[i]>0){alvo=mm[i];alvoN=i+1;if(vm<mm[i])break;}}
+    var bateuTudo=vm>=alvo && vm>=Math.max(o.m1,o.m2,o.m3);
+    var diaria=du?alvo/du:0, faltaHoje=Math.max(0,diaria-vh), okHoje=faltaHoje<=0.5;
+    var cor=okHoje?'#2E7D32':'#C0392B';
+    var titulo=bateuTudo?('🎉 Você bateu TODAS as metas! Comissão máxima ('+PCT[2]+'%).')
+      :('Pra ficar no ritmo da <b>Meta '+alvoN+'</b> ('+PCT[alvoN-1]+'%), o alvo de hoje é <b>'+brl(diaria)+'</b>.');
+    $('hoje').innerHTML='<div style="font-size:13.5px;color:var(--mut);line-height:1.5;">'+titulo+'</div>'
+      +'<div style="font-family:\'Fraunces\';font-size:30px;color:'+cor+';margin-top:9px;line-height:1.1;">'
+      +(bateuTudo?('Hoje: '+brl(vh)):(okHoje?('✓ Dia batido! 🔥'):('Faltam '+brl(faltaHoje)+' hoje')))+'</div>'
+      +(vh>0?'<div style="font-size:12.5px;color:var(--mut);margin-top:5px;">Você já lançou <b>'+brl(vh)+'</b> hoje.</div>':'');
+  }
+
+  /* --- no mês: as 3 metas --- */
+  $('messub').textContent='Você já vendeu '+brl(vm)+' este mês.';
+  var mn=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var bars='';
+  for(var j=0;j<3;j++){var mv=mm[j];if(!mv)continue;var p=Math.min(100,vm/mv*100),falta=Math.max(0,mv-vm),com=mv*PCT[j]/100,ok=vm>=mv;
+    bars+='<div class="metarow"><div class="metatop"><span><b>Meta '+(j+1)+'</b> · '+PCT[j]+'%</span><span>'+brl(vm)+' / '+brl(mv)+(ok?' ✅':'')+'</span></div>'
+      +'<div class="track"><div class="fill" style="width:'+p+'%;'+(ok?'background:#2E7D32;':'')+'"></div></div>'
+      +'<div class="metasub">'+(ok?('bateu! comissão de <b>'+brl(com)+'</b>'):('faltam <b>'+brl(falta)+'</b> · comissão de '+brl(com)))+'</div></div>';
+  }
+  $('mesbars').innerHTML=bars;
+
+  /* --- a cenoura (comissão) --- */
+  var prox=0,proxN=0;
+  for(var k2=0;k2<3;k2++){if(mm[k2]>0&&vm<mm[k2]){prox=mm[k2];proxN=k2+1;break;}}
+  if(!temMeta){$('cenoura').innerHTML='';}
+  else if(proxN){var f=prox-vm,com=prox*PCT[proxN-1]/100;
+    $('cenoura').innerHTML='<div class="cenoura">🥕 Faltam <b>'+brl(f)+'</b> pra bater a <b>Meta '+proxN+'</b> — e sua comissão vira <b>'+PCT[proxN-1]+'%</b> = <b>'+brl(com)+'</b> no seu bolso!</div>';}
+  else{$('cenoura').innerHTML='<div class="cenoura">🎉 Todas as metas batidas! Você está na comissão máxima de <b>'+PCT[2]+'%</b>. Arrasou!</div>';}
+
+  /* --- ritmo / projeção --- */
+  if(temMeta&&dp>0){var proj=vm/dp*du;var chega=0;for(var r=0;r<3;r++){if(mm[r]>0&&proj>=mm[r])chega=r+1;}
+    $('ritmo').innerHTML='📈 No seu ritmo, você fecha '+mn[new Date().getMonth()+1]+' em <b>'+brl(proj)+'</b>'+(chega?(' — dá pra bater a <b>Meta '+chega+'</b>! 💪'):'. Bora subir o ritmo? 💛');}
+  else{$('ritmo').innerHTML='';}
+}
+/* --- ações --- */
+$('btvendi').onclick=function(){var v=null;try{v=prompt('Quanto você vendeu agora? (R$)');}catch(e){}if(v===null)return;var val=num(v);if(val<=0){toast('Valor inválido');return;}var o=load();o.dias[hojeStr()]=(+o.dias[hojeStr()]||0)+val;save(o);render();toast('Venda de '+brl(val)+' lançada ✓');};
+$('btajuste').onclick=function(){var o=load();var atual=+(o.dias[hojeStr()]||0);var v=null;try{v=prompt('Total que você vendeu HOJE (corrige o valor de hoje):',atual?Math.round(atual):'');}catch(e){}if(v===null)return;o.dias[hojeStr()]=Math.max(0,num(v));save(o);render();toast('Total de hoje ajustado ✓');};
+$('btsave').onclick=function(){var o=load();o.m1=num($('m1').value);o.m2=num($('m2').value);o.m3=num($('m3').value);o.base=num($('base').value);save(o);render();toast('Metas salvas ✓ 💛');};
+render();
+</script>
+</body>
+</html>
