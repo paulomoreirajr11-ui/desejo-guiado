@@ -693,7 +693,7 @@ function _nClientes(){try{return clientesComLook().length;}catch(e){return 0;}}
 function aplicarMesa(){var m=$('mesa'),c=$('mesacaret'),bar=$('mesabar');var ab=mesaAberta();if(m)m.style.display=ab?'block':'none';if(c)c.textContent=ab?'⌄':'›';if(bar){if(ab){bar.textContent='🛍️ Fechar mesa de venda';bar.style.background='var(--panel2)';bar.style.color='var(--gold2)';}else{var n=_nClientes();bar.textContent='🛍️ Abrir mesa de venda'+(n?(' · '+n+' cliente'+(n>1?'s':'')):'');bar.style.background='var(--gold)';bar.style.color='#1A1408';}}}
 function abrirMesa(v){try{localStorage.setItem('mira_mesa_aberta',v?'1':'0');}catch(e){}aplicarMesa();}
 function _mesaTop(){try{var h=document.querySelector('header'),b=$('mesabar');if(h&&b)b.style.top=h.offsetHeight+'px';}catch(e){}}
-function _toggleMesa(){var abrir=!mesaAberta();abrirMesa(abrir);if(abrir){var mh=$('mesahdr')||$('mesa');if(mh)setTimeout(function(){mh.scrollIntoView({behavior:'smooth',block:'start'});},70);}}
+function _toggleMesa(){abrirMesa(!mesaAberta());}
 if($('mesahdr'))$('mesahdr').onclick=_toggleMesa;
 if($('mesabar'))$('mesabar').onclick=_toggleMesa;
 _mesaTop();window.addEventListener('resize',_mesaTop);
@@ -729,7 +729,6 @@ function abrirCliente(key){
   S.tipo='cli';var tgc=$('tgc'),tgi=$('tgi');if(tgc)tgc.classList.add('on');if(tgi)tgi.classList.remove('on');
   S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();renderRecentes();upd();
   if(!mesaAberta())abrirMesa(true);
-  var m=$('mesahdr');if(m)m.scrollIntoView({behavior:'smooth',block:'start'});
   toast('Histórico de '+(_primeiro(p.nome)||'cliente')+' — selecione e envie 💛');
 }
 aplicarMesa();renderRecentes();
