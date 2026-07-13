@@ -192,16 +192,26 @@
     <div class="tg" id="fundotg" style="margin-top:10px;"><button id="fcena" class="on">🌆 Cenário</button><button id="festudio">⬜ Estúdio infinito</button></div>
     <button class="ger" id="ger" disabled>✨ Gerar look</button>
     <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
-    <button class="wpp" id="wpp" disabled><span>🟢</span> Enviar no WhatsApp</button>
-    <button class="wpp" id="resposta" disabled style="background:var(--gold);color:#1A1408;margin-top:8px;">💬 Enviar com resposta</button>
-    <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin-top:8px;">★ Soltar no Clube</button>
-    <button class="novo" id="reservar" disabled style="margin-top:8px;border-color:var(--gold);color:var(--gold2);">📌 Reservar no provador</button>
-    <div id="resumo" style="display:none;font-size:12px;color:var(--gold2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-top:10px;text-align:center;font-weight:500;"></div>
-    <div id="gosto" style="display:none;font-size:13px;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:11px 13px;margin-top:8px;line-height:1.5;"></div>
-    <div class="band" id="band"></div>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
-      <button class="novo" id="limpar" style="flex:1;margin:0;">🗑 limpar galeria</button>
+    <div id="mesahdr" style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:11px 13px;background:var(--panel2);border:1px solid var(--gold);border-radius:12px;cursor:pointer;user-select:none;">
+      <span style="font-size:16px;">🛍️</span>
+      <span style="flex:1;font-weight:600;color:var(--gold2);font-size:14px;">Mesa de venda<span id="mesacount" style="color:var(--mut);font-weight:500;"></span></span>
+      <span id="mesacaret" style="color:var(--gold2);font-size:18px;">⌄</span>
+    </div>
+    <div id="mesa">
+      <div id="recentes" style="margin-top:10px;"></div>
+      <div class="band" id="band"></div>
+      <button class="wpp" id="wpp" disabled style="margin-top:8px;"><span>🟢</span> Enviar no WhatsApp</button>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="wpp" id="resposta" disabled style="background:var(--gold);color:#1A1408;margin:0;flex:1;font-size:13px;padding:12px 6px;">💬 com resposta</button>
+        <button class="wpp" id="clube" disabled style="background:#1E1B19;color:#E0C57E;border:1px solid var(--gold);margin:0;flex:1;font-size:13px;padding:12px 6px;">★ Clube</button>
+      </div>
+      <button class="novo" id="reservar" disabled style="margin-top:8px;border-color:var(--gold);color:var(--gold2);">📌 Reservar no provador</button>
+      <div id="resumo" style="display:none;font-size:12px;color:var(--gold2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-top:10px;text-align:center;font-weight:500;"></div>
+      <div id="gosto" style="display:none;font-size:13px;background:#FBF6EA;border:1px solid var(--gold);border-radius:12px;padding:11px 13px;margin-top:8px;line-height:1.5;"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="novo" id="novo" style="flex:1;margin:0;">↻ novo look</button>
+        <button class="novo" id="limpar" style="flex:1;margin:0;">🗑 limpar galeria</button>
+      </div>
     </div>
   </div>
 </div>
@@ -433,7 +443,7 @@ if(_lock&&!VENDEDORAS.includes(_lock))VENDEDORAS.unshift(_lock);
 VENDEDORAS.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent='Você: '+v;vend.appendChild(o);});
 if(_lock){S.vend=_lock;localStorage.setItem('mira_vendedora',_lock);}
 vend.value=S.vend;
-vend.onchange=()=>{S.vend=vend.value;localStorage.setItem('mira_vendedora',S.vend);CARTEIRA=[];carregarCarteira();loadTray();renderBig();renderBand();};
+vend.onchange=()=>{S.vend=vend.value;localStorage.setItem('mira_vendedora',S.vend);CARTEIRA=[];carregarCarteira();loadTray();renderBig();renderBand();try{renderRecentes();}catch(e){}};
 if(_lock){vend.disabled=true;vend.style.opacity='.9';vend.title='Travado nesta vendedora';}
 var DEV=localStorage.getItem('mira_device');
 if(!DEV){DEV=(self.crypto&&crypto.randomUUID)?crypto.randomUUID():('d'+Date.now()+Math.random().toString(36).slice(2));localStorage.setItem('mira_device',DEV);}
@@ -654,7 +664,7 @@ function showLook(img,pecas){
 function _primeiro(nome){return (''+(nome||'')).trim().split(' ')[0]||'cliente';}
 var _filaN=0,_temPendente=false,_filaNomes=[];
 function _fila_setChip(){var el=$('fila');if(!el)return;if(!_temPendente&&_filaN<=0){el.style.display='none';return;}el.style.display='inline-flex';var n=_filaN;el.textContent=n>0?('⏳ '+n+' look'+(n>1?'s':'')+' gerando'):'⏳ gerando…';}
-function _entregarLook(trayKey,row){var item={img:row.image,nome:row.cliente,occ:row.occ||'',pecas:(row.pecas?(''+row.pecas).split(', ').filter(Boolean):[]),sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(trayKey)||'[]');arr.push(item);localStorage.setItem(trayKey,JSON.stringify(arr));}catch(e){}}}
+function _entregarLook(trayKey,row){var item={img:row.image,nome:row.cliente,occ:row.occ||'',pecas:(row.pecas?(''+row.pecas).split(', ').filter(Boolean):[]),sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(trayKey)||'[]');arr.push(item);localStorage.setItem(trayKey,JSON.stringify(arr));}catch(e){}}try{addRecente(row.person_key||trayKey.replace('mira_celtray_'+S.vend+'_',''),row.cliente||item.nome);}catch(e){}}
 function sincronizarFila(force){if(!S.vend)return;if(!force&&!_temPendente)return;fetch('/fila?vend='+encodeURIComponent(S.vend)).then(function(r){return r.json();}).then(function(d){var rows=(d&&d.fila)||[];var gerando=0,delIds=[];_filaNomes=[];rows.forEach(function(row){if(row.status==='pronto'&&row.image){var tk='mira_celtray_'+(row.vend||S.vend)+'_'+(row.person_key||'');_entregarLook(tk,row);toast('✓ Look de '+_primeiro(row.cliente)+' pronto 💛');delIds.push(row.id);}else if(row.status==='erro'){toast('Não consegui gerar o look de '+_primeiro(row.cliente)+' — tenta de novo');delIds.push(row.id);}else{gerando++;_filaNomes.push(_primeiro(row.cliente));}});if(delIds.length){fetch('/fila/limpar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:delIds})}).catch(function(){});}_filaN=gerando;_temPendente=gerando>0;_fila_setChip();}).catch(function(){});}
 ger.onclick=()=>{
  if(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto){var tr=$('trocar');toast('Falta a foto de '+(S.pessoa.nome||'sua cliente')+' pra vestir — toque em “Trocar a foto desta cliente” 💛');if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(function(){tr.style.boxShadow='';},2400);}return;}
@@ -676,6 +686,46 @@ ger.onclick=()=>{
  }).catch(function(){toast('Servidor offline — tenta de novo');_filaN=Math.max(0,_filaN-1);_fila_setChip();});
 };
 setInterval(function(){sincronizarFila(false);},8000);
+/* ---- Mesa de venda: abrir/fechar MANUAL + barra "Clientes de hoje" (últimas geradas) ---- */
+function mesaAberta(){try{return localStorage.getItem('mira_mesa_aberta')!=='0';}catch(e){return true;}}
+function aplicarMesa(){var m=$('mesa'),c=$('mesacaret');var ab=mesaAberta();if(m)m.style.display=ab?'block':'none';if(c)c.textContent=ab?'⌄':'›';}
+function abrirMesa(v){try{localStorage.setItem('mira_mesa_aberta',v?'1':'0');}catch(e){}aplicarMesa();}
+if($('mesahdr'))$('mesahdr').onclick=function(){abrirMesa(!mesaAberta());};
+function _recKey(){return 'mira_recentes_'+(S.vend||'x');}
+function loadRecentes(){try{return JSON.parse(localStorage.getItem(_recKey())||'[]');}catch(e){return [];}}
+function saveRecentes(a){try{localStorage.setItem(_recKey(),JSON.stringify(a.slice(0,10)));}catch(e){}}
+function addRecente(key,nome){if(!key)return;var a=loadRecentes().filter(function(x){return x.key!==key;});a.unshift({key:key,nome:nome||''});saveRecentes(a);renderRecentes();}
+function _trayDe(key){try{return JSON.parse(localStorage.getItem('mira_celtray_'+S.vend+'_'+key)||'[]').filter(function(b){return b.img;});}catch(e){return [];}}
+function _fotoDe(key){var p=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes()).find(function(x){return x.key===key;});return p&&p.foto?p.foto:'';}
+function clientesComLook(){
+  var vis={},out=[];
+  loadRecentes().forEach(function(r){var t=_trayDe(r.key);if(t.length){vis[r.key]=1;out.push({key:r.key,nome:r.nome||(t[0]&&t[0].nome)||'',tray:t});}});
+  try{var pre='mira_celtray_'+S.vend+'_';for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0){var key=k.slice(pre.length);if(vis[key])continue;var t=_trayDe(key);if(t.length){vis[key]=1;out.push({key:key,nome:(t[0]&&t[0].nome)||'',tray:t});}}}}catch(e){}
+  return out.slice(0,10);
+}
+function renderRecentes(){
+  var el=$('recentes');if(!el)return;
+  var a=clientesComLook();
+  var pend=a.filter(function(c){return c.tray.some(function(b){return !b.lookid&&!b.enviado;});}).length;
+  var mc=$('mesacount');if(mc)mc.textContent=a.length?(' · '+a.length+' cliente'+(a.length>1?'s':'')+(pend?(' · '+pend+' a enviar'):'')):'';
+  if(!a.length){el.innerHTML='<div style="color:var(--mut);font-size:12px;padding:4px 2px 8px;">Os looks que você gerar aparecem aqui, por cliente, pra enviar num toque 💛</div>';return;}
+  el.innerHTML='<div style="font-size:10.5px;color:var(--gold2);margin:0 0 7px;font-weight:700;letter-spacing:.04em;">CLIENTES DE HOJE — toque pra abrir e enviar</div><div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:5px;">'+a.map(function(c){
+    var nm=_primeiro(c.nome)||'cliente',pd=c.tray.some(function(b){return !b.lookid&&!b.enviado;}),sel=(S.pessoa&&c.key===S.pessoa.key),foto=_fotoDe(c.key);
+    var av=foto?('<img src="'+foto+'" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid '+(sel?'var(--gold)':'transparent')+';">'):('<div style="width:52px;height:52px;border-radius:50%;background:var(--panel2);border:2px solid '+(sel?'var(--gold)':'var(--line)')+';display:flex;align-items:center;justify-content:center;color:var(--gold2);font-family:\'Fraunces\',serif;font-size:22px;box-sizing:border-box;">'+(nm.charAt(0).toUpperCase()||'?')+'</div>');
+    return '<div class="rchip" data-key="'+c.key+'" style="flex:0 0 auto;width:58px;text-align:center;cursor:pointer;position:relative;">'+av+(pd?'<span style="position:absolute;top:0;right:4px;width:13px;height:13px;background:#C0392B;border-radius:50%;border:2px solid var(--bg);"></span>':'')+'<div style="font-size:10.5px;margin-top:3px;line-height:1.1;">'+nm+'</div><div style="font-size:9px;color:var(--mut);">'+c.tray.length+' look'+(c.tray.length>1?'s':'')+'</div></div>';
+  }).join('')+'</div>';
+  el.querySelectorAll('.rchip').forEach(function(x){x.onclick=function(){abrirCliente(x.getAttribute('data-key'));};});
+}
+function abrirCliente(key){
+  var p=(typeof FOTOS!=='undefined'?FOTOS:[]).concat(getClientes()).find(function(x){return x.key===key;});
+  if(!p){var t=_trayDe(key);p={key:key,nome:(t[0]&&t[0].nome)||'Cliente'};}
+  S.tipo='cli';var tgc=$('tgc'),tgi=$('tgi');if(tgc)tgc.classList.add('on');if(tgi)tgi.classList.remove('on');
+  S.pessoa=p;loadTray();renderPessoas();renderGrid();renderBig();renderBand();renderRecentes();upd();
+  if(!mesaAberta())abrirMesa(true);
+  var m=$('mesahdr');if(m)m.scrollIntoView({behavior:'smooth',block:'start'});
+  toast('Histórico de '+(_primeiro(p.nome)||'cliente')+' — selecione e envie 💛');
+}
+aplicarMesa();renderRecentes();
 function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
   if(!arr.length){b.innerHTML='';renderResumo();return;}
@@ -775,6 +825,7 @@ async function enviar(){
  const send=S.bandeja.filter(b=>b.img&&b.sel!==false);
  if(!send.length){toast('Selecione ao menos 1 look');return;}
  try{send.forEach(function(it){fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})}).catch(function(){});});}catch(e){}
+ try{send.forEach(function(it){it.enviado=true;});saveTray();renderBand();renderRecentes();}catch(e){}
  var _allp=[];send.forEach(function(it){(it.pecas||[]).forEach(function(f){if(_allp.indexOf(f)<0)_allp.push(f);});});
  const msg=fraseLook()+ofertaLook(_allp);
  try{const files=[];for(const it of send){const r=await fetch(it.img);let bl=await r.blob();bl=await watermarkBlob(bl);files.push(new File([bl],'look.jpg',{type:'image/jpeg'}));}
@@ -827,7 +878,7 @@ async function enviarResposta(){
  var id='';
  try{var r=await fetch('/look',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:it.img,cliente:nomeCliente(),vend:S.vend,pecas:it.pecas||[],occ:it.occ})});var d=await r.json();id=d.id||'';}catch(e){}
  if(!id){toast('Sem conexão — tente de novo');return;}
- it.lookid=id;it.enviado=true;saveTray();renderBig();renderBand();
+ it.lookid=id;it.enviado=true;saveTray();renderBig();renderBand();try{renderRecentes();}catch(e){}
  var link=location.origin+'/estudio/look.html?id='+id;
  var msg=fraseLook()+ofertaLook(it.pecas)+'\n👉 Toque pra ver e me dizer o que achou:\n'+link;
  try{if(navigator.share){await navigator.share({title:'Um look pra você',text:msg});toast('Aberto pra enviar ✓');return;}}catch(e){if(e&&e.name==='AbortError')return;}
@@ -835,7 +886,7 @@ async function enviarResposta(){
 }
 $('resposta').onclick=enviarResposta;
 $('novo').onclick=()=>{S.pecas=[];S.occ=null;[...occEl.children].forEach(x=>x.classList.remove('on'));renderGrid();upd();renderBig();toast('Monte o próximo look ✓');};
-$('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();toast('Galeria limpa ✓');};
+$('limpar').onclick=()=>{S.bandeja=[];S.view=0;saveTray();renderBig();renderBand();try{renderRecentes();}catch(e){}toast('Galeria limpa ✓');};
 
 /* ---- Bloco 2: Biblioteca de looks (cardápio) — receita de peças, pessoa trocável ---- */
 function looksKey(){return 'mira_looks_'+(S.vend||'x');}
