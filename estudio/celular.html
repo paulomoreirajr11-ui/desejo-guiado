@@ -103,6 +103,7 @@
   .bthumb img{width:46px;height:58px;object-fit:cover;border-radius:7px;display:block;border:2px solid transparent;}
   .bthumb.cur img{border-color:var(--gold);}
   .bthumb.off img{opacity:.3;}
+  .bthumb .bdt{position:absolute;left:0;right:0;bottom:0;background:rgba(20,16,10,.78);color:#F3E7CC;font-size:8px;line-height:1.35;text-align:center;padding:1px 0 2px;border-radius:0 0 7px 7px;pointer-events:none;font-weight:600;letter-spacing:.2px;}
   .bthumb .bx{position:absolute;top:1px;right:1px;width:16px;height:16px;border-radius:50%;background:rgba(122,30,43,.92);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .bthumb .bsel{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:rgba(14,14,14,.5);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .bthumb .bsel.on{background:var(--gold);color:#1A1408;}
@@ -205,7 +206,7 @@
       <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
       <div id="recentes" style="margin-top:10px;"></div>
       <div class="band" id="band"></div>
-      <div id="bandnota" style="display:none;font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5;">Só os looks de <b>hoje</b> vêm marcados. Os de outros dias ficam apagados — toque no <b>✓</b> se quiser mandar um deles junto.</div>
+      <div id="bandnota" style="display:none;font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5;">Só os looks de <b>hoje</b> vêm marcados. Os de outros dias ficam apagados e <b>com a data</b> — toque no <b>✓</b> se quiser mandar um deles junto.</div>
       <button class="wpp" id="wpp" disabled style="margin-top:8px;"><span>🟢</span> Enviar no WhatsApp</button>
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button class="wpp" id="resposta" disabled style="background:var(--gold);color:#1A1408;margin:0;flex:1;font-size:13px;padding:12px 6px;">💬 com resposta</button>
@@ -423,6 +424,7 @@ function trayKey(){return S.pessoa?('mira_celtray_'+S.vend+'_'+S.pessoa.key):nul
 function saveTray(){const k=trayKey();if(k)localStorage.setItem(k,JSON.stringify(S.bandeja));}
 function _diaKey(d){d=d?new Date(d):new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function ehDeHoje(it){return !!(it&&it.ts)&&_diaKey(it.ts)===_diaKey();}
+function selosDia(it){if(!it||ehDeHoje(it))return '';if(!it.ts)return 'antigo';var d=new Date(it.ts),o=new Date();o.setDate(o.getDate()-1);if(_diaKey(d)===_diaKey(o))return 'ontem';var dif=Math.round((new Date(_diaKey())-new Date(_diaKey(d)))/86400000);if(dif>1&&dif<7)return ['dom','seg','ter','qua','qui','sex','sáb'][d.getDay()];return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2);}
 function marcarSoHoje(){try{S.bandeja.forEach(function(it){it.sel=ehDeHoje(it);});}catch(e){}}
 function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];marcarSoHoje();S.view=S.bandeja.length-1;S.reacoes={};carregarReacoes();}
 
@@ -750,7 +752,7 @@ function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
   try{var nt=$('bandnota');if(nt)nt.style.display=(arr.length&&arr.some(function(o){return !ehDeHoje(o.it);}))?'block':'none';}catch(e){}
   if(!arr.length){b.innerHTML='';renderResumo();return;}
-  b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;var st=lookStatus(o.it);return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'">'+(st?'<span style="position:absolute;top:3px;left:3px;font-size:13px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));pointer-events:none;">'+st.e+'</span>':'')+'<span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span></div>';}).join('');
+  b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;var st=lookStatus(o.it);return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'">'+(st?'<span style="position:absolute;top:3px;left:3px;font-size:13px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));pointer-events:none;">'+st.e+'</span>':'')+'<span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span>'+(function(){var dt=selosDia(o.it);return dt?'<span class="bdt">'+dt+'</span>':'';})()+'</div>';}).join('');
   b.querySelectorAll('.bthumb').forEach(t=>t.onclick=e=>{if(e.target.classList.contains('bx')||e.target.classList.contains('bsel'))return;S.view=+t.dataset.i;renderBig();renderBand();});
   b.querySelectorAll('.bsel').forEach(s=>s.onclick=e=>{e.stopPropagation();var i=+s.dataset.s;S.bandeja[i].sel=(S.bandeja[i].sel===false);saveTray();renderBig();renderBand();});
   b.querySelectorAll('.bx').forEach(x=>x.onclick=e=>{e.stopPropagation();S.bandeja.splice(+x.dataset.x,1);if(S.view>S.bandeja.length-1)S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();});
