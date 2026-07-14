@@ -205,6 +205,7 @@
       <div class="res" id="res"><div class="ph"><span class="big">A cliente, produzida</span>escolha a pessoa, toque nas peças e na ocasião</div></div>
       <div id="recentes" style="margin-top:10px;"></div>
       <div class="band" id="band"></div>
+      <div id="bandnota" style="display:none;font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5;">Só os looks de <b>hoje</b> vêm marcados. Os de outros dias ficam apagados — toque no <b>✓</b> se quiser mandar um deles junto.</div>
       <button class="wpp" id="wpp" disabled style="margin-top:8px;"><span>🟢</span> Enviar no WhatsApp</button>
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button class="wpp" id="resposta" disabled style="background:var(--gold);color:#1A1408;margin:0;flex:1;font-size:13px;padding:12px 6px;">💬 com resposta</button>
@@ -420,7 +421,10 @@ function saveFotos(){try{if(FOTOS.length>12)FOTOS=FOTOS.slice(0,12);localStorage
 let S={vend:localStorage.getItem('mira_vendedora')||VENDEDORAS[0],tipo:'cli',pessoa:null,cat:'Todas',busca:'',pecas:[],occ:null,fundo:'cena',view:0,bandeja:[]};
 function trayKey(){return S.pessoa?('mira_celtray_'+S.vend+'_'+S.pessoa.key):null;}
 function saveTray(){const k=trayKey();if(k)localStorage.setItem(k,JSON.stringify(S.bandeja));}
-function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];S.view=S.bandeja.length-1;S.reacoes={};carregarReacoes();}
+function _diaKey(d){d=d?new Date(d):new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function ehDeHoje(it){return !!(it&&it.ts)&&_diaKey(it.ts)===_diaKey();}
+function marcarSoHoje(){try{S.bandeja.forEach(function(it){it.sel=ehDeHoje(it);});}catch(e){}}
+function loadTray(){const k=trayKey();S.bandeja=k?JSON.parse(localStorage.getItem(k)||'[]'):[];marcarSoHoje();S.view=S.bandeja.length-1;S.reacoes={};carregarReacoes();}
 
 const vend=$('vend');
 let _qv=new URLSearchParams(location.search).get('vend');
@@ -666,7 +670,7 @@ function renderBig(){
   updWpp();
 }
 function showLook(img,pecas){
-  S.bandeja.push({img:img,nome:S.pessoa.nome,occ:S.occ,pecas:pecas||[],sel:true});
+  S.bandeja.push({img:img,nome:S.pessoa.nome,occ:S.occ,pecas:pecas||[],sel:true,ts:Date.now()});
   S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();
   S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();
   upd();toast('Look pronto ✓ — escolha as próximas peças');
@@ -675,7 +679,7 @@ function showLook(img,pecas){
 function _primeiro(nome){return (''+(nome||'')).trim().split(' ')[0]||'cliente';}
 var _filaN=0,_temPendente=false,_filaNomes=[];
 function _fila_setChip(){var el=$('fila');if(!el)return;if(!_temPendente&&_filaN<=0){el.style.display='none';return;}el.style.display='inline-flex';var n=_filaN;el.textContent=n>0?('⏳ '+n+' look'+(n>1?'s':'')+' gerando'):'⏳ gerando…';}
-function _entregarLook(trayKey,row){var item={img:row.image,nome:row.cliente,occ:row.occ||'',pecas:((row.ids&&row.ids.length)?row.ids.slice():(row.pecas?(''+row.pecas).split(', ').filter(Boolean):[])),sel:true};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(trayKey)||'[]');arr.push(item);localStorage.setItem(trayKey,JSON.stringify(arr));}catch(e){}}try{addRecente(row.person_key||trayKey.replace('mira_celtray_'+S.vend+'_',''),row.cliente||item.nome);}catch(e){}}
+function _entregarLook(trayKey,row){var item={img:row.image,nome:row.cliente,occ:row.occ||'',pecas:((row.ids&&row.ids.length)?row.ids.slice():(row.pecas?(''+row.pecas).split(', ').filter(Boolean):[])),sel:true,ts:Date.now()};if(S.pessoa&&('mira_celtray_'+S.vend+'_'+S.pessoa.key)===trayKey){S.bandeja.push(item);S.view=S.bandeja.length-1;saveTray();renderBig();renderBand();}else{try{var arr=JSON.parse(localStorage.getItem(trayKey)||'[]');arr.push(item);localStorage.setItem(trayKey,JSON.stringify(arr));}catch(e){}}try{addRecente(row.person_key||trayKey.replace('mira_celtray_'+S.vend+'_',''),row.cliente||item.nome);}catch(e){}}
 function sincronizarFila(force){if(!S.vend)return;if(!force&&!_temPendente)return;fetch('/fila?vend='+encodeURIComponent(S.vend)).then(function(r){return r.json();}).then(function(d){var rows=(d&&d.fila)||[];var gerando=0,delIds=[];_filaNomes=[];rows.forEach(function(row){if(row.status==='pronto'&&row.image){var tk='mira_celtray_'+(row.vend||S.vend)+'_'+(row.person_key||'');_entregarLook(tk,row);toast('✓ Look de '+_primeiro(row.cliente)+' pronto 💛');delIds.push(row.id);}else if(row.status==='erro'){toast('Não consegui gerar o look de '+_primeiro(row.cliente)+' — tenta de novo');delIds.push(row.id);}else{gerando++;_filaNomes.push(_primeiro(row.cliente));}});if(delIds.length){fetch('/fila/limpar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids:delIds})}).catch(function(){});}_filaN=gerando;_temPendente=gerando>0;_fila_setChip();}).catch(function(){});}
 ger.onclick=()=>{
  if(S.tipo==='cli'&&S.pessoa&&!S.pessoa.foto){var tr=$('trocar');toast('Falta a foto de '+(S.pessoa.nome||'sua cliente')+' pra vestir — toque em “Trocar a foto desta cliente” 💛');if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(function(){tr.style.boxShadow='';},2400);}return;}
@@ -744,6 +748,7 @@ function abrirCliente(key){
 aplicarMesa();renderRecentes();
 function renderBand(){
   const b=$('band');const arr=S.bandeja.map((it,i)=>({it,i})).filter(o=>o.it.img);
+  try{var nt=$('bandnota');if(nt)nt.style.display=(arr.length&&arr.some(function(o){return !ehDeHoje(o.it);}))?'block':'none';}catch(e){}
   if(!arr.length){b.innerHTML='';renderResumo();return;}
   b.innerHTML=arr.map(function(o){var sel=o.it.sel!==false;var st=lookStatus(o.it);return '<div class="bthumb'+(o.i===S.view?' cur':'')+(sel?'':' off')+'" data-i="'+o.i+'"><img src="'+o.it.img+'">'+(st?'<span style="position:absolute;top:3px;left:3px;font-size:13px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));pointer-events:none;">'+st.e+'</span>':'')+'<span class="bsel'+(sel?' on':'')+'" data-s="'+o.i+'">'+(sel?'✓':'+')+'</span><span class="bx" data-x="'+o.i+'">✕</span></div>';}).join('');
   b.querySelectorAll('.bthumb').forEach(t=>t.onclick=e=>{if(e.target.classList.contains('bx')||e.target.classList.contains('bsel'))return;S.view=+t.dataset.i;renderBig();renderBand();});
