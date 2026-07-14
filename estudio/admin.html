@@ -131,8 +131,26 @@
     <span style="font-size:12px;color:var(--mut);">toque numa imagem para ampliar e dar zoom</span>
   </div>
   <div class="lookgrid" id="looksger"></div>
-  <h2 class="sec">🌐 Mesa Geral — estoque compartilhado</h2>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;">Peças que as vendedoras deixaram "pra todas". Toque numa peça pra ver grande e poder tirar do estoque.</div>
+  <h2 class="sec">⭐ Achado da Semana — a Mesa Geral</h2>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;">Peça que aparece no estoque de <b>todas</b> as vendedoras. Quando ela monta um look com essa peça, a mensagem do WhatsApp já sai com a oferta ("olha que oportunidade: … por R$ …"). <b>Sem valor, a oferta não sai.</b> Toque numa peça pra ver grande e poder tirar da Mesa.</div>
+  <div style="background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:14px;margin-bottom:14px;max-width:720px;">
+    <div style="font-weight:600;color:var(--off);margin-bottom:10px;">⭐ Subir uma peça pra todas</div>
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <img id="mgthumb" style="width:78px;height:104px;object-fit:cover;border-radius:10px;background:var(--panel2);border:1px solid var(--line);">
+      <div style="flex:1;min-width:230px;display:flex;flex-direction:column;gap:8px;">
+        <input type="file" id="mgfoto" accept="image/*" style="font-family:inherit;font-size:13px;color:var(--mut);">
+        <input id="mgnome" placeholder="Nome da peça — ex: Blazer alfaiataria" style="padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--panel2);color:var(--off);">
+        <input id="mgvalor" inputmode="decimal" placeholder="Valor R$ — ex: 890 (obrigatório: vira a oferta)" style="padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--panel2);color:var(--off);">
+        <input id="mgtam" placeholder="Tamanhos — ex: 38-44, ou 40, ou P,M,G" style="padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--panel2);color:var(--off);">
+        <select id="mgcat" style="padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--panel2);color:var(--off);">
+          <option value="">Categoria (onde ela aparece no filtro)</option>
+          <option>Vestidos</option><option>Casual</option><option>Festa Noite</option><option>Terninho</option><option>Conjunto</option><option>Acessórios</option><option>Praia</option><option>Academia</option>
+        </select>
+        <button id="mgsubir" style="padding:12px;border:none;border-radius:12px;background:var(--gold);color:#1A1408;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">⭐ Subir pra todas</button>
+        <div id="mgmsg" style="font-size:12px;color:var(--mut);"></div>
+      </div>
+    </div>
+  </div>
   <div class="lookgrid" id="mesageral"></div>
   <h2 class="sec">Reações das clientes</h2>
   <div class="atfeed" id="reacoes"></div>
@@ -212,7 +230,7 @@ async function carregar(){
   }
   // Mesa Geral (estoque compartilhado)
   try{ var _pj=await (await fetch('/pecas')).json(); var _pcs=_pj.pecas||[];
-    document.getElementById('mesageral').innerHTML=_pcs.length?_pcs.map(function(p){var t=(p.tam&&p.tam.length)?' · T '+Math.min.apply(null,p.tam)+'–'+Math.max.apply(null,p.tam):'';return '<div class="lktile" data-sku="'+p.f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+(p.nome||'peça')+t+(p.vend?' · '+p.vend:'')+'</div></div>';}).join(''):'<div class="empty">Nada na Mesa Geral ainda. Quando uma vendedora deixar uma peça "pra todas", aparece aqui.</div>';
+    document.getElementById('mesageral').innerHTML=_pcs.length?_pcs.map(function(p){var t=(p.tam&&p.tam.length)?' · T '+Math.min.apply(null,p.tam)+'–'+Math.max.apply(null,p.tam):'';var pr=(''+(p.preco||'')).trim();var val=pr?'<span style="color:var(--gold2);font-weight:600;">R$ '+pr+'</span>':'<span style="color:#B4342C;font-weight:600;">sem valor — a oferta não sai</span>';return '<div class="lktile" data-sku="'+p.f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+(p.nome||'peça')+t+(p.vend?' · '+p.vend:'')+'<br>'+val+'</div></div>';}).join(''):'<div class="empty">Nada na Mesa Geral ainda. Suba uma peça aqui em cima, ou espere uma vendedora deixar uma "pra todas".</div>';
   }catch(e){ var _m=document.getElementById('mesageral'); if(_m)_m.innerHTML='<div class="empty">erro ao carregar a Mesa Geral</div>'; }
   var ck=Object.keys(claims);
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
@@ -233,6 +251,36 @@ function _closeLB(){var lb=document.getElementById('lightbox');if(lb)lb.style.di
 (function(){var lb=document.getElementById('lightbox');if(!lb)return;lb.onclick=_closeLB;var x=document.getElementById('lbx');if(x)x.onclick=function(e){e.stopPropagation();_closeLB();};var i=document.getElementById('lbimg');if(i)i.onclick=function(e){e.stopPropagation();var big=this.style.transform==='scale(2.2)';this.style.transform=big?'scale(1)':'scale(2.2)';this.style.cursor=big?'zoom-in':'zoom-out';};})();
 var _lg=document.getElementById('looksger');if(_lg)_lg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src);});
 var _mg=document.getElementById('mesageral');if(_mg)_mg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src,tile.dataset.sku);});
+
+// ---- Achado da Semana: subir peça pra todas, direto do painel ----
+var _mgData=null;
+var LET={'PP':36,'P':38,'M':40,'G':44,'GG':48};
+function mgTam(s){s=(s||'').trim();if(!s)return null;function num(t){t=t.trim().toUpperCase();return /^\d+$/.test(t)?+t:(LET[t]||0);}var rm=s.match(/^(.+?)\s*[-–]\s*(.+)$/);if(rm){var a=num(rm[1]),b=num(rm[2]);if(a&&b){if(b<a){var z=a;a=b;b=z;}var arr=[];for(var i=a;i<=b;i++)arr.push(i);return arr;}}var out=[];s.split(/[,;\/\s]+/).forEach(function(t){var n=num(t);if(n)out.push(n);});out=Array.from(new Set(out)).sort(function(x,y){return x-y;});return out.length?out:null;}
+function mgMsg(t,erro){var m=document.getElementById('mgmsg');if(m){m.textContent=t;m.style.color=erro?'#B4342C':'var(--gold2)';}}
+var _mgf=document.getElementById('mgfoto');
+if(_mgf)_mgf.onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(ev){var img=new Image();img.onload=function(){var mx=420,c=document.createElement('canvas');var w=img.width,h=img.height;if(w>mx){h=Math.round(h*mx/w);w=mx;}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);_mgData=c.toDataURL('image/jpeg',.8);document.getElementById('mgthumb').src=_mgData;mgMsg('Foto pronta ✓');};img.src=ev.target.result;};rd.readAsDataURL(f);};
+var _mgb=document.getElementById('mgsubir');
+if(_mgb)_mgb.onclick=function(){
+  var nome=(document.getElementById('mgnome').value||'').trim();
+  var preco=(document.getElementById('mgvalor').value||'').trim();
+  var cat=document.getElementById('mgcat').value||'';
+  var tam=mgTam(document.getElementById('mgtam').value);
+  if(!_mgData){mgMsg('Escolha a foto da peça.',1);return;}
+  if(!preco){mgMsg('Coloque o valor — é ele que vira a oferta no WhatsApp.',1);document.getElementById('mgvalor').focus();return;}
+  if(!nome){mgMsg('Dê um nome pra peça.',1);document.getElementById('mgnome').focus();return;}
+  _mgb.disabled=true;mgMsg('Subindo…');
+  fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku:'share_'+Date.now(),img:_mgData,cat:cat,nome:nome,tam:tam,preco:preco,vend:'Painel'})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      _mgb.disabled=false;
+      if(d&&d.ok===false){mgMsg('não subiu: '+(d.error||d.skip||'erro'),1);return;}
+      mgMsg('⭐ No estoque de todas as vendedoras ✓');
+      _mgData=null;document.getElementById('mgthumb').removeAttribute('src');
+      ['mgnome','mgvalor','mgtam','mgfoto'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+      document.getElementById('mgcat').value='';
+      carregar();
+    }).catch(function(){_mgb.disabled=false;mgMsg('não subiu (rede).',1);});
+};
 var _fc=document.getElementById('fichas');if(_fc)_fc.addEventListener('click',function(e){if(e.target.tagName==='IMG'&&e.target.closest('.ficard'))openLB(e.target.src);});
 async function carregarPlacar(periodo){
   var host=document.getElementById('placar'); if(!host)return;
