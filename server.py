@@ -789,12 +789,33 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
             "She must remain INSTANTLY recognizable as that exact same real woman. Do NOT beautify, rejuvenate, slim her, "
             "change her hair color or hair length, remove her glasses, or turn her into a young fashion model. "
             "Hair and makeup: " + beauty + " — you may arrange the hair to suit the occasion, but ALWAYS keep its real color and real length. "
+            # --- CORPO FIEL: nem mais gorda, nem mais magra (a IA estava ENGORDANDO a cliente) ---
+            "HER BODY: reproduce her REAL body EXACTLY as it is in the FIRST reference image — the same height, the same "
+            "weight, the same silhouette and the same proportions (shoulders, bust, waist, hips, arms, legs). She is a real "
+            "customer, not a fashion model. Do NOT make her heavier, wider, thicker, rounder or bulkier than she really is; "
+            "and do NOT slim, stretch, tone or idealize her either. Her body must be TRUE. NEVER copy the body of the model "
+            "who appears in the garment reference photos — those images are there ONLY to show the clothes. If her legs or "
+            "hips are not visible in the reference, infer them conservatively from her visible proportions instead of "
+            "inventing a fuller body. "
+            # --- CAIMENTO: vestido justo tem que abraçar o corpo real, sem inventar volume ---
+            "HOW THE CLOTHES SIT ON HER: a fitted or body-hugging garment must follow her real silhouette smoothly and fall "
+            "naturally with gravity — the fabric skims the body. Do NOT add padding, bulk, thickness or extra volume under or "
+            "around the garment; do NOT bunch, crease or wrinkle the fabric in a way that adds width at the waist, stomach or "
+            "hips; do NOT stretch it as if the size were too small. It must look like the garment FITS her, in her own size. "
             "Background scene (only the setting around her — does NOT change her outfit): " + cena + ". " + pose + ". "
-            "Photographed beautifully: elegant professional fashion photography, soft directional key light with subtle rim "
-            "light, refined natural color grade with rich elegant tones, intentional negative space, 85mm lens, shallow depth "
-            "of field, full-length with the entire body from head to feet in frame, tack-sharp focus, natural photorealistic "
-            "skin texture, magazine-quality finish. This elegance must come ONLY from the lighting, the scene and the "
-            "composition — NEVER from altering the woman or her clothes. No text, no logos, no hanger.")
+            # --- FOTOGRAFIA QUE VALORIZA SEM MENTIR (pose 3/4 + luz lateral + lente longa) ---
+            "Photographed exactly like the boutique's own lookbook: she stands in a natural three-quarter turn — body angled "
+            "about 30-45 degrees from the camera, weight on the back leg, front leg slightly crossed in front, shoulders "
+            "relaxed and slightly angled, spine long, neck long, chin slightly forward and a touch down. Camera at chest "
+            "height and perfectly level: NEVER shot from below, NEVER a wide-angle or selfie perspective (those distort and "
+            "widen the body). 85-105mm portrait lens, no lens distortion. Directional key light from about 45 degrees to one "
+            "side, sculpting a soft shadow down the far side of her body, plus a subtle rim light separating her from the "
+            "background — the light must DEFINE her waistline honestly instead of flattening and widening her; avoid flat "
+            "frontal lighting. Full-length vertical framing with the entire body from head to shoes in frame, shoes visible, "
+            "generous headroom. Refined natural color grade with rich elegant tones, shallow depth of field, tack-sharp "
+            "focus, natural photorealistic skin texture, magazine-quality finish. Every bit of the flattery must come ONLY "
+            "from the pose, the lighting, the lens and the scene — NEVER from changing her body or her clothes. "
+            "No text, no logos, no hanger.")
 
 def to_uri(v):
     """data-uri ou http(s) passa direto; caminho local vira data-uri."""
@@ -986,7 +1007,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-14_3-destinos", "ok": True})
+            return self._json(200, {"version": "2026-07-14_corpo-fiel", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
