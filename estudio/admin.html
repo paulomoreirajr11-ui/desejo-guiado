@@ -146,11 +146,13 @@
           <option value="">Categoria (onde ela aparece no filtro)</option>
           <option>Vestidos</option><option>Casual</option><option>Festa Noite</option><option>Terninho</option><option>Conjunto</option><option>Acessórios</option><option>Praia</option><option>Academia</option>
         </select>
-        <button id="mgsubir" style="padding:12px;border:none;border-radius:12px;background:var(--gold);color:#1A1408;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">⭐ Subir pra todas</button>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--off);cursor:pointer;"><input type="checkbox" id="mgachado" checked style="width:17px;height:17px;"> <b>⭐ Achado da Semana</b> — leva a oferta no zap (exige o valor). Desmarque pra entrar só como <b>estoque da loja</b>.</label>
+        <button id="mgsubir" style="padding:12px;border:none;border-radius:12px;background:var(--gold);color:#1A1408;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Subir pra todas</button>
         <div id="mgmsg" style="font-size:12px;color:var(--mut);"></div>
       </div>
     </div>
   </div>
+  <div id="mgcount" style="font-size:12px;color:var(--mut);margin-bottom:8px;"></div>
   <div class="lookgrid" id="mesageral"></div>
   <h2 class="sec">Reações das clientes</h2>
   <div class="atfeed" id="reacoes"></div>
@@ -230,7 +232,18 @@ async function carregar(){
   }
   // Mesa Geral (estoque compartilhado)
   try{ var _pj=await (await fetch('/pecas')).json(); var _pcs=_pj.pecas||[];
-    document.getElementById('mesageral').innerHTML=_pcs.length?_pcs.map(function(p){var t=(p.tam&&p.tam.length)?' · T '+Math.min.apply(null,p.tam)+'–'+Math.max.apply(null,p.tam):'';var pr=(''+(p.preco||'')).trim();var val=pr?'<span style="color:var(--gold2);font-weight:600;">R$ '+pr+'</span>':'<span style="color:#B4342C;font-weight:600;">sem valor — a oferta não sai</span>';return '<div class="lktile" data-sku="'+p.f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+(p.nome||'peça')+t+(p.vend?' · '+p.vend:'')+'<br>'+val+'</div></div>';}).join(''):'<div class="empty">Nada na Mesa Geral ainda. Suba uma peça aqui em cima, ou espere uma vendedora deixar uma "pra todas".</div>';
+    var _nach=_pcs.filter(function(p){return /^share_/.test(p.f||'');}).length;
+    var _cont=document.getElementById('mgcount');
+    if(_cont)_cont.textContent=_pcs.length?(_pcs.length+' peças na mesa de todas · ⭐ '+_nach+' Achado'+(_nach===1?'':'s')+' da Semana · 👗 '+(_pcs.length-_nach)+' estoque da loja'):'';
+    document.getElementById('mesageral').innerHTML=_pcs.length?_pcs.map(function(p){
+      var ach=/^share_/.test(p.f||'');
+      var t=(p.tam&&p.tam.length)?' · T '+Math.min.apply(null,p.tam)+'–'+Math.max.apply(null,p.tam):'';
+      var pr=(''+(p.preco||'')).trim();
+      var val=pr?'<span style="color:var(--gold2);font-weight:600;">R$ '+pr+'</span>'
+                :(ach?'<span style="color:#B4342C;font-weight:600;">sem valor — a oferta não sai</span>':'<span style="color:var(--mut);">sem valor</span>');
+      var selo=ach?'<span style="color:var(--gold2);font-weight:700;">★ Achado</span> · ':'';
+      return '<div class="lktile" data-sku="'+p.f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+selo+(p.nome||'peça')+t+(p.vend?' · '+p.vend:'')+'<br>'+val+'</div></div>';
+    }).join(''):'<div class="empty">Nada na mesa ainda. Suba uma peça aqui em cima, ou espere uma vendedora deixar uma "pra todas".</div>';
   }catch(e){ var _m=document.getElementById('mesageral'); if(_m)_m.innerHTML='<div class="empty">erro ao carregar a Mesa Geral</div>'; }
   var ck=Object.keys(claims);
   document.getElementById('travas').innerHTML=ck.length?ck.map(function(v){return '<div class="atrow"><span class="who">🔒 '+v+'</span><span>aparelho registrado</span><span class="when">'+fmt(claims[v].ts)+' <button class="btn liberar" data-v="'+v+'" style="margin-left:8px;">Liberar</button></span></div>';}).join(''):'<div class="empty">Nenhum aparelho travado ainda. Quando a vendedora abrir o link dela, o celular fica registrado aqui.</div>';
@@ -265,16 +278,17 @@ if(_mgb)_mgb.onclick=function(){
   var preco=(document.getElementById('mgvalor').value||'').trim();
   var cat=document.getElementById('mgcat').value||'';
   var tam=mgTam(document.getElementById('mgtam').value);
+  var achado=document.getElementById('mgachado').checked;
   if(!_mgData){mgMsg('Escolha a foto da peça.',1);return;}
-  if(!preco){mgMsg('Coloque o valor — é ele que vira a oferta no WhatsApp.',1);document.getElementById('mgvalor').focus();return;}
+  if(achado&&!preco){mgMsg('Achado da Semana precisa do valor — é ele que vira a oferta no WhatsApp.',1);document.getElementById('mgvalor').focus();return;}
   if(!nome){mgMsg('Dê um nome pra peça.',1);document.getElementById('mgnome').focus();return;}
   _mgb.disabled=true;mgMsg('Subindo…');
-  fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku:'share_'+Date.now(),img:_mgData,cat:cat,nome:nome,tam:tam,preco:preco,vend:'Painel'})})
+  fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku:(achado?'share_':'estq_')+Date.now(),img:_mgData,cat:cat,nome:nome,tam:tam,preco:preco,vend:'Painel'})})
     .then(function(r){return r.json();})
     .then(function(d){
       _mgb.disabled=false;
       if(d&&d.ok===false){mgMsg('não subiu: '+(d.error||d.skip||'erro'),1);return;}
-      mgMsg('⭐ No estoque de todas as vendedoras ✓');
+      mgMsg((achado?'⭐ Achado da Semana':'👗 Estoque da loja')+' — já está na mesa de todas ✓');
       _mgData=null;document.getElementById('mgthumb').removeAttribute('src');
       ['mgnome','mgvalor','mgtam','mgfoto'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
       document.getElementById('mgcat').value='';

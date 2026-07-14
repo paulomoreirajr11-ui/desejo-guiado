@@ -61,14 +61,32 @@ def _ptam(t):
     except Exception:
         return None
 def load_pecas():
+    """Lista SEM a foto (só a URL). Com centenas de peças, mandar base64 travaria o celular."""
     if SB_ON:
         try:
-            rows = sb_req("GET", "pecas", "select=*&order=ts.desc") or []
-            return [{"f": r.get("sku"), "cap": r.get("img"), "cat": r.get("cat"),
+            rows = sb_req("GET", "pecas", "select=sku,cat,nome,tam,preco,vend&order=ts.desc") or []
+            return [{"f": r.get("sku"), "cap": "/peca/" + str(r.get("sku")) + ".jpg", "cat": r.get("cat"),
                      "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "preco": r.get("preco"), "vend": r.get("vend")} for r in rows]
         except Exception:
             pass
     return []
+
+_PECA_IMG = {}          # sku -> data-uri (cache em memória; a foto de uma peça nunca muda)
+def peca_img(sku):
+    if not sku:
+        return ""
+    if sku in _PECA_IMG:
+        return _PECA_IMG[sku]
+    img = ""
+    if SB_ON:
+        try:
+            rows = sb_req("GET", "pecas", "sku=eq." + urllib.parse.quote(str(sku)) + "&select=img") or []
+            img = (rows[0].get("img") if rows else "") or ""
+        except Exception:
+            img = ""
+    if img:
+        _PECA_IMG[sku] = img
+    return img
 
 # ---- Registro de uso por vendedora (painel do admin) ----
 USO_FILE = os.path.join(ROOT, "uso_log.json")
@@ -771,6 +789,10 @@ def build_prompt(ocasiao, estilo, pecas="", fundo="cena"):
 def to_uri(v):
     """data-uri ou http(s) passa direto; caminho local vira data-uri."""
     if not v: return v
+    if v.startswith("/peca/"):
+        sku = v[len("/peca/"):]
+        if sku.endswith(".jpg"): sku = sku[:-4]
+        return peca_img(sku) or v
     if v.startswith("data:") or v.startswith("http"): return v
     p = os.path.join(ROOT, v.replace("/", os.sep))
     if os.path.exists(p):
@@ -887,6 +909,27 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
     def do_GET(self):
         p = self.path.split("?")[0]
+        if p.startswith("/peca/"):
+            sku = p[len("/peca/"):]
+            if sku.endswith(".jpg"): sku = sku[:-4]
+            uri = peca_img(sku)
+            if not uri or "base64," not in uri:
+                self.send_response(404); self.end_headers(); return
+            try:
+                head, b64 = uri.split("base64,", 1)
+                raw = base64.b64decode(b64)
+            except Exception:
+                self.send_response(404); self.end_headers(); return
+            ctype = "image/jpeg"
+            if head.startswith("data:") and ";" in head:
+                ctype = head[5:].split(";", 1)[0] or "image/jpeg"
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(raw)))
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+            self.end_headers()
+            self.wfile.write(raw)
+            return
         if p == "/clube":
             return self._json(200, {"posts": load_clube()})
         if p == "/uso":
@@ -932,7 +975,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-14_tarja-dias", "ok": True})
+            return self._json(200, {"version": "2026-07-14_cadastro-serie", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -1099,6 +1142,7 @@ class Handler(SimpleHTTPRequestHandler):
                 n = int(self.headers.get("Content-Length", 0))
                 d = json.loads((self.rfile.read(n) or b"{}").decode("utf-8", "replace"))
                 if d.get("del"):
+                    _PECA_IMG.pop(str(d.get("del")), None)
                     if SB_ON:
                         try:
                             sb_req("DELETE", "pecas", "sku=eq." + urllib.parse.quote(str(d.get("del"))))
@@ -1114,6 +1158,7 @@ class Handler(SimpleHTTPRequestHandler):
                     return self._json(200, {"ok": False, "sb": False})
                 try:
                     sb_req("POST", "pecas", body=row)
+                    _PECA_IMG[str(d.get("sku"))] = d.get("img")
                     return self._json(200, {"ok": True, "sku": d.get("sku")})
                 except Exception as e:
                     return self._json(200, {"ok": False, "error": str(e)})
