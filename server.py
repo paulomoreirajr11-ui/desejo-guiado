@@ -60,13 +60,23 @@ def _ptam(t):
         return json.loads(t) if t else None
     except Exception:
         return None
-def load_pecas():
-    """Lista SEM a foto (só a URL). Com centenas de peças, mandar base64 travaria o celular."""
+def load_pecas(vend=""):
+    """Lista SEM a foto (só a URL). Com centenas de peças, mandar base64 travaria o celular.
+    sku: share_=Achado da Semana | estq_=estoque da loja (todas veem) | priv_=só da vendedora dona.
+    Peça privada só sai pra dona (vend). Sem vend (painel do admin) = tudo."""
     if SB_ON:
         try:
             rows = sb_req("GET", "pecas", "select=sku,cat,nome,tam,preco,vend&order=ts.desc") or []
-            return [{"f": r.get("sku"), "cap": "/peca/" + str(r.get("sku")) + ".jpg", "cat": r.get("cat"),
-                     "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "preco": r.get("preco"), "vend": r.get("vend")} for r in rows]
+            out = []
+            for r in rows:
+                sku = str(r.get("sku") or "")
+                priv = sku.startswith("priv_")
+                if priv and vend and (r.get("vend") or "") != vend:
+                    continue
+                out.append({"f": sku, "cap": "/peca/" + sku + ".jpg", "cat": r.get("cat"),
+                            "nome": r.get("nome"), "tam": _ptam(r.get("tam")), "preco": r.get("preco"),
+                            "vend": r.get("vend"), "priv": 1 if priv else 0})
+            return out
         except Exception:
             pass
     return []
@@ -935,7 +945,8 @@ class Handler(SimpleHTTPRequestHandler):
         if p == "/uso":
             return self._json(200, {"log": load_uso()})
         if p == "/pecas":
-            return self._json(200, {"pecas": load_pecas()})
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            return self._json(200, {"pecas": load_pecas((q.get("vend") or [""])[0])})
         if p == "/reserva":
             return self._json(200, {"reservas": load_reservas()})
         if p == "/look":
@@ -975,7 +986,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-14_cadastro-serie", "ok": True})
+            return self._json(200, {"version": "2026-07-14_3-destinos", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]

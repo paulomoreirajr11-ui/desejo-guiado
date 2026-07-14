@@ -132,7 +132,7 @@
   </div>
   <div class="lookgrid" id="looksger"></div>
   <h2 class="sec">⭐ Achado da Semana — a Mesa Geral</h2>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;">Peça que aparece no estoque de <b>todas</b> as vendedoras. Quando ela monta um look com essa peça, a mensagem do WhatsApp já sai com a oferta ("olha que oportunidade: … por R$ …"). <b>Sem valor, a oferta não sai.</b> Toque numa peça pra ver grande e poder tirar da Mesa.</div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.6;">Três tipos de peça: <b>⭐ Achado da Semana</b> (todas veem <b>e</b> a oferta vai pronta no WhatsApp — exige o valor) · <b>👗 estoque da loja</b> (todas veem, sem oferta) · <b>🔒 particular</b> (a vendedora cadastrou só pra ela — só ela vê, mas você pode apagar aqui). Toque numa peça pra ver grande e poder apagar.</div>
   <div style="background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:14px;margin-bottom:14px;max-width:720px;">
     <div style="font-weight:600;color:var(--off);margin-bottom:10px;">⭐ Subir uma peça pra todas</div>
     <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
@@ -233,16 +233,18 @@ async function carregar(){
   // Mesa Geral (estoque compartilhado)
   try{ var _pj=await (await fetch('/pecas')).json(); var _pcs=_pj.pecas||[];
     var _nach=_pcs.filter(function(p){return /^share_/.test(p.f||'');}).length;
+    var _npriv=_pcs.filter(function(p){return /^priv_/.test(p.f||'');}).length;
     var _cont=document.getElementById('mgcount');
-    if(_cont)_cont.textContent=_pcs.length?(_pcs.length+' peças na mesa de todas · ⭐ '+_nach+' Achado'+(_nach===1?'':'s')+' da Semana · 👗 '+(_pcs.length-_nach)+' estoque da loja'):'';
+    if(_cont)_cont.textContent=_pcs.length?(_pcs.length+' peças · ⭐ '+_nach+' Achado'+(_nach===1?'':'s')+' da Semana · 👗 '+(_pcs.length-_nach-_npriv)+' estoque da loja · 🔒 '+_npriv+' particular'+(_npriv===1?'':'es')+' de vendedora'):'';
     document.getElementById('mesageral').innerHTML=_pcs.length?_pcs.map(function(p){
-      var ach=/^share_/.test(p.f||'');
+      var f=p.f||'',ach=/^share_/.test(f),priv=/^priv_/.test(f);
       var t=(p.tam&&p.tam.length)?' · T '+Math.min.apply(null,p.tam)+'–'+Math.max.apply(null,p.tam):'';
       var pr=(''+(p.preco||'')).trim();
       var val=pr?'<span style="color:var(--gold2);font-weight:600;">R$ '+pr+'</span>'
                 :(ach?'<span style="color:#B4342C;font-weight:600;">sem valor — a oferta não sai</span>':'<span style="color:var(--mut);">sem valor</span>');
-      var selo=ach?'<span style="color:var(--gold2);font-weight:700;">★ Achado</span> · ':'';
-      return '<div class="lktile" data-sku="'+p.f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+selo+(p.nome||'peça')+t+(p.vend?' · '+p.vend:'')+'<br>'+val+'</div></div>';
+      var selo=ach?'<span style="color:var(--gold2);font-weight:700;">★ Achado</span> · '
+             :(priv?'<span style="color:var(--mut);font-weight:700;">🔒 só '+(p.vend||'dela')+'</span> · ':'');
+      return '<div class="lktile" data-sku="'+f+'"><img loading="lazy" src="'+p.cap+'"><div class="cap">'+selo+(p.nome||'peça')+t+((p.vend&&!priv)?' · '+p.vend:'')+'<br>'+val+'</div></div>';
     }).join(''):'<div class="empty">Nada na mesa ainda. Suba uma peça aqui em cima, ou espere uma vendedora deixar uma "pra todas".</div>';
   }catch(e){ var _m=document.getElementById('mesageral'); if(_m)_m.innerHTML='<div class="empty">erro ao carregar a Mesa Geral</div>'; }
   var ck=Object.keys(claims);
@@ -259,7 +261,7 @@ var _bc=document.getElementById('buscacli');if(_bc)_bc.oninput=function(){render
 var _vs=document.getElementById('ficvendsel');if(_vs)_vs.onchange=function(){renderFichas();};
 ['ficmes','ficveste','ficcalca'].forEach(function(id){var e=document.getElementById(id);if(e){e.oninput=function(){renderFichas();};e.onchange=function(){renderFichas();};}});
 var _fl=document.getElementById('ficlimpa');if(_fl)_fl.onclick=function(){['buscacli','ficveste','ficcalca','ficmes','ficvendsel'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});renderFichas();};
-window.openLB=function(src,sku){var lb=document.getElementById('lightbox'),i=document.getElementById('lbimg');if(!lb||!i||!src)return;i.src=src;i.style.transform='scale(1)';i.style.cursor='zoom-in';var del=document.getElementById('lbdel');if(del){if(sku){del.style.display='block';del.onclick=function(e){e.stopPropagation();if(!confirm('Tirar esta peça da Mesa Geral? Some pra todas as vendedoras.'))return;fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({del:sku})}).then(function(){lb.style.display='none';carregar();}).catch(function(){});};}else{del.style.display='none';del.onclick=null;}}lb.style.display='flex';};
+window.openLB=function(src,sku){var lb=document.getElementById('lightbox'),i=document.getElementById('lbimg');if(!lb||!i||!src)return;i.src=src;i.style.transform='scale(1)';i.style.cursor='zoom-in';var del=document.getElementById('lbdel');if(del){if(sku){del.style.display='block';del.onclick=function(e){e.stopPropagation();if(!confirm(/^priv_/.test(sku)?'Apagar esta peça particular da vendedora?':'Apagar esta peça? Some pra TODAS as vendedoras.'))return;fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({del:sku})}).then(function(){lb.style.display='none';carregar();}).catch(function(){});};}else{del.style.display='none';del.onclick=null;}}lb.style.display='flex';};
 function _closeLB(){var lb=document.getElementById('lightbox');if(lb)lb.style.display='none';}
 (function(){var lb=document.getElementById('lightbox');if(!lb)return;lb.onclick=_closeLB;var x=document.getElementById('lbx');if(x)x.onclick=function(e){e.stopPropagation();_closeLB();};var i=document.getElementById('lbimg');if(i)i.onclick=function(e){e.stopPropagation();var big=this.style.transform==='scale(2.2)';this.style.transform=big?'scale(1)':'scale(2.2)';this.style.cursor=big?'zoom-in':'zoom-out';};})();
 var _lg=document.getElementById('looksger');if(_lg)_lg.addEventListener('click',function(e){var tile=e.target.closest('.lktile');if(!tile)return;var im=tile.querySelector('img');if(im&&im.src)openLB(im.src);});
