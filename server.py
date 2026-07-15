@@ -1007,7 +1007,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-14_corpo-fiel", "ok": True})
+            return self._json(200, {"version": "2026-07-14_editar-peca", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -1181,6 +1181,17 @@ class Handler(SimpleHTTPRequestHandler):
                         except Exception:
                             pass
                     return self._json(200, {"ok": True})
+                if d.get("edit") and d.get("sku"):
+                    sku = str(d.get("sku"))
+                    patch = {"cat": d.get("cat"), "nome": d.get("nome"),
+                             "tam": json.dumps(d.get("tam")) if d.get("tam") is not None else None,
+                             "preco": d.get("preco")}
+                    if SB_ON:
+                        try:
+                            sb_req("PATCH", "pecas", "sku=eq." + urllib.parse.quote(sku), body=patch)
+                        except Exception as e:
+                            return self._json(200, {"ok": False, "error": str(e)})
+                    return self._json(200, {"ok": True, "sku": sku})
                 if not d.get("img") or not d.get("sku"):
                     return self._json(200, {"ok": False, "skip": "sem img/sku"})
                 row = {"sku": d.get("sku"), "img": d.get("img"), "cat": d.get("cat"),
