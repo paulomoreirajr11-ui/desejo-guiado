@@ -745,11 +745,12 @@ ger.onclick=()=>{
  const person=srv(S.pessoa.foto||('modelos/'+S.pessoa.key+'.jpg'));
  const garments=_look.map(f=>{var e=pecaByF(f);return e&&e.cap?e.cap:srv('estoque/'+f+'.jpg');});
  var _pk=S.pessoa.key,_pn=(S.pessoa.nome||''),_tray='mira_celtray_'+S.vend+'_'+_pk,_nm=_primeiro(_pn);
- var body={vend:S.vend,cliente:_pn,person_key:_pk,person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria')};
+ var _fiel=_look.some(function(f){var e=pecaByF(f);return e&&/^Festa/.test(e.cat||'');});   // vestido de festa (dia/noite) → motor de alta fidelidade
+ var body={vend:S.vend,cliente:_pn,person_key:_pk,person:person,garments:garments,pecas:nomes,ocasiao:S.occ,estilo:(S.pessoa.estilo||''),fundo:S.fundo,faceswap:(S.tipo==='cli'),reforco:(S.tipo==='cli'&&S.pessoa.fonte==='galeria'),motor:(_fiel?'fiel':'')};
  /* libera a tela na hora — ela já monta a próxima */
  S.pecas=[];S.occ=null;try{[...occEl.children].forEach(function(x){x.classList.remove('on');});}catch(e){}renderGrid();upd();renderBig();
  _temPendente=true;_filaN=(_filaN||0)+1;_fila_setChip();
- toast('Na fila ✓ — '+_nm+' gerando no fundo. Pode montar a próxima 💛');
+ toast(_fiel?('🎯 Alta fidelidade ✓ — vestido de festa da '+_nm+' gerando com capricho no fundo (demora um tiquinho mais). Pode montar a próxima 💛'):('Na fila ✓ — '+_nm+' gerando no fundo. Pode montar a próxima 💛'));
  fetch('/gerar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){
    if(d&&d.image){_entregarLook(_tray,{image:d.image,cliente:_pn,occ:body.ocasiao,pecas:nomes.join(', '),ids:_look.slice(),person_key:_pk,vend:S.vend});toast('✓ Look de '+_nm+' pronto 💛');_filaN=Math.max(0,_filaN-1);_temPendente=_filaN>0;_fila_setChip();}
    else if(d&&d.full){toast('Muitos looks na fila — espera uns terminarem 💛');_filaN=Math.max(0,_filaN-1);_fila_setChip();}

@@ -844,6 +844,49 @@ def fal_generate(prompt, image_uris):
     if imgs and isinstance(imgs[0], dict): return imgs[0].get("url")
     return data.get("url")
 
+FAL_MODEL_FIEL = os.environ.get("FAL_MODEL_FIEL", "fal-ai/flux-pro/kontext/max/multi")
+def fal_kontext(prompt, image_uris):
+    """Motor de ALTA FIDELIDADE (mais caro/lento) — preserva a construção da peça.
+    Usado em vestido de festa, onde o nano-banana reinterpreta a silhueta."""
+    body = json.dumps({"prompt": prompt, "image_urls": image_uris, "num_images": 1,
+                       "guidance_scale": 4.0, "aspect_ratio": "3:4", "output_format": "jpeg"}).encode()
+    req = urllib.request.Request("https://fal.run/" + FAL_MODEL_FIEL, data=body,
+        headers={"Authorization": "Key " + FAL_KEY, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=240) as r:
+        data = json.loads(r.read().decode())
+    imgs = data.get("images") or data.get("image") or []
+    if isinstance(imgs, dict): imgs = [imgs]
+    if imgs and isinstance(imgs[0], dict): return imgs[0].get("url")
+    return data.get("url")
+
+def build_prompt_fiel(ocasiao, estilo, pecas, fundo="cena"):
+    """Prompt de alta fidelidade (Kontext): a construção EXATA da peça vem antes de tudo.
+    Genérico — serve pra qualquer vestido de festa (volumoso, reto, sereia...)."""
+    beauty = BEAUTY.get(ocasiao, "polished natural makeup and styled hair")
+    if fundo == "estudio":
+        cena = ("a professional photography studio with a seamless light-grey backdrop and soft even studio lighting")
+    else:
+        cena = pick_cena(ocasiao)
+    if isinstance(pecas, (list, tuple)):
+        nomes = ", ".join([str(x) for x in pecas if x])
+    else:
+        nomes = str(pecas or "")
+    detalhe = (" The look includes: " + nomes + ".") if nomes else ""
+    return ("Full-length elegant fashion photograph: the woman from the FIRST reference image is wearing the "
+            "EXACT outfit shown in the OTHER reference image(s). Reproduce every garment COMPLETELY and "
+            "IDENTICALLY as in the reference — the same neckline, the same straps or sleeves, the same bodice "
+            "construction, the same waistline position, the same length, and the EXACT same amount of volume, "
+            "fullness, gathers, ruffles, pleats, drape or flare it has. If a skirt is full and voluminous, keep "
+            "it just as full; if it is straight and slim, keep it slim. Same colors, same fabric and sheen, and "
+            "the EXACT same print, embroidery, lace, beading or appliqué in the same place and size. Do NOT "
+            "restyle, redesign, shorten, lengthen, slim or simplify the outfit in any way — the exact shape of "
+            "each piece is the product being sold." + detalhe + " Keep her face, hair, skin tone, age and body "
+            "TRUE to the first image; she must stay instantly recognizable as that same real woman, and her body "
+            "must not be made heavier or thinner than she really is. Hair and makeup: " + beauty + ". Setting: " +
+            cena + ". Natural three-quarter pose, full body from head to shoes in frame, shoes visible, soft "
+            "directional lighting that flatters honestly, refined color grade, photorealistic, magazine quality. "
+            "No text, no logos, no hanger.")
+
 def fal_faceswap(look_url, face_uri):
     """Cola o rosto REAL (face_uri) sobre o look gerado (look_url). Garante a identidade."""
     body = json.dumps({"base_image_url": look_url, "swap_image_url": face_uri}).encode()
@@ -866,11 +909,15 @@ def gerar_look_img(body):
     if not garments:
         g = body.get("garment", "")
         garments = [g] if g else []
-    prompt = build_prompt(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
+    fiel = (body.get("motor") or "").lower() == "fiel"
+    if fiel:
+        prompt = build_prompt_fiel(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
+    else:
+        prompt = build_prompt(body.get("ocasiao", "Dia a dia"), body.get("estilo", ""), body.get("pecas", body.get("peca", "")), body.get("fundo", "cena"))
     if body.get("prompt_override"):
         prompt = body.get("prompt_override")
     uris = [to_uri(body.get("person", ""))] + [to_uri(g) for g in garments if g]
-    url = fal_generate(prompt, uris)
+    url = fal_kontext(prompt, uris) if fiel else fal_generate(prompt, uris)
     if not url:
         return None, "a nuvem nao devolveu imagem"
     if body.get("faceswap"):
@@ -1007,7 +1054,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-15_ajuda-cadastro", "ok": True})
+            return self._json(200, {"version": "2026-07-17_alta-fidelidade-festa", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
