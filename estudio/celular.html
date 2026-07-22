@@ -563,21 +563,44 @@ var _editSku=null;
 function _sairEdicao(){_editSku=null;var a=$('captall'),s=$('captshare');if(a)a.style.display='';if(s)s.style.display='';var t=$('captctitulo');if(t)t.textContent='Cadastrar peça';}
 function abrirEdicao(pc){if(!pc)return;_editSku=pc.f;_serie=0;_fila_capt=[];_captData=pc.cap||'/peca/'+pc.f+'.jpg';
  $('captthumb').src=_captData;$('captnome').value=pc.nome||'';$('capttam').value=(pc.tam&&pc.tam.length)?pc.tam.join(', '):'';$('captvalor').value=pc.preco||'';_marcarCat(pc.cat||null);
- var a=$('captall'),s=$('captshare');if(a)a.style.display='none';if(s)s.style.display='none';   // destino não muda na edição
+ _setTg('captall',!!(pc.shared||pc.achado));_setTg('captshare',!!pc.achado);   // destino atual — dá pra trocar aqui
  var t=$('captctitulo');if(t)t.textContent='Editar peça';
- var cc=$('captconta');if(cc){cc.style.display='block';cc.textContent='✎ Editando '+(pc.achado?'⭐ Achado da Semana':(pc.priv?'🔒 sua peça':'👗 estoque da loja'))+' — corrija o que precisar.';}
+ var cc=$('captconta');if(cc){cc.style.display='block';cc.textContent='✎ Hoje é '+(pc.achado?'⭐ Achado da Semana':(pc.priv?'🔒 só sua':'👗 estoque da loja'))+'. Corrija o que precisar — dá pra mudar quem vê a peça nos botões abaixo.';}
  $('captsalvar').textContent='Salvar alterações ✓';_valorObrig();$('captcat').style.display='flex';}
 function abrirCategoria(d){_sairEdicao();_captData=d;$('captthumb').src=d;$('captnome').value='';$('captvalor').value='';if(!_serie){_marcarCat(null);$('capttam').value='';_setTg('captall',false);_setTg('captshare',false);}_valorObrig();_contaSerie();$('captcat').style.display='flex';}
 function finalizarCapt(cat){if(!_captData)return;
  if(_editSku){
    var enome=($('captnome').value||'').trim()||(cat||'Peça');var etam=parseTam($('capttam').value);var epreco=(($('captvalor').value||'').trim());
-   var eachado=/^share_/.test(_editSku);
+   var eachado=_tg('captshare');var etodas=eachado||_tg('captall');
+   var edest=eachado?'share':(etodas?'estq':'priv');
+   var eatual=(_editSku.split('_')[0]||'');if(eatual==='capt')eatual='priv';
+   var emudou=(edest!==eatual);
    if(eachado&&!epreco){var cv=$('captvalor');if(cv){cv.style.borderColor='#B4342C';cv.focus();}toast('⭐ O Achado precisa do valor 💛');return;}
-   var pc=SHARED.find(function(p){return p.f===_editSku;})||CAPT[_editSku];
-   if(pc){pc.nome=enome;pc.cat=cat;pc.tam=etam;pc.preco=epreco;}
-   if(CAPT[_editSku])saveCapt();
-   else fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({edit:1,sku:_editSku,cat:cat,nome:enome,tam:etam,preco:epreco,vend:S.vend})}).catch(function(){});
-   $('captcat').style.display='none';_captData=null;_sairEdicao();renderGrid();upd();if(typeof renderCockpit==='function')renderCockpit();toast('✎ alterado ✓');return;
+   var _velho=_editSku, _local=CAPT[_editSku];
+   var pc=SHARED.find(function(p){return p.f===_editSku;})||_local;
+   if(pc){pc.nome=enome;pc.cat=cat;pc.tam=etam;pc.preco=epreco;pc.achado=eachado?1:0;pc.shared=etodas?1:0;pc.priv=etodas?0:1;}
+   if(_local&&etodas){
+     // peça antiga que só existia no aparelho: sobe pra mesa com a foto local
+     var _novo=(eachado?'share_':'estq_')+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+     fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku:_novo,img:_local.cap,cat:cat,nome:enome,tam:etam,preco:epreco,vend:S.vend})}).catch(function(){});
+     delete CAPT[_velho];saveCapt();
+     pc.f=_novo;if(SHARED.indexOf(pc)<0)SHARED.unshift(pc);
+     var _i=S.pecas.indexOf(_velho);if(_i>=0)S.pecas[_i]=_novo;
+   } else if(_local){
+     saveCapt();                                            // continua só dela, no aparelho
+   } else {
+     fetch('/pecas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({edit:1,sku:_editSku,cat:cat,nome:enome,tam:etam,preco:epreco,destino:edest,vend:S.vend})})
+       .then(function(r){return r.json();}).then(function(d){
+         if(d&&d.ok===false){toast('não consegui alterar 😕');return;}
+         if(d&&d.sku&&d.sku!==_velho){                      // mudou de destino → código novo
+           if(pc)pc.f=d.sku;
+           var i=S.pecas.indexOf(_velho);if(i>=0)S.pecas[i]=d.sku;
+           renderGrid();upd();
+         }
+       }).catch(function(){});
+   }
+   $('captcat').style.display='none';_captData=null;_sairEdicao();aplicarChipAchado();renderGrid();upd();if(typeof renderCockpit==='function')renderCockpit();
+   toast(emudou?(eachado?'⭐ Agora é Achado da Semana — todas veem ✓':(etodas?'👗 Agora todas as vendedoras veem ✓':'🔒 Agora é só sua ✓')):'✎ alterado ✓');return;
  }
  var nome=($('captnome').value||'').trim();
  if(!nome)nome=(cat||'Foto nova')+((_fila_capt.length||_serie)?' '+(_serie+1):'');   // em série numera sozinho

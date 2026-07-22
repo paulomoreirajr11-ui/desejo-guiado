@@ -1054,7 +1054,7 @@ class Handler(SimpleHTTPRequestHandler):
                     out["error"] = str(e)
             return self._json(200, out)
         if p == "/version":
-            return self._json(200, {"version": "2026-07-17_alta-fidelidade-festa", "ok": True})
+            return self._json(200, {"version": "2026-07-18_trocar-destino", "ok": True})
         if p == "/placar":
             q = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
             periodo = (q.get("periodo") or ["mes"])[0]
@@ -1233,6 +1233,30 @@ class Handler(SimpleHTTPRequestHandler):
                     patch = {"cat": d.get("cat"), "nome": d.get("nome"),
                              "tam": json.dumps(d.get("tam")) if d.get("tam") is not None else None,
                              "preco": d.get("preco")}
+                    # trocar o DESTINO (só minha ↔ estoque da loja ↔ Achado) sem recadastrar:
+                    # o destino mora no prefixo do sku, então reescrevemos a linha aqui no servidor
+                    # (a foto já está guardada — a vendedora não precisa subir nada de novo).
+                    PREF = {"priv": "priv_", "estq": "estq_", "share": "share_"}
+                    novo = PREF.get((d.get("destino") or "").strip())
+                    atual = sku.split("_", 1)[0] + "_"
+                    if SB_ON and novo and novo != atual:
+                        try:
+                            rows = sb_req("GET", "pecas", "sku=eq." + urllib.parse.quote(sku) + "&select=*") or []
+                            if not rows:
+                                return self._json(200, {"ok": False, "error": "peça não encontrada"})
+                            row = dict(rows[0])
+                            row.pop("id", None)
+                            novo_sku = novo + sku.split("_", 1)[1]
+                            row["sku"] = novo_sku
+                            row.update(patch)
+                            sb_req("POST", "pecas", body=row)
+                            sb_req("DELETE", "pecas", "sku=eq." + urllib.parse.quote(sku))
+                            img_ant = _PECA_IMG.pop(sku, None) or row.get("img")
+                            if img_ant:
+                                _PECA_IMG[novo_sku] = img_ant
+                            return self._json(200, {"ok": True, "sku": novo_sku, "antigo": sku, "movida": True})
+                        except Exception as e:
+                            return self._json(200, {"ok": False, "error": str(e)})
                     if SB_ON:
                         try:
                             sb_req("PATCH", "pecas", "sku=eq." + urllib.parse.quote(sku), body=patch)
